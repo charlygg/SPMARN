@@ -99,6 +99,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
 					$i2 = 0;
+					$arrayTramites2 = array();
+					
 					while($k = mysqli_fetch_array($resultado)){
 						
 						// Esta es la fecha de incio del tramite
@@ -114,8 +116,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						
 						//semana pasada
 						$semanaPasada = strtotime('-7 day', strtotime($formattedHOY));
-						
-						
 
 						$fechaVencimiento = sumarDiasTramite($unixFechaInicio,20);
 						$fechaV = str_replace('/', '-', $fechaVencimiento);
@@ -360,7 +360,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Estatus de los tramites
+            Estado de los tramites
            <?php
            /* Funcion que nos permite obtener el ultimo dia en numero del mes x del año y, contando bisiestos*/
            	function getUltimoDiaMes($elAnio,$elMes) {
@@ -487,16 +487,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		
 		$aux = basename($_SERVER['REQUEST_URI']);
 		$arrayAux = explode("?",$aux);
-		$urlParametros = $arrayAux[1];
+
+		$urlParametros = $arrayAux[1];	
+				
 		
 		$mysqli = new mysqli($servidor, $user, $passwd, $database);
 		$fi = $GLOBALS['fechaInicial'];
 		$ft = $GLOBALS['fechaTermino'];
-		$tProceso=0;
-		$tFinalizado=0;
-		$tRecibido=0;
-		$tTotales=0;
-		$tNuevos=0;
+		
+		$EN = 0;
+		$NU = 0;
+		$REC = 0;
+		$PRO = 0;
+		$TER_MES = 0;
+		$TER = 0;
+		
 	
 		if (!$mysqli){
   			die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
@@ -504,11 +509,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		
 		$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(4,'$fi','$ft')");
 		while($k = mysqli_fetch_array($resultado)){
-			$tProceso = $k['PROCESO'];
-			$tFinalizado = $k['TERMINADOS'];
-			$tRecibido = $k['RECIBIDO'];
-			$tNuevos = $k['NUEVO'];
-			$tTotales = $k['TOTAL_TRAMITES'];
+			$EN = $k['TOTAL_TRAMITES_ENTRANTES'];
+			$NU = $k['TOTAL_TRAMITES_NUEVOS'];
+			$REC = $k['TOTAL_TRAMITES_RECIBIDOS'];
+			$PRO = $k['TOTAL_TRAMITES_PROCESO'];
+			$TER_MES = $k['TOTAL_TRAMITES_MES_T'];
+			$TER = $k['TOTAL_TRAMITES_TERMINADOS'];
 		}
 		mysqli_close($mysqli);
 		?>
@@ -519,7 +525,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <span class="info-box-icon bg-aqua"><i class="fa fa-envelope-o"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">Nuevos tramites</span>
-                  <span class="info-box-number"><?php echo $tNuevos ?></span>
+                  <span class="info-box-number"><?php echo $NU ?></span>
                   <br>
                   <span class="info-box-text">(En recepcion)</span>
                 </div><!-- /.info-box-content -->
@@ -532,9 +538,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <span class="info-box-icon bg-green"><i class="fa fa-flag-o"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">En Proceso (En el area)</span>
-                  <span class="info-box-number"><?php echo $tProceso ?></span>
+                  <span class="info-box-number"><?php echo $PRO + $TER_MES; ?></span>
                   <span class="info-box-text">Recibidos (En el area)</span>
-                  <span class="info-box-number"><?php echo $tRecibido ?></span>
+                  <span class="info-box-number"><?php echo $REC ?></span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
             </a>
@@ -545,7 +551,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">Finalizados</span>
-                  <span class="info-box-number"><?php echo $tFinalizado ?></span>
+                  <span class="info-box-number"><?php echo $TER ?></span>
                   <span class="info-box-text">Notificados</span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
@@ -556,8 +562,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <div class="info-box">
                 <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">Totales del mes</span>
-                  <span class="info-box-number"><?php echo $tTotales ?></span>
+                  <span class="info-box-text">ENTRANTES DEL MES</span>
+                  <span class="info-box-number"><?php echo $EN ?></span>
+                  <span class="info-box-text">CUMPLIMIENTO</span>
+                  <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." %";  ?></span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
 			</a>

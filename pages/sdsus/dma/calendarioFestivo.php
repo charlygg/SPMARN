@@ -28,6 +28,7 @@
 
 	}
 
+
     function esFestivo($time) {
     	/* Son los dias no laborables, no procede tramites*/
     	$dias_saltados = array(0,6); // 0: domingo, 1: lunes... 6:sabado

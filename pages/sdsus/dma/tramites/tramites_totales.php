@@ -205,7 +205,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  
 		  */
 		  
-		  		  			if(isset($_GET['metodoSeleccionFecha'])){
+		  		  	if(isset($_GET['metodoSeleccionFecha'])){
 			 	
 			 		if($_GET['metodoSeleccionFecha'] == 1){
 			 		/* Seleccion de fecha por rango mensual*/	
@@ -256,12 +256,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		?>		
        	        <div class="box">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Listado de Empresas</h3>
+                  <h3 class="box-title">Listado de Trámites</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-				<p>Listado de tramites en estado finalizados</p>
+				<p>Listado de tramites entrantes</p>
                   <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
-                  	<thead>
+                  	<t	head>
                       <tr>
                         <th>No. Tramite</th>
                         <th>Tramite</th>
