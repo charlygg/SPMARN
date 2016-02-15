@@ -259,7 +259,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h3 class="box-title">Listado de Empresas</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-				<p>Listado de tramites en estado finalizados</p>
+				<p>Listado de tramites finalizados</p>
                   <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
                   	<thead>
                       <tr>
