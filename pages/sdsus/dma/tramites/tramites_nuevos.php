@@ -266,6 +266,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       <tr>
                         <th>No. Tramite</th>
                         <th>Tramite</th>
+                        <th>Area</th>
                         <th>Empresa</th>
                         <th>Asunto</th>
                         <th>Recibido</th>
@@ -295,6 +296,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo "<tr>";
 							echo "<td>".$k['NO_TRAMITE']."</td>";
 							echo "<td>".$k['TRAMITE']."</td>";
+							echo "<td>".$k['TURNADO_A']."</td>";
 							echo "<td>".$k['EMPRESA']."</td>";
 							echo "<td>".$k['ASUNTO']."</td>";
 							//echo "<td>".$k['REP_FECHA_INICIO_TRAMITE']."</td>";

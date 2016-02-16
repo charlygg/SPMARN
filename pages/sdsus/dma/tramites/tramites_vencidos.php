@@ -263,10 +263,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   	<thead>
                       <tr>
                         <th>No. Tramite</th>
-                        <th>Fecha de Ingreso</th>
+                        <th>Tramite</th>
+                        <th>Area</th>
                         <th>Empresa</th>
-                        <th>Asunto	</th>
-                        <th>Turnado A</th>
+                        <th>Asunto</th>
                         <th>Inicio tramite</th>
                         <th>Vencimiento</th>
                       </tr>
@@ -330,14 +330,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo "<tr>";
 							echo "<td>".$k['no_tramite']."</td>";
 							echo "<td>".$k['tramite']."</td>";
+							echo "<td>".$k['turnado']."</td>";
 							echo "<td>".$k['empresa']."</td>";
 							echo "<td>".$k['asunto']."</td>";
-							echo "<td>".$k['turnado']."</td>";
 							echo "<td>".$k['inicio_tramite']."</td>";
 							echo "<td>".$k['fecha_vencimiento']."</td>";
 							echo "</tr>";
                     	}
-					
 					mysqli_close($mysqli);
                   	?>
                     </tbody>

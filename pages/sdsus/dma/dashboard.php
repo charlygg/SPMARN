@@ -180,7 +180,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
-  						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
+  						die ("Error en la conexion con el servidor de bases de datos: ".mysql_error());
 					}
 										/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
@@ -565,7 +565,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <span class="info-box-text">ENTRANTES DEL MES</span>
                   <span class="info-box-number"><?php echo $EN ?></span>
                   <span class="info-box-text">CUMPLIMIENTO</span>
-                  <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." %";  ?></span>
+                  <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." %";  ?> <?php echo "<button value='A' ></button>"?></span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
 			</a>
