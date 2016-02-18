@@ -98,10 +98,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </li>
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="../../../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
+                      <a href="../../../../myprofilesettings.php" class="btn btn-default btn-flat">Mi cuenta</a>
                     </div>
                     <div class="pull-right">
-                      <a href="../../../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="../../../../logoutsession.php" class="btn btn-default btn-flat">Cerrar sesión</a>
                     </div>
                   </li>
                 </ul>
@@ -178,7 +178,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <small></small>
           </h1>
           <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard -> </a>Trámites nuevos</li>
             <!--<li class="active">Here</li>-->
           </ol>
         </section>

@@ -178,7 +178,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <small></small>
           </h1>
           <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard -> </a>Trámites entrantes</li>
             <!--<li class="active">Here</li>-->
           </ol>
         </section>

@@ -24,11 +24,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../../../dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.css" />
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
+	<link>    
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -178,7 +180,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <small></small>
           </h1>
           <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard -> </a> Trámites finalizados</li>
             <!--<li class="active">Here</li>-->
           </ol>
         </section>
@@ -186,25 +188,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <!-- Your Page Content Here -->
         <section class="content">
-		<?php
-		 
-		 /*
-		echo $_SESSION['session_idusername']."<br>";
-		echo $_SESSION['session_nombre']."<br>";
-	 	echo $_SESSION['session_apPat']."<br>";
-		echo $_SESSION['session_apMat']."<br>";
-		echo $_SESSION['session_username']."<br>"; 
-		echo $_SESSION['session_email']."<br>";
-		echo $_SESSION['session_role']."<br>";
-		echo $_SESSION['session_enabled']."<br>";
-		echo "<p>Informacion del departamento</p>";
-		echo $_SESSION['session_user_depto_id']."<br>";
-		echo $_SESSION['session_user_depto_nombre']."<br>";
-		echo $_SESSION['session_user_depto_descripcion']."<br>";
-		echo $_SESSION['session_user_depto_role']."<br>";
-		  
-		  */
-		  
+		<?php		  
 		  		  	if(isset($_GET['metodoSeleccionFecha'])){
 			 	
 			 		if($_GET['metodoSeleccionFecha'] == 1){
@@ -256,23 +240,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		?>		
        	        <div class="box">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Listado de Empresas</h3>
+                  <h3 class="box-title">Listado de Trámites Finalizados</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-				<p>Listado de tramites finalizados</p>
-                  <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
-                  	<thead>
-                      <tr>
-                        <th>No. Tramite</th>
-                        <th>Tramite</th>
-                        <th>Area</th>
-                        <th>Empresa</th>
-                        <th>Asunto</th>
-                        <th>Recibido</th>
-                        <th>Terminado</th>
-                      </tr>
-                    </thead>
-                  	<tbody>
                   	<?php
 					function getUltimoDiaMes($elAnio,$elMes) {
  						return date("d",(mktime(0,0,0,$elMes+1,1,$elAnio)-1));
@@ -285,24 +255,68 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					if (!$mysqli){
   						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 					}
-					echo "<h4>Tramites del mes</h4>";
 										
+					$arrayT = array();
+					$arrayInformacion = array();
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(7,'$fechaInicial','$fechaTermino')") or die ($mysqli->error.__LINE__);
-					
+	
 					while($k = mysqli_fetch_array($resultado)){
-							echo "<tr>";
-							echo "<td>".$k['NO_TRAMITE']."</td>";
-							echo "<td>".$k['TRAMITE']."</td>";
-							echo "<td>".$k['TURNADO_A']."</td>";
-							echo "<td>".$k['EMPRESA']."</td>";
-							echo "<td>".$k['ASUNTO']."</td>";
-							echo "<td>".$k['REP_FECHA_INICIO_TRAMITE']."</td>";
-							echo "<td>".$k['REP_FECHA_CIERRE_TRAMITE']."</td>";
-							echo "</tr>";
+							$arr = ($k['TURNADO_A']);
+							$arrInfo = array(
+								'NO_TRAMITE' => $k['NO_TRAMITE'],
+								'TRAMITE' => $k['TRAMITE'],
+								'TURNADO' => $k['TURNADO_A'],
+								'EMPRESA' => $k['EMPRESA'],
+								'ASUNTO' => $k['ASUNTO'],
+								'FECHA_INICIO' => $k['REP_FECHA_INICIO_TRAMITE'],
+								'FECHA_TERMINO' => $k['REP_FECHA_CIERRE_TRAMITE']
+							);
+							$arrayT[] = $arr;
+							$arrayInformacion[] = $arrInfo;
 					}
+					$arrayT = array_unique($arrayT);
 					mysqli_close($mysqli);
                   	?>
-                    </tbody>
+                  
+                  <?php
+                  echo "<p>Filtrar Area ";
+				  echo "<select>";
+                  echo "Filtrar area <option></option>";
+                   foreach($arrayT as $t){
+                   		echo "<option>";
+                   		echo $t;
+                   		echo "</option>";
+				  }
+					echo "</select></p>";				  
+				  ?>
+				  
+				  <table id="tblFullCaracteristicas" class="display table table-bordered table-striped">
+                  	<thead>
+                      <tr>
+                        <th>No. Tramite</th>
+                        <th>Tramite</th>
+                        <th>Area</th>
+                        <th>Empresa</th>
+                        <th>Asunto</th>
+                        <th>Recibido</th>
+                        <th>Terminado</th>
+                      </tr>
+                    </thead>
+                  <tbody>
+                  <?php
+                  	foreach($arrayInformacion as $I){
+                  		echo "<tr>";
+						echo "<td>$I[NO_TRAMITE]</td>";
+						echo "<td>$I[TRAMITE]</td>";
+						echo "<td>$I[TURNADO]</td>";
+						echo "<td>$I[EMPRESA]</td>";
+						echo "<td>$I[ASUNTO]</td>";
+						echo "<td>$I[FECHA_INICIO]</td>";
+						echo "<td>$I[FECHA_TERMINO]</td>";
+						echo "</tr>";
+                  	}
+                  	?>
+                   </tbody>
                   </table>
                 </div><!-- /.box-body -->
         </div>
@@ -504,15 +518,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
-
+    <!-- Yatch -->
+    <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
+	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
-      $(function () {
-        $("#tblFullCaracteristicas").DataTable();
-      });
+    $(document).ready(function(){
+		$('#tblFullCaracteristicas').dataTable().yadcf([
+		{column_number : 1},
+		{column_number : 2}]
+		);
+	});
+      // $(function () {
+        // // $("#tblFullCaracteristicas").DataTable();
+            // $('#tblFullCaracteristicas').DataTable( {
+        // initComplete: function () {
+            // this.api().columns().every( function () {
+                // var column = this;
+                // var select = $('<select><option value=""></option></select>')
+                    // .appendTo( $(column.footer()).empty() )
+                    // .on( 'change', function () {
+                        // var val = $.fn.dataTable.util.escapeRegex(
+                            // $(this).val()
+                        // );
+//  
+                        // column
+                            // .search( val ? '^'+val+'$' : '', true, false )
+                            // .draw();
+                    // } );
+//  
+                // column.data().unique().sort().each( function ( d, j ) {
+                    // select.append( '<option value="'+d+'">'+d+'</option>' )
+                // } );
+            // } );
+        // }
+    // } );
+      // });
     </script>
   </body>
 </html>

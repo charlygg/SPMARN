@@ -287,18 +287,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </li>
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="../../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
+                      <a href="../../../myprofilesettings.php" class="btn btn-default btn-flat">Mi cuenta</a>
                     </div>
                     <div class="pull-right">
-                      <a href="../../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="../../../logoutsession.php" class="btn btn-default btn-flat">Cerrar sesión</a>
                     </div>
                   </li>
                 </ul>
               </li>
               <!-- Control Sidebar Toggle Button -->
-              <li>
-                <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-              </li>
             </ul>
           </div>
         </nav>
@@ -327,7 +324,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <form action="#" method="get" class="sidebar-form">
             <div class="input-group">
               <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">value
+              <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
               </span>
             </div>
@@ -435,7 +432,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <small></small>
           </h1>
           <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
+            <li><i class="fa fa-dashboard"></i> Dashboard</li>
             <!--<li class="active">Here</li>-->
           </ol>
         </section>
@@ -558,17 +555,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             </div><!-- /.col -->
             <div class="col-md-3 col-sm-6 col-xs-12">
-           	<a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;">
+           <!--	<a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;"> -->
               <div class="info-box">
+              	<a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;">
                 <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
+                </a>
                 <div class="info-box-content">
+                <a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;">
                   <span class="info-box-text">ENTRANTES DEL MES</span>
                   <span class="info-box-number"><?php echo $EN ?></span>
                   <span class="info-box-text">CUMPLIMIENTO</span>
-                  <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." %";  ?> <?php echo "<button value='A' ></button>"?></span>
+                </a>
+                  <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." % - ";  ?>
+                  	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="llenaGraficoModal()" class="fa fa-fw fa-pie-chart">Areas</i>
+                  </span>
+                  
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
-			</a>
+			<!--</a>
             </div><!-- /.col -->         
           </div><!-- /.row -->
               <div class="nav-tabs-custom">
@@ -658,10 +662,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							</td>
 						</tr>-->
 					</table>
-					
-					
                 </div>
-                
               </div>
               
               <div class="nav-tabs-custom">
@@ -672,12 +673,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="tab-content no-padding">
                 	<canvas id="myChartFinalizados" width="500" style="position: relative; height: 400px;"></canvas>
                 </div>
-                
               </div>
 	  </section>
       </div><!-- /.content-wrapper -->
-
-      <!-- Main Footer -->
+<!-- VENTANA Modal PARA MOSTRAR EL % DE CUMPLIMIENTO A NIVEL AREA, SE MUESTRA CUANDO SE LE DA CLIC AL BOTON DE GRAFICO -->
+<div class="modal fade" id="graficoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto; max-width: 1000px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Seleccionado</h4>
+      </div>
+      <div class="modal-body">
+		<canvas id="myChartAreas"></canvas>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <!-- -
+        	        <button onclick="mostrarDiv()">Boton</button>	
+        	-->
+        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- Main Footer -->
       <footer class="main-footer">
         <!-- To the right -->
         <div class="pull-right hidden-xs">
@@ -715,7 +735,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
-    /* Ajax y jQuery*/
+    /* Script de Funciones Ajax y jQuery*/
       $(function () {
       	/* Si no elejimos que fecha de inicio y termino queremos, por defecto traera las del mes actuales desde el primer dia
       	 hasta el ultimo segun sea el mes*/
@@ -738,14 +758,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
     
     
     	function llenaGraficoUno(){
-    		
     	$('#rangoFecha').daterangepicker();
       	var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
       	/*
       	 * AJAX QUE RELLENA EL GRAFICO NUMERO UNO DE LOS TRAMITES CAPTURADOS CONTRA LOS RECIBIDOS
       	 */
-      	
       	$.ajax({
         	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
         	type: "POST",
@@ -766,7 +784,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         });
         
         function llenaGrafico(data2){
-        	
         console.log(data2);
 
       	var arrayDias = new Array();
@@ -821,10 +838,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 }
     
 		function llenaGraficoDos(){
-			      	        /*
+		/*
         	AJAX QUE RELLENA EL GRAFICO DE LOS TRAMITES ENTRANTES CONTRA LOS FINALIZADOS
         */
-       
         var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
         
@@ -865,7 +881,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			i++;
       	}        	
       	
-
       	var data = {
    		 labels: arrayDias,
     	datasets: [
@@ -899,11 +914,98 @@ scratch. This page gets rid of all links and provides the needed markup only.
         	scaleStepWidth : 10,
         	scaleStartValue : 0
 		});
-        }
-			
-		}    
+        }	
+}    
+	
+		function llenaGraficoModal(){
+			/*	Ajax para rellenar el grafico de % de cumplimiento a nivel area*/
+        var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
+      	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
+        $.ajax({
+        	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
+        	type: "POST",
+        	dataType: "json",
+        	url: "../getFlujoTramiteFinalizadoPorArea.php",
+        })
+        .done(function(data, textStatus, jqXHR){
+        	if(console && console.log){
+        		console.log("La solicitud se ha completado correctamente");
+        		llenaGraficoTres(data);
+        	}
+        	
+        })
+        .fail(function(jqXHR, textStatus, errorThrown){
+        	if(console && console.log){
+        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
+        		alert("Algo ha fallado " + textStatus + " " + errorThrown);
+        	}
+        }); /* Fin de Ajax*/
+} /* Fin de llenaGraficoTres*/
+
+		function llenaGraficoTres(datos){
+        	
+        console.log(datos);
+      	/*
+		var i = 0;
+      	for(var key in datos){
+      	    //arrayDias[i] = data2[key].fechaCaptura;
+			//arrayTramites[i] = data2[key].noTramiteCapturados;
+			//arrayTramites2[i] = data2[key].noTramiteRecibidos;
+			i++;
+      	}       */ 	
+      	var data = [
+    {
+        value: 20,
+        color:"#F7464A",
+        highlight: "#FF5A5E",
+        label: "Red"
+    },
+    {
+        value: 50,
+        color: "#46BFBD",
+        highlight: "#5AD3D1",
+        label: "Green"
+    },
+    {
+        value: 100,
+        color: "#FDB45C",
+        highlight: "#FFC870",
+        label: "Yellow"
+    }
+];
+
+        ctx = $("#myChartAreas").get(0).getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			                //Boolean - Show a backdrop to the scale label
+                scaleShowLabelBackdrop: true,
+                //String - The colour of the label backdrop
+                scaleBackdropColor: "rgba(255,255,255,0.75)",
+                // Boolean - Whether the scale should begin at zero
+                scaleBeginAtZero: true,
+                //Number - The backdrop padding above & below the label in pixels
+                scaleBackdropPaddingY: 2,
+                //Number - The backdrop padding to the side of the label in pixels
+                scaleBackdropPaddingX: 2,
+                //Boolean - Show line for each value in the scale
+                scaleShowLine: true,
+                //Boolean - Stroke a line around each segment in the chart
+                segmentShowStroke: true,
+                //String - The colour of the stroke on each segement.
+                segmentStrokeColor: "#fff",
+                //Number - The width of the stroke value in pixels
+                segmentStrokeWidth: 2,
+                //Number - Amount of animation steps
+                animationSteps: 100,
+                //String - Animation easing effect.
+                animationEasing: "easeOutBounce",
+                //Boolean - Whether to animate the rotation of the chart
+                animateRotate: true,
+                //Boolean - Whether to animate scaling the chart from the centre
+                animateScale: false
+		});
+} /* Fin de llenaGraficoTres(data)*/	
     
-    /* Funciones Javascript*/
+    /* Funciones Javascript separadas*/
     	function setFechaUno(){
     		var metodo = 1;
 			var anio = document.getElementById("seleccionAnio");
@@ -927,6 +1029,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		function restablecerFecha(){
 			var nuevaURL = window.location.href.split('?')[0];
 			window.location.href = nuevaURL;
+		}
+		
+		function despliegaGraficoAreas(){
+			llenaGraficoTres();
 		}
  
    </script>
