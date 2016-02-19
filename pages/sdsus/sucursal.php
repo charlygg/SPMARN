@@ -411,7 +411,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     	
     	function fillTablaTramites(tramites){
    		console.log(tramites);	
-   		$("#myModalLabel").innerHTML="Se ha menudito ante la sabiduría de ella, en cambio prefieres a una tonta que cree que sabes mucho. seleccionado la sucursal";
+   		$("#myModalLabel").innerHTML="Seleccionado la sucursal";
    		var divTabla = document.getElementById("tablaTramites");
    		$("#tablaTramites").empty();
       	var strTabla = '<table id="tblFullTramites" class="table table-bordered table-striped">';

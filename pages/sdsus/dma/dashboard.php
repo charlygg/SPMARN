@@ -439,45 +439,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Main content -->
         <!-- Your Page Content Here -->
-        <section class="content">
-        	<!--
-        <div class="row">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="info-box bg-aqua">
-                <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
-                <div class="info-box-content">
-                  <span class="info-box-text">Bookmarks</span>
-                  <span class="info-box-number">41,410</span>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 70%"></div>
-                  </div>
-                  <span class="progress-description">
-                    70% Increase in 30 Days
-                  </span>
-                </div><!-- /.info-box-content --
-              </div><!-- /.info-box 
-            </div><!-- /.col 
-        </div>-->
-		<?php
-		 
-		 /*
-		echo $_SESSION['session_idusername']."<br>";
-		echo $_SESSION['session_nombre']."<br>";
-	 	echo $_SESSION['session_apPat']."<br>";
-		echo $_SESSION['session_apMat']."<br>";
-		echo $_SESSION['session_username']."<br>"; 
-		echo $_SESSION['session_email']."<br>";
-		echo $_SESSION['session_role']."<br>";
-		echo $_SESSION['session_enabled']."<br>";
-		echo "<p>Informacion del departamento</p>";
-		echo $_SESSION['session_user_depto_id']."<br>";
-		echo $_SESSION['session_user_depto_nombre']."<br>";
-		echo $_SESSION['session_user_depto_descripcion']."<br>";
-		echo $_SESSION['session_user_depto_role']."<br>";
-		  
-		  */
-		?>		
-		
+        <section class="content">		
 		<?php
 		/* Obtencion de los totales de los tramites*/
 		require('../../db_connect.php');
@@ -486,8 +448,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		$arrayAux = explode("?",$aux);
 
 		$urlParametros = $arrayAux[1];	
-				
-		
+
 		$mysqli = new mysqli($servidor, $user, $passwd, $database);
 		$fi = $GLOBALS['fechaInicial'];
 		$ft = $GLOBALS['fechaTermino'];
@@ -567,12 +528,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <span class="info-box-text">CUMPLIMIENTO</span>
                 </a>
                   <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." % - ";  ?>
-                  	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="llenaGraficoModal()" class="fa fa-fw fa-pie-chart">Areas</i>
+                  	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="despliegaGraficoAreas()" class="fa fa-fw fa-pie-chart">Areas</i>
                   </span>
                   
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
-			<!--</a>
+			<!--</a>-->
             </div><!-- /.col -->         
           </div><!-- /.row -->
               <div class="nav-tabs-custom">
@@ -675,25 +636,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div>
               </div>
 	  </section>
-      </div><!-- /.content-wrapper -->
+</div><!-- /.content-wrapper -->
 <!-- VENTANA Modal PARA MOSTRAR EL % DE CUMPLIMIENTO A NIVEL AREA, SE MUESTRA CUANDO SE LE DA CLIC AL BOTON DE GRAFICO -->
 <div class="modal fade" id="graficoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto; max-width: 1000px;">
+  <div class="modal-dialog" style="width: auto; max-width: 600px;">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Seleccionado</h4>
+        <h4 class="modal-title" id="myModalLabel">Cumplimiento por áreas</h4>
       </div>
       <div class="modal-body">
-		<canvas id="myChartAreas"></canvas>
+      	<div class="row">
+      		<div class="col-md-6">
+				<canvas id="chartCumpimiento"></canvas>
+			</div>
+			<div class="col-md-5" id="tablaColoresCumplimiento">
+			</div>
+		</div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <!-- -
-        	        <button onclick="mostrarDiv()">Boton</button>	
-        	-->
-        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
       </div>
+    
     </div>
   </div>
 </div>
@@ -710,8 +674,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- REQUIRED JS SCRIPTS -->
 
-	<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-
     <!-- jQuery 2.1.4 -->
     <script src="../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
@@ -726,6 +688,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Chart JS -->
     <script src="../../../plugins/chartjs/Chart.js"></script>
         <!-- date-range-picker -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
@@ -735,8 +698,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
-    /* Script de Funciones Ajax y jQuery*/
-      $(function () {
+      $(function (){
       	/* Si no elejimos que fecha de inicio y termino queremos, por defecto traera las del mes actuales desde el primer dia
       	 hasta el ultimo segun sea el mes*/
       	//Date range picker
@@ -744,8 +706,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	setTimeout(function() { llenaGraficoDos();}, 1000);
       	
         $("#tblFullCaracteristicas").DataTable();
-
-      });
+	  });
     </script>
     <script>
     	function recargarGraficoUno(){
@@ -866,7 +827,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         function llenaGraficoDos(data2){
         	
         console.log(data2);
-
+      	
       	var arrayDias = new Array();
       	var arrayTramites = new Array();
       	
@@ -918,7 +879,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 }    
 	
 		function llenaGraficoModal(){
-			/*	Ajax para rellenar el grafico de % de cumplimiento a nivel area*/
+		/*	Ajax para rellenar el grafico de % de cumplimiento a nivel area*/
         var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
         $.ajax({
@@ -945,37 +906,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		function llenaGraficoTres(datos){
         	
         console.log(datos);
-      	/*
-		var i = 0;
-      	for(var key in datos){
-      	    //arrayDias[i] = data2[key].fechaCaptura;
-			//arrayTramites[i] = data2[key].noTramiteCapturados;
-			//arrayTramites2[i] = data2[key].noTramiteRecibidos;
-			i++;
-      	}       */ 	
-      	var data = [
-    {
-        value: 20,
-        color:"#F7464A",
-        highlight: "#FF5A5E",
-        label: "Red"
-    },
-    {
-        value: 50,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Green"
-    },
-    {
-        value: 100,
-        color: "#FDB45C",
-        highlight: "#FFC870",
-        label: "Yellow"
-    }
-];
-
-        ctx = $("#myChartAreas").get(0).getContext("2d");
-		var myNewChart = new Chart(ctx).Pie(data, {
+        var arrayTerminado = new Array();
+        var i = 0;
+        for(var key in datos){
+        	var tramites = [];
+        	tramites['value'] = datos[i].NUM_TRAMITES;
+        	tramites['color'] = datos[i].color_rgb;
+        	tramites['label'] = datos[i].vc_departamento;
+        	arrayTerminado[i] = tramites;
+        	i++;
+        }
+        ctx2 = $("#chartCumpimiento").get(0).getContext("2d");
+		var myNewChart3 = new Chart(ctx2).Pie(arrayTerminado, {
 			                //Boolean - Show a backdrop to the scale label
                 scaleShowLabelBackdrop: true,
                 //String - The colour of the label backdrop
@@ -999,11 +941,49 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 //String - Animation easing effect.
                 animationEasing: "easeOutBounce",
                 //Boolean - Whether to animate the rotation of the chart
-                animateRotate: true,
+                //animateRotate: true,
                 //Boolean - Whether to animate scaling the chart from the centre
                 animateScale: false
 		});
+		//Llamamos a la otra funcion que dibuja la tabla de los colores
+		setTimeout(function() { llenaTablaColores(datos);}, 200);
 } /* Fin de llenaGraficoTres(data)*/	
+
+		function llenaTablaColores(datos){
+			var divTabla = document.getElementById("tablaColoresCumplimiento");
+			$("#tablaColoresCumplimiento").empty();
+			var strTabla = '<table id="tblFullTramites" style="padding-left: 10px;">';
+	      	strTabla += '<thead>';
+      		strTabla += '<tr>';
+      		strTabla += '<th>Color</th>';
+      		strTabla += '<th style="padding-left: 20px;"></th>';
+      		strTabla += '<th>Tramite</th>';
+      		strTabla += '</tr>';
+      		
+      		strTabla += '</tr>';
+      		strTabla += '<td style="padding: 5px;" colspan=3></td>';
+      		strTabla += '</tr>';
+      		
+      		strTabla += '</thead>';
+      		strTabla += '<tbody>';
+      		var i = 0;
+			for(var key in datos){
+				strTabla += '<tr>';
+				strTabla += '<td bgcolor="'+datos[i].color_rgb+'"></td>';
+				strTabla += '<td></td>';
+				strTabla += '<td>'+datos[i].vc_departamento+'</td>';
+				strTabla += '</tr>';
+				
+				strTabla += '</tr>';
+      			strTabla += '<td style="padding: 5px;" colspan=3></td>';
+      			strTabla += '</tr>';
+				
+				i++;
+			}
+      		strTabla += '</tbody>';
+      		divTabla.innerHTML = strTabla;
+		} /* Fin de llenaTablaColores */
+
     
     /* Funciones Javascript separadas*/
     	function setFechaUno(){
@@ -1032,7 +1012,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		}
 		
 		function despliegaGraficoAreas(){
-			llenaGraficoTres();
+			setTimeout(function() { llenaGraficoModal();}, 200);
 		}
  
    </script>

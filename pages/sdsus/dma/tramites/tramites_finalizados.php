@@ -29,8 +29,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
-	<link>    
+    <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css"> 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -38,6 +37,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <!-- Sobreescritura de los css para mejor personalizacion en la pagina-->
+    <style type="text/css">
+    	.yadcf-filter{
+    		width: 100%;
+    	}
+    </style>
   </head>
   <!--
   BODY TAG OPTIONS:
@@ -277,20 +282,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					$arrayT = array_unique($arrayT);
 					mysqli_close($mysqli);
                   	?>
-                  
-                  <?php
-                  echo "<p>Filtrar Area ";
-				  echo "<select>";
-                  echo "Filtrar area <option></option>";
-                   foreach($arrayT as $t){
-                   		echo "<option>";
-                   		echo $t;
-                   		echo "</option>";
-				  }
-					echo "</select></p>";				  
-				  ?>
-				  
-				  <table id="tblFullCaracteristicas" class="display table table-bordered table-striped">
+                   <table id="tblFullCaracteristicas" class="display table table-bordered table-striped">
                   	<thead>
                       <tr>
                         <th>No. Tramite</th>
@@ -322,174 +314,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </div>
 		</section><!-- /.content -->
         
+		<section class="content">
+			<div class="box box-primary">
+				<div class="box-header with-border">
+					<h3 class="box-title">Cumplimiento por áreas</h3>
+				</div>
+				<div class="box-body">
+					<div class="col-md-6">
+						<canvas id="myChartAreas"></canvas>
+						</div>
+						<div class="col-md-5" id="tablaColoresCumplimiento">
+					</div>
+				</div>
+			</div>
 		</section>
-		
-		      <!-- Control Sidebar -->
-      <aside class="control-sidebar control-sidebar-dark">
-        <!-- Create the tabs -->
-        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-          <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
 
-          <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
-        </ul>
-        <!-- Tab panes -->
-        <div class="tab-content">
-          <!-- Home tab content -->
-          <div class="tab-pane" id="control-sidebar-home-tab">
-            <h3 class="control-sidebar-heading">Recent Activity</h3>
-            <ul class="control-sidebar-menu">
-              <li>
-                <a href="javascript::;">
-                  <i class="menu-icon fa fa-birthday-cake bg-red"></i>
-                  <div class="menu-info">
-                    <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
-                    <p>Will be 23 on April 24th</p>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="javascript::;">
-                  <i class="menu-icon fa fa-user bg-yellow"></i>
-                  <div class="menu-info">
-                    <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
-                    <p>New phone +1(800)555-1234</p>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="javascript::;">
-                  <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
-                  <div class="menu-info">
-                    <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
-                    <p>nora@example.com</p>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="javascript::;">
-                  <i class="menu-icon fa fa-file-code-o bg-green"></i>
-                  <div class="menu-info">
-                    <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
-                    <p>Execution time 5 seconds</p>
-                  </div>
-                </a>
-              </li>
-            </ul><!-- /.control-sidebar-menu -->
-
-            <h3 class="control-sidebar-heading">Tasks Progress</h3>
-            <ul class="control-sidebar-menu">
-              <li>
-                <a href="javascript::;">
-                  <h4 class="control-sidebar-subheading">
-                    Custom Template Design
-                    <span class="label label-danger pull-right">70%</span>
-                  </h4>
-                  <div class="progress progress-xxs">
-                    <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="javascript::;">
-                  <h4 class="control-sidebar-subheading">
-                    Update Resume
-                    <span class="label label-success pull-right">95%</span>
-                  </h4>
-                  <div class="progress progress-xxs">
-                    <div class="progress-bar progress-bar-success" style="width: 95%"></div>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="javascript::;">
-                  <h4 class="control-sidebar-subheading">
-                    Laravel Integration
-                    <span class="label label-warning pull-right">50%</span>
-                  </h4>
-                  <div class="progress progress-xxs">
-                    <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="javascript::;">
-                  <h4 class="control-sidebar-subheading">
-                    Back End Framework
-                    <span class="label label-primary pull-right">68%</span>
-                  </h4>
-                  <div class="progress progress-xxs">
-                    <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
-                  </div>
-                </a>
-              </li>
-            </ul><!-- /.control-sidebar-menu -->
-
-          </div><!-- /.tab-pane -->
-          <!-- Stats tab content -->
-          <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->
-          <!-- Settings tab content -->
-          <div class="tab-pane" id="control-sidebar-settings-tab">
-            <form method="post">
-              <h3 class="control-sidebar-heading">General Settings</h3>
-              <div class="form-group">
-                <label class="control-sidebar-subheading">
-                  Report panel usage
-                  <input type="checkbox" class="pull-right" checked>
-                </label>
-                <p>
-                  Some information about this general settings option
-                </p>
-              </div><!-- /.form-group -->
-
-              <div class="form-group">
-                <label class="control-sidebar-subheading">
-                  Allow mail redirect
-                  <input type="checkbox" class="pull-right" checked>
-                </label>
-                <p>
-                  Other sets of options are available
-                </p>
-              </div><!-- /.form-group -->
-
-              <div class="form-group">
-                <label class="control-sidebar-subheading">
-                  Expose author name in posts
-                  <input type="checkbox" class="pull-right" checked>
-                </label>
-                <p>
-                  Allow the user to show his name in blog posts
-                </p>
-              </div><!-- /.form-group -->
-
-              <h3 class="control-sidebar-heading">Chat Settings</h3>
-
-              <div class="form-group">
-                <label class="control-sidebar-subheading">
-                  Show me as online
-                  <input type="checkbox" class="pull-right" checked>
-                </label>
-              </div><!-- /.form-group -->
-
-              <div class="form-group">
-                <label class="control-sidebar-subheading">
-                  Turn off notifications
-                  <input type="checkbox" class="pull-right">
-                </label>
-              </div><!-- /.form-group -->
-
-              <div class="form-group">
-                <label class="control-sidebar-subheading">
-                  Delete chat history
-                  <a href="javascript::;" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
-                </label>
-              </div><!-- /.form-group -->
-            </form>
-          </div><!-- /.tab-pane -->
-        </div>
-      </aside><!-- /.control-sidebar -->
-      <!-- Add the sidebar's background. This div must be placed
-           immediately after the control sidebar -->
-      <div class="control-sidebar-bg"></div>
       </div><!-- /.content-wrapper -->
 
       <!-- Main Footer -->
@@ -520,43 +359,89 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
-	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+    <!-- Chart JS -->
+    <script src="../../../../plugins/chartjs/Chart.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
     $(document).ready(function(){
-		$('#tblFullCaracteristicas').dataTable().yadcf([
-		{column_number : 1},
-		{column_number : 2}]
-		);
-	});
-      // $(function () {
-        // // $("#tblFullCaracteristicas").DataTable();
-            // $('#tblFullCaracteristicas').DataTable( {
-        // initComplete: function () {
-            // this.api().columns().every( function () {
-                // var column = this;
-                // var select = $('<select><option value=""></option></select>')
-                    // .appendTo( $(column.footer()).empty() )
-                    // .on( 'change', function () {
-                        // var val = $.fn.dataTable.util.escapeRegex(
-                            // $(this).val()
-                        // );
-//  
-                        // column
-                            // .search( val ? '^'+val+'$' : '', true, false )
-                            // .draw();
-                    // } );
-//  
-                // column.data().unique().sort().each( function ( d, j ) {
-                    // select.append( '<option value="'+d+'">'+d+'</option>' )
-                // } );
-            // } );
-        // }
-    // } );
-      // });
+    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
+		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
+		{column_number : 2}]);
+		
+		$('#container').css( 'display', 'block');
+		/*	Ajax para rellenar el grafico de % de cumplimiento a nivel area*/
+        var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
+      	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
+        $.ajax({
+        	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
+        	type: "POST",
+        	dataType: "json",
+        	url: "../../getFlujoTramiteFinalizadoPorArea.php",
+        })
+        .done(function(data, textStatus, jqXHR){
+        	if(console && console.log){
+        		console.log("La solicitud se ha completado correctamente");
+        		llenaGraficoTres(data);
+        	}
+        	
+        })
+        .fail(function(jqXHR, textStatus, errorThrown){
+        	if(console && console.log){
+        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
+        		alert("Algo ha fallado " + textStatus + " " + errorThrown);
+        	}
+        }); /* Fin de Ajax*/
+
+		function llenaGraficoTres(datos){     	
+        console.log(datos);
+        
+        var arrayTerminado = new Array();
+        
+        var i = 0;
+        for(var key in datos){
+        	var tramites = [];
+        	tramites['value'] = datos[i].NUM_TRAMITES;
+        	tramites['color'] = datos[i].color_rgb;
+        	tramites['label'] = datos[i].vc_departamento;
+        	arrayTerminado[i] = tramites;
+        	i++;
+        }
+        console.log(arrayTerminado);
+
+        ctx = $("#myChartAreas").get(0).getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(arrayTerminado, {
+			                //Boolean - Show a backdrop to the scale label
+                scaleShowLabelBackdrop: true,
+                //String - The colour of the label backdrop
+                scaleBackdropColor: "rgba(255,255,255,0.75)",
+                // Boolean - Whether the scale should begin at zero
+                scaleBeginAtZero: true,
+                //Number - The backdrop padding above & below the label in pixels
+                scaleBackdropPaddingY: 2,
+                //Number - The backdrop padding to the side of the label in pixels
+                scaleBackdropPaddingX: 2,
+                //Boolean - Show line for each value in the scale
+                scaleShowLine: true,
+                //Boolean - Stroke a line around each segment in the chart
+                segmentShowStroke: true,
+                //String - The colour of the stroke on each segement.
+                segmentStrokeColor: "#fff",
+                //Number - The width of the stroke value in pixels
+                segmentStrokeWidth: 2,
+                //Number - Amount of animation steps
+                animationSteps: 100,
+                //String - Animation easing effect.
+                animationEasing: "easeOutBounce",
+                //Boolean - Whether to animate the rotation of the chart
+                animateRotate: true,
+                //Boolean - Whether to animate scaling the chart from the centre
+                animateScale: false
+		});
+	}
+});
     </script>
   </body>
 </html>
