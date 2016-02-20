@@ -36,6 +36,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+        <style type="text/css">
+    	.yadcf-filter{
+    		width: 100%;
+    	}
+    </style>
   </head>
   <!--
   BODY TAG OPTIONS:
@@ -294,6 +299,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo "</tr>";
 					}
 					mysqli_close($mysqli);
+					
                   	?>
                     </tbody>
                   </table>
@@ -314,7 +320,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           Anything you want
         </div>
         <!-- Default to the left -->
-        <strong>SPMARN &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
+        <strong>SPMARN &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
       </footer>
     </div><!-- ./wrapper -->
 
@@ -333,14 +339,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
-
+    <!-- Yatch -->
+    <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
       $(function () {
-        $("#tblFullCaracteristicas").DataTable();
+    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
+		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
+		{column_number : 2}]);
+			
+		$('#contain2er').css( 'display', 'block');
       });
     </script>
   </body>

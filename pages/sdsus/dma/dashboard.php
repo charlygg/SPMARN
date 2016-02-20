@@ -448,7 +448,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		$arrayAux = explode("?",$aux);
 
 		$urlParametros = $arrayAux[1];	
-
+		
 		$mysqli = new mysqli($servidor, $user, $passwd, $database);
 		$fi = $GLOBALS['fechaInicial'];
 		$ft = $GLOBALS['fechaTermino'];
@@ -542,7 +542,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites (Capturados en el dia en gris y los recibidos en azul)</li>
                 </ul>
                 <div class="tab-content no-padding">
-                	<canvas id="myChart" width="500" style="position: relative; height: 400px;"></canvas>
+					<div id="myChart" style="width:100%; height:400px;"></div>                	
 					<table>
 						<tr>
 							<td><div class="form-group"><label style="padding-left: 10px; padding-right: 10px;">Seleccionar otro mes de actividad </label></div></td>
@@ -632,7 +632,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites entrantes vs finalizados</li>
                 </ul>
                 <div class="tab-content no-padding">
-                	<canvas id="myChartFinalizados" width="500" style="position: relative; height: 400px;"></canvas>
+                	<div id="myChartFinalizados" style="width:100%; height:400px;"></div>                	
                 </div>
               </div>
 	  </section>
@@ -645,7 +645,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
         <h4 class="modal-title" id="myModalLabel">Cumplimiento por áreas</h4>
       </div>
-      <div class="modal-body">
+       <div class="modal-body">
       	<div class="row">
       		<div class="col-md-6">
 				<canvas id="chartCumpimiento"></canvas>
@@ -657,6 +657,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
+      <!-- <div class="modal-body">
+			<div id="graficoTres" style="width:100%; height:400px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div> -->
     
     </div>
   </div>
@@ -668,7 +674,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           Anything you want
         </div>
         <!-- Default to the left -->
-        <strong>SPMARN &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
+        <strong>SPMARN &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
       </footer>
 </div><!-- ./wrapper -->
 
@@ -688,11 +694,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <!-- Chart JS -->
-    <script src="../../../plugins/chartjs/Chart.js"></script>
+    <!-- HighCharts Plugin-->
+    <script src="../../../plugins/highcharts/js/highcharts.js"></script>
         <!-- date-range-picker -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
     <script src="../../../plugins/daterangepicker/daterangepicker.js"></script>
+        <!-- Chart JS -->
+    <script src="../../../plugins/chartjs/Chart.js"></script>
+    
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
@@ -703,10 +712,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	 hasta el ultimo segun sea el mes*/
       	//Date range picker
       	llenaGraficoUno();    
-      	setTimeout(function() { llenaGraficoDos();}, 1000);
+      	setTimeout(function() { llenaGraficoD();}, 1000);
       	
         $("#tblFullCaracteristicas").DataTable();
 	  });
+	  
     </script>
     <script>
     	function recargarGraficoUno(){
@@ -719,7 +729,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     
     
     	function llenaGraficoUno(){
-    	$('#rangoFecha').daterangepicker();
+    	//$('#rangoFecha').daterangepicker();
       	var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
       	/*
@@ -743,67 +753,75 @@ scratch. This page gets rid of all links and provides the needed markup only.
         		recargarGraficoUno();
         	}
         });
+ }
         
         function llenaGrafico(data2){
         console.log(data2);
 
       	var arrayDias = new Array();
       	var arrayTramites = new Array();
+      	var arrayTramitesNum = new Array();
       	
       	var arrayDias2 = new Array();
       	var arrayTramites2 = new Array();
       	
+      	var fechaInicio = "<?php echo $GLOBALS['labelFechaInicial']; ?>";
+      	var fechaTermino = "<?php echo $GLOBALS['labelFechaTermino']; ?>";
+      	
 		var i = 0;
       	for(var key in data2){
       		arrayDias[i] = data2[key].fechaCaptura;
-			arrayTramites[i] = data2[key].noTramiteCapturados;
-			arrayTramites2[i] = data2[key].noTramiteRecibidos;
+      		var num = isNaN(parseInt(data2[key].noTramiteCapturados)) ? 0 : parseInt(data2[key].noTramiteCapturados)
+			arrayTramites[i] = num;
+			
+			var num2 = isNaN(parseInt(data2[key].noTramiteRecibidos)) ? 0 : parseInt(data2[key].noTramiteRecibidos)
+			arrayTramites2[i] = num2;
 			i++;
-      	}        	
+      	}    
       	
-
-      	var data = {
-   		 labels: arrayDias,
-    	datasets: [
-        {
-            label: "My First dataset",
-            fillColor: "rgba(220,220,220,0.2)",
-            strokeColor: "rgba(220,220,220,1)",
-            pointColor: "rgba(220,220,220,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(220,220,220,1)",
-            data: arrayTramites
+      	$('#myChart').highcharts({
+        chart: {
+            type: 'line'
         },
-        {
-            label: "Tramites entrantes",
-            fillColor: "rgba(151,187,205,0.2)",
-            strokeColor: "rgba(151,187,205,1)",
-            pointColor: "rgba(151,187,205,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(151,187,205,1)",
+        title: {
+            text: 'Flujo de los trámites mensuales'
+        },
+        subtitle: {
+            text: 'Fechas: Desde ' + fechaInicio + ' hasta ' + fechaTermino
+        },
+        xAxis: {
+            categories: arrayDias
+        },
+        yAxis: {
+            title: {
+                text: 'No. de Trámites'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: true
+            }
+        },
+        series: [{
+            name: 'Tramites capturados',
+            data: arrayTramites
+        }, {
+            name: 'Tramites recibidos',
             data: arrayTramites2
-        }
-    ]
-};
-        var ctx = document.getElementById("myChart").getContext("2d");
-		var myNewChart = new Chart(ctx).Line(data, {
-			responsive: true,
-			scaleOverride : true,
-        	scaleSteps : 8,
-        	scaleStepWidth : 10,
-        	scaleStartValue : 0
-		});
-        }
+        }]
+    });
 }
-    
-		function llenaGraficoDos(){
+
+		function llenaGraficoD(){
 		/*
         	AJAX QUE RELLENA EL GRAFICO DE LOS TRAMITES ENTRANTES CONTRA LOS FINALIZADOS
         */
         var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
+      	
         
         $.ajax({
         	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
@@ -823,10 +841,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
         		recargarGraficoDos();
         	}
         });
+}
         
         function llenaGraficoDos(data2){
-        	
         console.log(data2);
+        
+        var fechaInicio = "<?php echo $GLOBALS['labelFechaInicial']; ?>";
+      	var fechaTermino = "<?php echo $GLOBALS['labelFechaTermino']; ?>";
       	
       	var arrayDias = new Array();
       	var arrayTramites = new Array();
@@ -836,46 +857,56 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	
 		var i = 0;
       	for(var key in data2){
-      		arrayDias[i] = data2[key].fechaRecibido;
-			arrayTramites[i] = data2[key].noTramiteFinalizados;
-			arrayTramites2[i] = data2[key].noTramiteRecibidos;
+      		
+      	 	if (data2[key].fechaRecibido == null) { 
+      	 		arrayDias[i] = data2[key].fechaFinalizados;
+      	 	} else {
+      	 		arrayDias[i] = data2[key].fechaRecibido;
+      	 	}
+      		
+      		
+      		var num = isNaN(parseInt(data2[key].noTramiteFinalizados)) ? 0 : parseInt(data2[key].noTramiteFinalizados)
+			arrayTramites[i] = num;
+			
+			var num2 = isNaN(parseInt(data2[key].noTramiteRecibidos)) ? 0 : parseInt(data2[key].noTramiteRecibidos)
+			arrayTramites2[i] = num2;
 			i++;
-      	}        	
+      	}        
       	
-      	var data = {
-   		 labels: arrayDias,
-    	datasets: [
-        {
-            label: "My Second dataset",
-            fillColor: "rgba(243, 156, 18, 0.2)",
-            strokeColor: "rgba(243, 156, 18, 1)",
-            pointColor: "rgba(243, 156, 18, 1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(243, 156, 18, 1)",
-            data: arrayTramites
+      	$('#myChartFinalizados').highcharts({
+        chart: {
+            type: 'line'
         },
-        {
-            label: "Tramites entrantes",
-            fillColor: "rgba(151,187,205,0.2)",
-            strokeColor: "rgba(151,187,205,1)",
-            pointColor: "rgba(151,187,205,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(151,187,205,1)",
+        title: {
+            text: 'Flujo de los trámites mensuales'
+        },
+        subtitle: {
+            text: 'Fechas: Desde ' + fechaInicio + ' hasta ' + fechaTermino
+        },
+        xAxis: {
+            categories: arrayDias
+        },
+        yAxis: {
+            title: {
+                text: 'No. de Trámites'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: true
+            }
+        },
+        series: [{
+            name: 'Tramites finalizados',
+            data: arrayTramites
+        }, {
+            name: 'Tramites recibidos',
             data: arrayTramites2
-        }
-    ]
-};
-        var ctx = document.getElementById("myChartFinalizados").getContext("2d");
-		var myNewChart = new Chart(ctx).Line(data, {
-			responsive: true,
-			scaleOverride : true,
-        	scaleSteps : 8,
-        	scaleStepWidth : 10,
-        	scaleStartValue : 0
-		});
-        }	
+        }]
+    });	
 }    
 	
 		function llenaGraficoModal(){
@@ -904,7 +935,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 } /* Fin de llenaGraficoTres*/
 
 		function llenaGraficoTres(datos){
-        	
         console.log(datos);
         var arrayTerminado = new Array();
         var i = 0;
@@ -948,7 +978,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		//Llamamos a la otra funcion que dibuja la tabla de los colores
 		setTimeout(function() { llenaTablaColores(datos);}, 200);
 } /* Fin de llenaGraficoTres(data)*/	
-
 		function llenaTablaColores(datos){
 			var divTabla = document.getElementById("tablaColoresCumplimiento");
 			$("#tablaColoresCumplimiento").empty();
@@ -982,9 +1011,59 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			}
       		strTabla += '</tbody>';
       		divTabla.innerHTML = strTabla;
-		} /* Fin de llenaTablaColores */
-
-    
+		} /* Fin de llenaTablaColores */       	
+        // console.log(datos);
+        // var arrayTerminado = new Array();
+        // var i = 0;
+        // for(var key in datos){
+        	// var tramites = new Object;
+//         	
+        	// // tramites.value = isNaN(parseInt(datos[i].NUM_TRAMITES)) ? 0 : parseInt(datos[i].NUM_TRAMITES);
+        	// tramites.name = datos[i].vc_departamento;
+        	// tramites.y = isNaN(parseInt(datos[i].NUM_TRAMITES)) ? 0 : parseInt(datos[i].NUM_TRAMITES);
+//         	
+        	// arrayTerminado.push(tramites);
+        	// i++;
+        // }
+//         
+        // var myJsonString = JSON.stringify(arrayTerminado);
+        // console.log(myJsonString);
+//         
+        // $('#graficoTres').highcharts({
+        // chart: {
+            // plotBackgroundColor: null,
+            // plotBorderWidth: null,
+            // plotShadow: false,
+            // type: 'pie'
+        // },
+        // title: {
+            // text: 'Cumplimiento de las areas'
+        // },
+        // tooltip: {
+            // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        // },
+        // plotOptions: {
+            // pie: {
+                // allowPointSelect: true,
+                // cursor: 'pointer',
+                // dataLabels: {
+                    // enabled: true,
+                    // format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    // style: {
+                        // color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    // }
+                // }
+            // }
+        // },
+        // series: [{
+            // name: 'Brands',
+            // colorByPoint: true,
+            // data: myJsonString
+        // }]
+    // });
+//         
+// } /* Fin de llenaGraficoTres(data)*/	
+   
     /* Funciones Javascript separadas*/
     	function setFechaUno(){
     		var metodo = 1;
@@ -1003,7 +1082,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			var fechaTermino = rangoDate.value.split('- ')[1];
 			var actualURL = window.location.href.split('?')[0];
 			window.location.href= actualURL+"?metodoSeleccionFecha="+metodo+"&fechaInicial="+fechaInicial+"&fechaTermino="+fechaTermino;
-			
 		}
 		
 		function restablecerFecha(){

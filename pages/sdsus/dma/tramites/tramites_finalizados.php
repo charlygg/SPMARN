@@ -314,20 +314,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </div>
 		</section><!-- /.content -->
         
-		<section class="content">
+		<!-- <section class="content">
 			<div class="box box-primary">
 				<div class="box-header with-border">
 					<h3 class="box-title">Cumplimiento por áreas</h3>
 				</div>
 				<div class="box-body">
 					<div class="col-md-6">
-						<canvas id="myChartAreas"></canvas>
+						<div id="containerGrafico" style="width:100%; height:400px;"></div>
 						</div>
-						<div class="col-md-5" id="tablaColoresCumplimiento">
 					</div>
 				</div>
 			</div>
-		</section>
+		</section> -->
 
       </div><!-- /.content-wrapper -->
 
@@ -359,8 +358,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
-    <!-- Chart JS -->
-    <script src="../../../../plugins/chartjs/Chart.js"></script>
+    <!-- HighCharts Plugin-->
+    <script src="http://code.highcharts.com/highcharts.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
@@ -370,9 +369,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
 		{column_number : 2}]);
+			
+		$('#contain2er').css( 'display', 'block');
 		
-		$('#container').css( 'display', 'block');
-		/*	Ajax para rellenar el grafico de % de cumplimiento a nivel area*/
         var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
         $.ajax({
@@ -411,35 +410,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
         }
         console.log(arrayTerminado);
 
-        ctx = $("#myChartAreas").get(0).getContext("2d");
-		var myNewChart = new Chart(ctx).Pie(arrayTerminado, {
-			                //Boolean - Show a backdrop to the scale label
-                scaleShowLabelBackdrop: true,
-                //String - The colour of the label backdrop
-                scaleBackdropColor: "rgba(255,255,255,0.75)",
-                // Boolean - Whether the scale should begin at zero
-                scaleBeginAtZero: true,
-                //Number - The backdrop padding above & below the label in pixels
-                scaleBackdropPaddingY: 2,
-                //Number - The backdrop padding to the side of the label in pixels
-                scaleBackdropPaddingX: 2,
-                //Boolean - Show line for each value in the scale
-                scaleShowLine: true,
-                //Boolean - Stroke a line around each segment in the chart
-                segmentShowStroke: true,
-                //String - The colour of the stroke on each segement.
-                segmentStrokeColor: "#fff",
-                //Number - The width of the stroke value in pixels
-                segmentStrokeWidth: 2,
-                //Number - Amount of animation steps
-                animationSteps: 100,
-                //String - Animation easing effect.
-                animationEasing: "easeOutBounce",
-                //Boolean - Whether to animate the rotation of the chart
-                animateRotate: true,
-                //Boolean - Whether to animate scaling the chart from the centre
-                animateScale: false
-		});
+  		$('#containerGrafico').highcharts({
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Fruit Consumption'
+        },
+        xAxis: {
+            categories: ['Apples', 'Bananas', 'Oranges']
+        },
+        yAxis: {
+            title: {
+                text: 'Fruit eaten'
+            }
+        },
+        series: [{
+            name: 'Jane',
+            data: [1, 0, 4]
+        }, {
+            name: 'John',
+            data: [5, 7, 3]
+        }]
+    });
 	}
 });
     </script>
