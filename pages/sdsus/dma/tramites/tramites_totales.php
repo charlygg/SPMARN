@@ -26,6 +26,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../../../../dist/css/AdminLTE.min.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
+    <!-- Export Plugin for Datatables -->
+	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
@@ -506,6 +508,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -514,9 +518,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
          fixed layout. -->
     <script>
       $(function () {
-    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
+    	var table =	$('#tblFullCaracteristicas').dataTable({
+    				 "processing": true,
+         			 "dom": 'lBfrtip',
+        "buttons": [
+            {
+                extend: 'collection',
+                text: 'Exportar',
+                buttons: [
+                    'excel',
+                    'csv'
+                ]
+            }
+        ]
+    	}).yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
-		{column_number : 2}]);
+		{column_number : 2},
+		{column_number : 3}
+		]);
 			
 		$('#contain2er').css( 'display', 'block');
       });

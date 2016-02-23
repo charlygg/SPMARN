@@ -28,7 +28,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
-    <!-- Buttons for Datatables -->
+    <!-- Export Plugin for Datatables -->
 	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
 	
     <!-- FixedColumns fro Datatables -->
@@ -76,11 +76,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <header class="main-header">
 
         <!-- Logo -->
-        <a href="index2.html" class="logo">
+        <a class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini"><b>A	</b>LT</span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>Admin</b>LTE</span>
+          <span class="logo-lg"><b>Administración</b></span>
         </a>
 
         <!-- Header Navbar -->
@@ -163,22 +163,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="treeview active">
               <a href="#"><i class="fa fa-link"></i> <span>Menu trámites</span> <i class="fa fa-angle-left pull-right "></i></a>
               <ul class="treeview-menu">
-                <li class="active"><a href="tramites_nuevos.php">Trámites nuevos</a></li>
-                <li><a href="tramites_proceso.php">Trámites en proceso</a></li>
-                <li><a href="#">Trámites finalizados</a></li>
+              	<?php	
+					if(empty($_GET)){
+						echo '<li><a href="tramites_nuevos.php">Trámites nuevos</a></li>';
+						echo '<li><a href="tramites_proceso.php">Trámites en proceso</a></li>';
+						echo '<li class="active"><a href="">Trámites finalizados</a></li>';
+						echo '<li><a href="tramites_vencidos.php">Trámites vencidos</a></li>';
+					} else{
+						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
+							$urlParametros = "?metodoSeleccionFecha=".$_GET['metodoSeleccionFecha']."&anio=".$_GET['anio']."&mes=".$_GET['mes'];
+							echo '<li><a href="tramites_nuevos.php'.$urlParametros.'">Trámites nuevos</a></li>';
+							echo '<li><a href="tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
+							echo '<li class="active"><a href="">Trámites finalizados</a></li>';
+							echo '<li><a href="tramites_vencidos.php'.$urlParametros.'">Trámites vencidos</a></li>';
+						}
+					}
+          		?>
               </ul>
             </li>
-            <!--            
-            <li class="treeview">
-              <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
-              <ul class="treeview-menu">
-                <li><a href="#">Link in level 2</a></li>
-                <li><a href="#">Link in level 2</a></li>
-              </ul>
-            </li>-->
           </ul><!-- /.sidebar-menu -->
         </section>
-        <!-- /.sidebar -->
       </aside>
 
       <!-- Content Wrapper. Contains page content -->
@@ -186,7 +190,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Pagina principal
+
+            Tramites Finalizados
             <small></small>
           </h1>
           <ol class="breadcrumb">
@@ -250,7 +255,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		?>		
        	        <div class="box">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Listado de Trámites Finalizados</h3>
+                  <h3 class="box-title"><?php echo "Consulta de Tramites desde ".$labelFechaInicial." hasta ".$labelFechaTermino; ?></h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
                   	<?php
@@ -316,58 +321,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                    </tbody>
                   </table>
                 </div><!-- /.box-body -->
-        </div>
+        	</div>
 		</section><!-- /.content -->
-      <?php
-      if(isset($_POST["ExportType"]))
-		{
-     	
-    	switch($_POST["ExportType"])
- 	   {
-        case "export-to-excel" :
-            // Submission from
-            $filename = $_POST["ExportType"] . ".xls";       
-            header("Content-Type: application/vnd.ms-excel");
-            header("Content-Disposition: attachment; filename=\"$filename\"");
-            ExportFile($data);
-            //$_POST["ExportType"] = '';
-            exit();
-        default :
-            die("Unknown action : ".$_POST["action"]);
-            break;
-  	  }
-	}
-	function ExportFile($records) {
-  	  $heading = false;
-        if(!empty($records))
-          foreach($records as $row) {
-            if(!$heading) {
-              // display field/column names as a first row
-              echo implode("\t", array_keys($row)) . "\n";
-              $heading = true;
-            }
-            echo implode("\t", array_values($row)) . "\n";
-          }
-        exit;
-}
-      
-      ?>
-		<!-- <section class="content">
-			<div class="box box-primary">
-				<div class="box-header with-border">
-					<h3 class="box-title">Cumplimiento por áreas</h3>
-				</div>
-				<div class="box-body">
-					<div class="col-md-6">
-						<div id="containerGrafico" style="width:100%; height:400px;"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section> -->
-
       </div><!-- /.content-wrapper -->
-
       <!-- Main Footer -->
       <footer class="main-footer">
         <!-- To the right -->
@@ -379,9 +335,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </footer>
      
     </div><!-- ./wrapper -->
-
     <!-- REQUIRED JS SCRIPTS -->
-
     <!-- jQuery 2.1.4 -->
     <script src="../../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
@@ -396,11 +350,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
     <!-- FixedColumn Datatable, para establecer la tabla que no se mueva -->
-    <!-- <script src="../../../../plugins/datatables/extensions/FixedColumns/js/dataTables.fixedColumns.min.js"></script> -->
-    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
 	    <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
@@ -416,22 +369,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 extend: 'collection',
                 text: 'Exportar',
                 buttons: [
-                    'copy',
                     'excel',
-                    'csv',
-                    'pdf',
-                    'print'
+                    'csv'
                 ]
             }
         ]
 		}).yadcf([
    	   	  {column_number : 1},
   		  {column_number : 2},
-  		  {column_number : 3, text_data_delimiter: ",", filter_type: "auto_complete"}
+  		  {column_number : 3}
   		  ]);
 		$('#contain2er').css( 'display', 'block');
-		
-});
+	});
     </script>
   </body>
 </html>

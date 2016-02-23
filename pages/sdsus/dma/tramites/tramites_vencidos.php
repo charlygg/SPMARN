@@ -24,18 +24,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../../../dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.css" />
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
-
+    <!-- Export Plugin for Datatables -->
+	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style type="text/css">
+    .yadcf-filter{
+   		width: 100%;
+    }
+    </style>
   </head>
   <!--
   BODY TAG OPTIONS:
@@ -541,14 +548,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
-
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
+    <!-- Yatch -->
+    <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
       $(function () {
-        $("#tblFullCaracteristicas").DataTable();
+        $("#tblFullCaracteristicas").dataTable({
+    				 "processing": true,
+         			 "dom": 'lBfrtip',
+        "buttons": [
+            {
+                extend: 'collection',
+                text: 'Exportar',
+                buttons: [
+                    'excel',
+                    'csv'
+                ]
+            }
+        ]
+    	}).yadcf([
+		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
+		{column_number : 2},
+		{column_number : 3}
+		]);
+		$('#container').css( 'display', 'block');
       });
     </script>
   </body>

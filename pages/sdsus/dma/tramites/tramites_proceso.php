@@ -24,8 +24,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../../../dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.css" />
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
+    <!-- Export Plugin for Datatables -->
+	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
@@ -156,9 +159,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="treeview active">
               <a href="#"><i class="fa fa-link"></i> <span>Menu trámites</span> <i class="fa fa-angle-left pull-right "></i></a>
               <ul class="treeview-menu">
-                <li class="active"><a href="tramites_nuevos.php">Trámites nuevos</a></li>
-                <li><a href="tramites_proceso.php">Trámites en proceso</a></li>
-                <li><a href="tramites_finalizados.php">Trámites finalizados</a></li>
+              	<?php	
+					if(empty($_GET)){
+						echo '<li><a href="tramites_nuevos.php">Trámites nuevos</a></li>';
+						echo '<li class="active"><a href="">Trámites en proceso</a></li>';
+						echo '<li><a href="tramites_finalizados.php">Trámites finalizados</a></li>';
+						echo '<li><a href="tramites_vencidos.php">Trámites vencidos</a></li>';
+					} else{
+						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
+							$urlParametros = "?metodoSeleccionFecha=".$_GET['metodoSeleccionFecha']."&anio=".$_GET['anio']."&mes=".$_GET['mes'];
+							echo '<li><a href="tramites_nuevos.php'.$urlParametros.'">Trámites nuevos</a></li>';
+							echo '<li class="active"><a href="">Trámites en proceso</a></li>';
+							echo '<li><a href="tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
+							echo '<li><a href="tramites_vencidos.php'.$urlParametros.'">Trámites vencidos</a></li>';
+						}
+					}
+          		?>
               </ul>
             </li>
             <!--            
@@ -179,7 +195,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Pagina principal
+            Tramites en proceso
             <small></small>
           </h1>
           <ol class="breadcrumb">
@@ -245,7 +261,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		?>		
        	        <div class="box">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Listado de Trámites</h3>
+                  <h3 class="box-title"><?php echo "Consulta de Tramites desde ".$labelFechaInicial." hasta ".$labelFechaTermino; ?></h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
 				<p>Listado de tramites en proceso</p>
@@ -339,6 +355,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -347,9 +365,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
          fixed layout. -->
     <script>
       $(function () {
-    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
+    	var table =	$('#tblFullCaracteristicas').dataTable({
+    				 "processing": true,
+         			 "dom": 'lBfrtip',
+        "buttons": [
+            {
+                extend: 'collection',
+                text: 'Exportar',
+                buttons: [
+                    'excel',
+                    'csv'
+                ]
+            }
+        ]
+    	}).yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
-		{column_number : 2}]);
+		{column_number : 2},
+		{column_number : 3}
+		]);
 			
 		$('#contain2er').css( 'display', 'block');
       });

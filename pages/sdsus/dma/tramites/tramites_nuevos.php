@@ -24,8 +24,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../../../dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.css" />
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
+    <!-- Export Plugin for Datatables -->
+	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
@@ -36,7 +39,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-        <style type="text/css">
+    <style type="text/css">
     	.yadcf-filter{
     		width: 100%;
     	}
@@ -156,9 +159,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="treeview active">
               <a href="#"><i class="fa fa-link"></i> <span>Menu trámites</span> <i class="fa fa-angle-left pull-right "></i></a>
               <ul class="treeview-menu">
-                <li class="active"><a href="tramites_nuevos.php">Trámites nuevos</a></li>
-                <li><a href="tramites_proceso.php">Trámites en proceso</a></li>
-                <li><a href="tramites_finalizados.php">Trámites finalizados</a></li>
+              	<?php	
+					if(empty($_GET)){
+						echo '<li class="active"><a href="">Trámites nuevos</a></li>';
+						echo '<li><a href="tramites_proceso.php">Trámites en proceso</a></li>';
+						echo '<li><a href="tramites_finalizados.php">Trámites finalizados</a></li>';
+						echo '<li><a href="tramites_vencidos.php">Trámites vencidos</a></li>';
+					} else{
+						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
+							$urlParametros = "?metodoSeleccionFecha=".$_GET['metodoSeleccionFecha']."&anio=".$_GET['anio']."&mes=".$_GET['mes'];
+							echo '<li class="active"><a href="">Trámites nuevos</a></li>';
+							echo '<li><a href="tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
+							echo '<li><a href="tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
+							echo '<li><a href="tramites_vencidos.php'.$urlParametros.'">Trámites vencidos</a></li>';
+						}
+					}
+          		?>
               </ul>
             </li>
             <!--            
@@ -191,25 +207,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <!-- Your Page Content Here -->
         <section class="content">
-		<?php
-		include "../calendarioFestivo.php";		
-		 
-		 /*
-		echo $_SESSION['session_idusername']."<br>";
-		echo $_SESSION['session_nombre']."<br>";
-	 	echo $_SESSION['session_apPat']."<br>";
-		echo $_SESSION['session_apMat']."<br>";
-		echo $_SESSION['session_username']."<br>"; 
-		echo $_SESSION['session_email']."<br>";
-		echo $_SESSION['session_role']."<br>";
-		echo $_SESSION['session_enabled']."<br>";
-		echo "<p>Informacion del departamento</p>";
-		echo $_SESSION['session_user_depto_id']."<br>";
-		echo $_SESSION['session_user_depto_nombre']."<br>";
-		echo $_SESSION['session_user_depto_descripcion']."<br>";
-		echo $_SESSION['session_user_depto_role']."<br>";
-		  
-		  */
+			<?php
+					include "../calendarioFestivo.php";		
 		  			if(isset($_GET['metodoSeleccionFecha'])){
 			 	
 			 		if($_GET['metodoSeleccionFecha'] == 1){
@@ -517,10 +516,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
-    <!-- Chart JS -->
-    <script src="../../../../plugins/chartjs/Chart.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
@@ -529,79 +528,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
     $(document).ready(function(){
     	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
-		{column_number : 2}]);
-		
+		{column_number : 2},
+		{column_number : 3}
+		]);
 		$('#container').css( 'display', 'block');
-		/*	Ajax para rellenar el grafico de % de cumplimiento a nivel area*/
-        var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
-      	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
-        $.ajax({
-        	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
-        	type: "POST",
-        	dataType: "json",
-        	url: "../../getFlujoTramiteFinalizadoPorArea.php",
-        })
-        .done(function(data, textStatus, jqXHR){
-        	if(console && console.log){
-        		console.log("La solicitud se ha completado correctamente");
-        		llenaGraficoTres(data);
-        	}
-        	
-        })
-        .fail(function(jqXHR, textStatus, errorThrown){
-        	if(console && console.log){
-        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
-        		alert("Algo ha fallado " + textStatus + " " + errorThrown);
-        	}
-        }); /* Fin de Ajax*/
-
-		function llenaGraficoTres(datos){     	
-        console.log(datos);
-        
-        var arrayTerminado = new Array();
-        
-        var i = 0;
-        for(var key in datos){
-        	var tramites = [];
-        	tramites['value'] = datos[i].NUM_TRAMITES;
-        	tramites['color'] = datos[i].color_rgb;
-        	tramites['label'] = datos[i].vc_departamento;
-        	arrayTerminado[i] = tramites;
-        	i++;
-        }
-        console.log(arrayTerminado);
-
-        ctx = $("#myChartAreas").get(0).getContext("2d");
-		var myNewChart = new Chart(ctx).Pie(arrayTerminado, {
-			                //Boolean - Show a backdrop to the scale label
-                scaleShowLabelBackdrop: true,
-                //String - The colour of the label backdrop
-                scaleBackdropColor: "rgba(255,255,255,0.75)",
-                // Boolean - Whether the scale should begin at zero
-                scaleBeginAtZero: true,
-                //Number - The backdrop padding above & below the label in pixels
-                scaleBackdropPaddingY: 2,
-                //Number - The backdrop padding to the side of the label in pixels
-                scaleBackdropPaddingX: 2,
-                //Boolean - Show line for each value in the scale
-                scaleShowLine: true,
-                //Boolean - Stroke a line around each segment in the chart
-                segmentShowStroke: true,
-                //String - The colour of the stroke on each segement.
-                segmentStrokeColor: "#fff",
-                //Number - The width of the stroke value in pixels
-                segmentStrokeWidth: 2,
-                //Number - Amount of animation steps
-                animationSteps: 100,
-                //String - Animation easing effect.
-                animationEasing: "easeOutBounce",
-                //Boolean - Whether to animate the rotation of the chart
-                animateRotate: true,
-                //Boolean - Whether to animate scaling the chart from the centre
-                animateScale: false
-		});
-	}
 });
+
+	function exportToExcel(){
+		
+	}
     </script>
   </body>
 </html>

@@ -70,7 +70,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <header class="main-header">
 
         <!-- Logo -->
-        <a href="index2.html" class="logo">
+        <a href="" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini"><b>A	</b>LT</span>
           <!-- logo for regular state and mobile devices -->
@@ -162,10 +162,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         	</a>
                       		</li>
                     		';
-                    	}
-                    	
+                    		}
                     	?>
-                     
                       <li>
                     </ul>
                   </li>
@@ -174,15 +172,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
               	<!----------------------------------------------- FIN DE LAS NOTIFICACIONES------------------------------------->
                 <!----------------------------------------------- TRAMITES VENCIDOS   ----------------------------------------->
-              
                   <?php
-					
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
   						die ("Error en la conexion con el servidor de bases de datos: ".mysql_error());
 					}
-										/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
+					/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
 					$i = 0;
 					while($k = mysqli_fetch_array($resultado)){
@@ -222,9 +218,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
 					mysqli_close($mysqli); 
                   ?>
-              
-              
-              
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
@@ -246,9 +239,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       		</li>
                     		';
                     	}
-                    	
                     	?>
-                      
                       <!--<li> Task item 
                         <a href="#">
                           <h3>
@@ -447,7 +438,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		$aux = basename($_SERVER['REQUEST_URI']);
 		$arrayAux = explode("?",$aux);
 
-		$urlParametros = $arrayAux[1];	
+		$urlParametros = "";	
+
+		if(empty($arrayAux[1])){
+		} else {
+			$urlParametros = $arrayAux[1];
+		}
 		
 		$mysqli = new mysqli($servidor, $user, $passwd, $database);
 		$fi = $GLOBALS['fechaInicial'];
@@ -459,7 +455,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		$PRO = 0;
 		$TER_MES = 0;
 		$TER = 0;
-		
 	
 		if (!$mysqli){
   			die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
@@ -614,6 +609,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				                      	</div>
                       					<input type="text" class="form-control pull-right" id="rangoFecha">
                     				</div>
+                    				
+                    				
 								</div>
 							</td>
 							<td>
@@ -699,7 +696,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../plugins/highcharts/js/modules/exporting.js"></script>
         <!-- Chart JS -->
     <script src="../../../plugins/chartjs/Chart.js"></script>
-    
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
@@ -712,9 +708,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	llenaGraficoUno();    
       	setTimeout(function() { llenaGraficoD();}, 1000);
       	
+      	Highcharts.setOptions({
+      		lang: {
+      			months: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+      			weekdays: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Sabado'],
+      			shortMonths: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      			printChart: 'Imprimir gráfico',
+      			downloadPNG: 'Descargar como imagen PNG',
+      			downloadJPEG: 'Descargar como imagen JPEG',
+      			downloadPDF: 'Descargar como documento PDF',
+      			downloadSVG: 'Descargar como imagen vector SVG',
+      			exportButtonTitle: 'Exportar grafico',
+      			loading: 'cargando',
+      			printButtonTitle: 'Imprimir el grafico',
+      			resetZoom: 'Resetear zoom',
+      			resetZoomTitle: 'Reiniciar zoom a 1:1'
+      		}
+      	});
         $("#tblFullCaracteristicas").DataTable();
 	  });
-	  
     </script>
     <script>
     	function recargarGraficoUno(){
@@ -724,7 +736,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     	function recargarGraficoDos(){
     		llenaGraficoDos();
     	}
-    
     
     	function llenaGraficoUno(){
     	//$('#rangoFecha').daterangepicker();
