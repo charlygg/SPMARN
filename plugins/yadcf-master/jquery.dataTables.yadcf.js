@@ -387,7 +387,7 @@ var yadcf = (function ($) {
 		selectElementCustomRefreshFunc,
 		selectElementCustomDestroyFunc,
 		placeholderLang = {
-			'select': 'Select value',
+			'select': 'Selecciona un elemento',
 			'select_multi': 'Select values',
 			'filter': 'Type to filter',
 			'range': ['From', 'To'],

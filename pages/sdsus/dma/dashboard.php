@@ -696,9 +696,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
     <!-- HighCharts Plugin-->
     <script src="../../../plugins/highcharts/js/highcharts.js"></script>
-        <!-- date-range-picker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
-    <script src="../../../plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="../../../plugins/highcharts/js/modules/exporting.js"></script>
         <!-- Chart JS -->
     <script src="../../../plugins/chartjs/Chart.js"></script>
     
@@ -770,7 +768,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	
 		var i = 0;
       	for(var key in data2){
-      		arrayDias[i] = data2[key].fechaCaptura;
+      		/* Algunas fechas dan null en un arreglo mienstras que en el otro no, el if es para detectar esos nulls*/
+      	    if (data2[key].fechaRecibido == null) { 
+      	 		arrayDias[i] = data2[key].fechaCaptura;
+      	 	} else {
+      	 		arrayDias[i] = data2[key].fechaRecibido;
+      	 	}
+      
       		var num = isNaN(parseInt(data2[key].noTramiteCapturados)) ? 0 : parseInt(data2[key].noTramiteCapturados)
 			arrayTramites[i] = num;
 			
@@ -1012,58 +1016,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       		strTabla += '</tbody>';
       		divTabla.innerHTML = strTabla;
 		} /* Fin de llenaTablaColores */       	
-        // console.log(datos);
-        // var arrayTerminado = new Array();
-        // var i = 0;
-        // for(var key in datos){
-        	// var tramites = new Object;
-//         	
-        	// // tramites.value = isNaN(parseInt(datos[i].NUM_TRAMITES)) ? 0 : parseInt(datos[i].NUM_TRAMITES);
-        	// tramites.name = datos[i].vc_departamento;
-        	// tramites.y = isNaN(parseInt(datos[i].NUM_TRAMITES)) ? 0 : parseInt(datos[i].NUM_TRAMITES);
-//         	
-        	// arrayTerminado.push(tramites);
-        	// i++;
-        // }
-//         
-        // var myJsonString = JSON.stringify(arrayTerminado);
-        // console.log(myJsonString);
-//         
-        // $('#graficoTres').highcharts({
-        // chart: {
-            // plotBackgroundColor: null,
-            // plotBorderWidth: null,
-            // plotShadow: false,
-            // type: 'pie'
-        // },
-        // title: {
-            // text: 'Cumplimiento de las areas'
-        // },
-        // tooltip: {
-            // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        // },
-        // plotOptions: {
-            // pie: {
-                // allowPointSelect: true,
-                // cursor: 'pointer',
-                // dataLabels: {
-                    // enabled: true,
-                    // format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    // style: {
-                        // color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    // }
-                // }
-            // }
-        // },
-        // series: [{
-            // name: 'Brands',
-            // colorByPoint: true,
-            // data: myJsonString
-        // }]
-    // });
-//         
-// } /* Fin de llenaGraficoTres(data)*/	
-   
+
     /* Funciones Javascript separadas*/
     	function setFechaUno(){
     		var metodo = 1;

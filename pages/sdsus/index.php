@@ -312,7 +312,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h3 class="box-title">Listado de Empresas</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-                	<h3>Si llego a ver esta pagina siggnifica que el departamento -<?php echo $_SESSION['session_user_depto_nombre']?>- aun no ha sido redireccionado</h3>
+                	<h3>El departamento - <?php echo $_SESSION['session_user_depto_nombre']?> - falta desarrollo de su modulo </h3>
 				<p>Para ver las sucursales de una empresa, haga clic en el nombre de la empresa</p>
                   <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
                   	<thead>

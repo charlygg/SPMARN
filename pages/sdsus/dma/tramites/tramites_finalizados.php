@@ -25,8 +25,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Theme style -->
     <link rel="stylesheet" href="../../../../dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.css" />
+    
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
+    <!-- Buttons for Datatables -->
+	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
+	
+    <!-- FixedColumns fro Datatables -->
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css"> 
@@ -313,7 +318,40 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div><!-- /.box-body -->
         </div>
 		</section><!-- /.content -->
-        
+      <?php
+      if(isset($_POST["ExportType"]))
+		{
+     	
+    	switch($_POST["ExportType"])
+ 	   {
+        case "export-to-excel" :
+            // Submission from
+            $filename = $_POST["ExportType"] . ".xls";       
+            header("Content-Type: application/vnd.ms-excel");
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            ExportFile($data);
+            //$_POST["ExportType"] = '';
+            exit();
+        default :
+            die("Unknown action : ".$_POST["action"]);
+            break;
+  	  }
+	}
+	function ExportFile($records) {
+  	  $heading = false;
+        if(!empty($records))
+          foreach($records as $row) {
+            if(!$heading) {
+              // display field/column names as a first row
+              echo implode("\t", array_keys($row)) . "\n";
+              $heading = true;
+            }
+            echo implode("\t", array_values($row)) . "\n";
+          }
+        exit;
+}
+      
+      ?>
 		<!-- <section class="content">
 			<div class="box box-primary">
 				<div class="box-header with-border">
@@ -339,6 +377,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Default to the left -->
         <strong>SPMARN &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
       </footer>
+     
     </div><!-- ./wrapper -->
 
     <!-- REQUIRED JS SCRIPTS -->
@@ -356,84 +395,42 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- FixedColumn Datatable, para establecer la tabla que no se mueva -->
+    <!-- <script src="../../../../plugins/datatables/extensions/FixedColumns/js/dataTables.fixedColumns.min.js"></script> -->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
-    <!-- HighCharts Plugin-->
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <!-- Optionally, you can add Slimscroll and FastClick plugins.
+    <!-- Table Export Plugin for Datatable-->
+	    <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
     $(document).ready(function(){
-    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
-		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
-		{column_number : 2}]);
 			
+		var table = $('#tblFullCaracteristicas').dataTable({
+			         "processing": true,
+         			 "dom": 'lBfrtip',
+        "buttons": [
+            {
+                extend: 'collection',
+                text: 'Exportar',
+                buttons: [
+                    'copy',
+                    'excel',
+                    'csv',
+                    'pdf',
+                    'print'
+                ]
+            }
+        ]
+		}).yadcf([
+   	   	  {column_number : 1},
+  		  {column_number : 2},
+  		  {column_number : 3, text_data_delimiter: ",", filter_type: "auto_complete"}
+  		  ]);
 		$('#contain2er').css( 'display', 'block');
 		
-        var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
-      	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
-        $.ajax({
-        	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
-        	type: "POST",
-        	dataType: "json",
-        	url: "../../getFlujoTramiteFinalizadoPorArea.php",
-        })
-        .done(function(data, textStatus, jqXHR){
-        	if(console && console.log){
-        		console.log("La solicitud se ha completado correctamente");
-        		llenaGraficoTres(data);
-        	}
-        	
-        })
-        .fail(function(jqXHR, textStatus, errorThrown){
-        	if(console && console.log){
-        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
-        		alert("Algo ha fallado " + textStatus + " " + errorThrown);
-        	}
-        }); /* Fin de Ajax*/
-
-		function llenaGraficoTres(datos){     	
-        console.log(datos);
-        
-        var arrayTerminado = new Array();
-        
-        var i = 0;
-        for(var key in datos){
-        	var tramites = [];
-        	tramites['value'] = datos[i].NUM_TRAMITES;
-        	tramites['color'] = datos[i].color_rgb;
-        	tramites['label'] = datos[i].vc_departamento;
-        	arrayTerminado[i] = tramites;
-        	i++;
-        }
-        console.log(arrayTerminado);
-
-  		$('#containerGrafico').highcharts({
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: 'Fruit Consumption'
-        },
-        xAxis: {
-            categories: ['Apples', 'Bananas', 'Oranges']
-        },
-        yAxis: {
-            title: {
-                text: 'Fruit eaten'
-            }
-        },
-        series: [{
-            name: 'Jane',
-            data: [1, 0, 4]
-        }, {
-            name: 'John',
-            data: [5, 7, 3]
-        }]
-    });
-	}
 });
     </script>
   </body>
