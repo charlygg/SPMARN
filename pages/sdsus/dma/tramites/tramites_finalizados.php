@@ -360,10 +360,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
-    $(document).ready(function(){
-			
-		var table = $('#tblFullCaracteristicas').dataTable({
-			         "processing": true,
+      $(document).ready(function () {
+    	var table =	$('#tblFullCaracteristicas').dataTable({
+    				 "processing": true,
          			 "dom": 'lBfrtip',
         "buttons": [
             {
@@ -375,24 +374,40 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 ]
             }
         ]
-		}).yadcf([
-   	   	  {column_number : 1},
-  		  {column_number : 2},
-  		  {column_number : 3}
-  		  ]);
+    	}).yadcf([
+		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
+		{column_number : 2},
+		{column_number : 3}
+		]);
+			
 		$('#contain2er').css( 'display', 'block');
-	});
+      });
 	
 	function getFilasYColumnas(){
+		// var data = $('#tblFullCaracteristicas').dataTable().fnGetFilteredData();
+		// console.log("Registros " + data.length);
+		// var row = $("#tblFullCaracteristicas").dataTable().fnGetFilteredData();
+		// for(var i= 0; i < row.length; i++){
+		// }
+		// var rows = tabla.data();
+				
 		var arrTodos = new Array();
+		var arrEncabezado = new Object();
+		
+		arrEncabezado['Encabezado1'] = 'Num. de Tramite';
+		arrEncabezado['Encabezado2'] = 'Tramite';
+		arrEncabezado['Encabezado3'] = 'Area';
+		arrEncabezado['Encabezado4'] = 'Empresa';
+		arrEncabezado['Encabezado5'] = 'Asunto';
+		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
+		arrEncabezado['Encabezado7'] = 'Fecha de finalización';
 		
 		$('#tblFullCaracteristicas tbody tr').each(function(index){
-			console.log("Nueva columna");
-			
-			var arrT = new Object();
-			/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
-			$(this).children("td").each(function(index2){
-				switch(index2){
+		console.log("Nueva columna");
+		var arrT = new Object();
+		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
+		$(this).children("td").each(function(index2){
+			switch(index2){
 					case 0: arrT['NO_TRAMITE'] = $(this).text();
 					break;
 					
@@ -411,17 +426,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					case 5: arrT['FECHA_RECIBIDO'] = $(this).text();
 					break;
 					
-					case 6: arrT['FECHA_TERMINAOD'] = $(this).text();
+					case 6: arrT['FECHA_TERMINADO'] = $(this).text();
 					break;
 				}
 			});
 			
 			arrTodos.push(arrT);
 		});
-		var json = JSON.stringify(arrTodos);
-		console.log(json);
 		
-		var indormacion = "Soy la funcion que se tiene que enviar a la tabla";
+		var arrTodo = new Array();
+		
+		arrTodo[0] = arrEncabezado;
+		arrTodo[1] = arrTodos;
+		
+		var jsonTodo = JSON.stringify(arrTodo);
+		
+		console.log(jsonTodo);
+		
 		/* Se enviara la informacion en un form oculto*/
 		var form = document.createElement("form");
 		form.setAttribute('method', 'post');
@@ -430,7 +451,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var hiddenField = document.createElement("input");
    		hiddenField.setAttribute("type", "hidden");
 	    hiddenField.setAttribute("name", "jsonValues");
-	    hiddenField.setAttribute("value", json);
+	    hiddenField.setAttribute("value", jsonTodo);
 	    form.appendChild(hiddenField);
 
 	    document.body.appendChild(form);
@@ -438,6 +459,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
     	
 		//window.open("reportes.php?info="+json);
 	}
+	
+		/*
+		* Function: fnGetFilteredData()
+		* Purpose:  Retrieve an array with all data that survived filtering
+		* by mikej
+		*/
+ 
+		$.fn.dataTableExt.oApi.fnGetFilteredData = function ( oSettings ) {
+        var a = [];
+        for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ ) {
+                a.push(oSettings.aoData[ oSettings.aiDisplay[i] ]._aData);
+        }
+ 	}
+      
     </script>
   </body>
 </html>

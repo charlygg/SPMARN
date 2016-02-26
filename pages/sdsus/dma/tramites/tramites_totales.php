@@ -266,6 +266,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h3 class="box-title">Listado de Trámites Entrantes</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
+                <button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
                   <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
                   	<thead>
                       <tr>
@@ -539,6 +540,78 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			
 		$('#contain2er').css( 'display', 'block');
       });
+      
+        function getFilasYColumnas(){
+		// var data = $('#tblFullCaracteristicas').dataTable().fnGetFilteredData();
+		// console.log("Registros " + data.length);
+		// var row = $("#tblFullCaracteristicas").dataTable().fnGetFilteredData();
+		// for(var i= 0; i < row.length; i++){
+		// }
+		// var rows = tabla.data();
+		// console.log(data);		
+				
+		var arrTodos = new Array();
+		var arrEncabezado = new Object();
+		
+		arrEncabezado['Encabezado1'] = 'Num. de Tramite';
+		arrEncabezado['Encabezado2'] = 'Tramite';
+		arrEncabezado['Encabezado3'] = 'Area';
+		arrEncabezado['Encabezado4'] = 'Empresa';
+		arrEncabezado['Encabezado5'] = 'Asunto';
+		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
+		
+		$('#tblFullCaracteristicas tbody tr').each(function(index){
+		var arrT = new Object();
+		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
+		$(this).children("td").each(function(index2){
+			switch(index2){
+					case 0: arrT['NO_TRAMITE'] = $(this).text();
+					break;
+					
+					case 1: arrT['TRAMITE'] = $(this).text();
+					break;
+					
+					case 2: arrT['AREA'] = $(this).text();
+					break;
+					
+					case 3: arrT['EMPRESA'] = $(this).text();
+					break;
+					
+					case 4: arrT['ASUNTO'] = $(this).text();
+					break;
+					
+					case 5: arrT['FECHA_RECIBIDO'] = $(this).text();
+					break;
+					
+				}
+			});
+			
+			arrTodos.push(arrT);
+		});
+		
+		var arrTodo = new Array();
+		
+		arrTodo[0] = arrEncabezado;
+		arrTodo[1] = arrTodos;
+		
+		var jsonTodo = JSON.stringify(arrTodo);
+		
+		console.log(jsonTodo);
+		
+		/* Se enviara la informacion en un form oculto*/
+		var form = document.createElement("form");
+		form.setAttribute('method', 'post');
+		form.setAttribute('action', 'reportes.php');
+		
+		var hiddenField = document.createElement("input");
+   		hiddenField.setAttribute("type", "hidden");
+	    hiddenField.setAttribute("name", "jsonValues");
+	    hiddenField.setAttribute("value", jsonTodo);
+	    form.appendChild(hiddenField);
+
+	    document.body.appendChild(form);
+    	form.submit();
+	}
     </script>
   </body>
 </html>
