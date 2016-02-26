@@ -364,7 +364,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
-      $(function () {
+      $(document).ready(function () {
     	var table =	$('#tblFullCaracteristicas').dataTable({
     				 "processing": true,
          			 "dom": 'lBfrtip',

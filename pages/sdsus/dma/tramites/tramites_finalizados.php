@@ -258,6 +258,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h3 class="box-title"><?php echo "Consulta de Tramites desde ".$labelFechaInicial." hasta ".$labelFechaTermino; ?></h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
+                	<button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
                   	<?php
 					function getUltimoDiaMes($elAnio,$elMes) {
  						return date("d",(mktime(0,0,0,$elMes+1,1,$elAnio)-1));
@@ -381,6 +382,62 @@ scratch. This page gets rid of all links and provides the needed markup only.
   		  ]);
 		$('#contain2er').css( 'display', 'block');
 	});
+	
+	function getFilasYColumnas(){
+		var arrTodos = new Array();
+		
+		$('#tblFullCaracteristicas tbody tr').each(function(index){
+			console.log("Nueva columna");
+			
+			var arrT = new Object();
+			/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
+			$(this).children("td").each(function(index2){
+				switch(index2){
+					case 0: arrT['NO_TRAMITE'] = $(this).text();
+					break;
+					
+					case 1: arrT['TRAMITE'] = $(this).text();
+					break;
+					
+					case 2: arrT['AREA'] = $(this).text();
+					break;
+					
+					case 3: arrT['EMPRESA'] = $(this).text();
+					break;
+					
+					case 4: arrT['ASUNTO'] = $(this).text();
+					break;
+					
+					case 5: arrT['FECHA_RECIBIDO'] = $(this).text();
+					break;
+					
+					case 6: arrT['FECHA_TERMINAOD'] = $(this).text();
+					break;
+				}
+			});
+			
+			arrTodos.push(arrT);
+		});
+		var json = JSON.stringify(arrTodos);
+		console.log(json);
+		
+		var indormacion = "Soy la funcion que se tiene que enviar a la tabla";
+		/* Se enviara la informacion en un form oculto*/
+		var form = document.createElement("form");
+		form.setAttribute('method', 'post');
+		form.setAttribute('action', 'reportes.php');
+		
+		var hiddenField = document.createElement("input");
+   		hiddenField.setAttribute("type", "hidden");
+	    hiddenField.setAttribute("name", "jsonValues");
+	    hiddenField.setAttribute("value", json);
+	    form.appendChild(hiddenField);
+
+	    document.body.appendChild(form);
+    	form.submit();
+    	
+		//window.open("reportes.php?info="+json);
+	}
     </script>
   </body>
 </html>

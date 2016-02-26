@@ -526,11 +526,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
          fixed layout. -->
     <script>
     $(document).ready(function(){
-    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
+    	var table =	$('#tblFullCaracteristicas').dataTable({
+    				 "processing": true,
+         			 "dom": 'lBfrtip',
+        "buttons": [
+            {
+                extend: 'collection',
+                text: 'Exportar',
+                buttons: [
+                    'excel',
+                    'csv'
+                ]
+            }
+        ]
+    	}).yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
 		{column_number : 2},
 		{column_number : 3}
 		]);
+		
 		$('#container').css( 'display', 'block');
 });
 

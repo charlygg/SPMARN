@@ -17,22 +17,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.5 -->
-    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../../dist/css/AdminLTE.min.css">
     <!-- DataTables -->
-    <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="../../../plugins/datatables/dataTables.bootstrap.css">
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
     -->
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../../../dist/css/skins/_all-skins.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -192,10 +192,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </li>
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
+                      <a href="../../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="../../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
                     </div>
                   </li>
                 </ul>
@@ -284,40 +284,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Your Page Content Here -->
                 
         <section class="content">
-		<div class="row">
-			<div class="col-md-9">
-				<div class="box box-primary">
-					<div class="box-header with-border">
-						<div class="box-title"><h4 class="box-title">Informacion de la Empresa</h4></div>
-					</div>
-				  <form role="form">
-                  <div class="box-body">
-                    	<div class="form-group">
-	                      <label for="lblNombreEmpresa">Empresa</label>
-	                      <input type="text" name="txtEmpresa" class="form-control" id="txtEmpresa" disabled="true"> 
-	                    </div>
-	                    
-	                    <div class="form-group">
-	                      <label for="lblRepforLegal">Representante Legal</label>
-	                      <input type="text" name="txtRepLegal" class="form-control" id="txtRepLegal" disabled="true">
-	                    </div>
-	              </div><!-- /.box-body -->
-	              </form>					
-				</div>
-			</div>
-			
-		</div>
-		</section><!-- /.content -->
-        <section class="content">
-       		<div class="box box-success">
-       			<div class="box-header with-border">
-                  <h3 class="box-title">Sucursales</h3>
-                </div>
-       			<div id="tablaSucursales" class="box-body">
-       				<!--------------------Se rellena automatico con ajax----------------------------->
-       			</div>
-       		</div>
-       	</section>
+        </section><!-- /.content -->
+        
 
 <!-- VENTANA Modal PARA CUANDO SE SELECCIONA LOS TRAMITES DE UNA EMPRESA-->
 
@@ -352,18 +320,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<!-- REQUIRED JS SCRIPTS -->
 
     <!-- jQuery 2.1.4 -->
-    <script src="../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
-    <script src="../../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../../bootstrap/js/bootstrap.min.js"></script>
     <!-- AdminLTE App -->a
-    <script src="../../dist/js/app.min.js"></script>
+    <script src="../../../dist/js/app.min.js"></script>
     <!-- DataTables -->
-    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="../../../plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
     <!-- SlimScroll -->
-    <script src="../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <script src="../../plugins/fastclick/fastclick.min.js"></script>   
+    <script src="../../../plugins/fastclick/fastclick.min.js"></script>   
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
