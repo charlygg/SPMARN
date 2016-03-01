@@ -3,6 +3,7 @@ session_start();
 if(!isset($_SESSION["session_username"])){
 	header("location:../../login.php?msg=errort");
 }
+date_default_timezone_set("America/Monterrey");
 ?>
 <!DOCTYPE html>
 <!--

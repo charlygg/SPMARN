@@ -3,6 +3,7 @@ session_start();
 if(!isset($_SESSION["session_username"])){
 	header("location:../../../../login.php?msg=errort");
 }
+date_default_timezone_set("America/Monterrey");
 ?>
 <!DOCTYPE html>
 <!--
@@ -27,19 +28,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.css" />
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
-    <!-- Export Plugin for Datatables -->
-	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
-   <!-- AdminLTE Skins. Choose a skin from the css/skins
+   	<!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-        <style type="text/css">
+    <style type="text/css">
     	.yadcf-filter{
     		width: 100%;
     	}
@@ -278,7 +271,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <th>Vencimiento</th>
                       </tr>
                     </thead>
-                  	
                   	<tbody>
                   	<?php
 					function getUltimoDiaMes($elAnio,$elMes) {
@@ -343,6 +335,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- REQUIRED JS SCRIPTS -->
 
+    <!-- REQUIRED JS SCRIPTS -->
     <!-- jQuery 2.1.4 -->
     <script src="../../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
@@ -356,8 +349,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <!-- Table Export Plugin for Datatable-->
-    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -366,38 +357,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
          fixed layout. -->
     <script>
       $(document).ready(function () {
-    	var table =	$('#tblFullCaracteristicas').dataTable({
-    				 "processing": true,
-         			 "dom": 'lBfrtip',
-        "buttons": [
-            {
-                extend: 'collection',
-                text: 'Exportar',
-                buttons: [
-                    'excel',
-                    'csv'
-                ]
-            }
-        ]
-    	}).yadcf([
+    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
 		{column_number : 2},
 		{column_number : 3}
 		]);
-			
-		$('#contain2er').css( 'display', 'block');
       });
       
-      
       	function getFilasYColumnas(){
-		// var data = $('#tblFullCaracteristicas').dataTable().fnGetFilteredData();
-		// console.log("Registros " + data.length);
-		// var row = $("#tblFullCaracteristicas").dataTable().fnGetFilteredData();
-		// for(var i= 0; i < row.length; i++){
-		// }
-		// var rows = tabla.data();
-		// console.log(data);		
-				
+		var table = $('#tblFullCaracteristicas').DataTable();
+		var info = table.page.info();
+		var numOfPages = info.pages;
 		var arrTodos = new Array();
 		var arrEncabezado = new Object();
 		

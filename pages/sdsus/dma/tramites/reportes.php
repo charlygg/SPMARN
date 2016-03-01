@@ -26,7 +26,7 @@ echo "<tbody>";
 foreach($array[1] as $info){
 	echo "<tr>";
 		foreach($info as $key => $value){
-			echo "<td>".utf8_decode($value)."</td>";
+			echo "<td VALIGN= Middle Align = Center>".utf8_decode($value)."</td>";
 		}
 	echo "</tr>";
 }

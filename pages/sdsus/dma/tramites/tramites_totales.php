@@ -3,6 +3,7 @@ session_start();
 if(!isset($_SESSION["session_username"])){
 	header("location:../../../../login.php?msg=errort");
 }
+date_default_timezone_set("America/Monterrey");
 ?>
 <!DOCTYPE html>
 <!--
@@ -26,8 +27,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../../../../dist/css/AdminLTE.min.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
-    <!-- Export Plugin for Datatables -->
-	<link rel="stylesheet" href="../../../../plugins/datatables/extensions/Export/datatables.min.css"/>
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
@@ -160,7 +159,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <ul class="treeview-menu">
                 <li class="active"><a href="tramites_nuevos.php">Trámites nuevos</a></li>
                 <li><a href="tramites_proceso.php">Trámites en proceso</a></li>
-                <li><a href="#">Trámites finalizados</a></li>
+                <li><a href="tramites_finalizados.php">Trámites finalizados</a></li>
+                <li class="#"><a href="#">Trámites vencidos</a></li>
               </ul>
             </li>
             <!--            
@@ -193,25 +193,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <!-- Your Page Content Here -->
         <section class="content">
-		<?php
-		 
-		 /*
-		echo $_SESSION['session_idusername']."<br>";
-		echo $_SESSION['session_nombre']."<br>";
-	 	echo $_SESSION['session_apPat']."<br>";
-		echo $_SESSION['session_apMat']."<br>";
-		echo $_SESSION['session_username']."<br>"; 
-		echo $_SESSION['session_email']."<br>";
-		echo $_SESSION['session_role']."<br>";
-		echo $_SESSION['session_enabled']."<br>";
-		echo "<p>Informacion del departamento</p>";
-		echo $_SESSION['session_user_depto_id']."<br>";
-		echo $_SESSION['session_user_depto_nombre']."<br>";
-		echo $_SESSION['session_user_depto_descripcion']."<br>";
-		echo $_SESSION['session_user_depto_role']."<br>";
-		  
-		  */
-		  
+				<?php
 		  		  	if(isset($_GET['metodoSeleccionFecha'])){
 			 	
 			 		if($_GET['metodoSeleccionFecha'] == 1){
@@ -490,7 +472,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           Anything you want
         </div>
         <!-- Default to the left -->
-        <strong>SPMARN &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
+        <strong>SPMARN &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
       </footer>
     </div><!-- ./wrapper -->
 
@@ -509,8 +491,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <!-- Table Export Plugin for Datatable-->
-    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -519,37 +499,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
          fixed layout. -->
     <script>
       $(function () {
-    	var table =	$('#tblFullCaracteristicas').dataTable({
-    				 "processing": true,
-         			 "dom": 'lBfrtip',
-        "buttons": [
-            {
-                extend: 'collection',
-                text: 'Exportar',
-                buttons: [
-                    'excel',
-                    'csv'
-                ]
-            }
-        ]
-    	}).yadcf([
+    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
 		{column_number : 2},
 		{column_number : 3}
 		]);
-			
-		$('#contain2er').css( 'display', 'block');
       });
       
         function getFilasYColumnas(){
-		// var data = $('#tblFullCaracteristicas').dataTable().fnGetFilteredData();
-		// console.log("Registros " + data.length);
-		// var row = $("#tblFullCaracteristicas").dataTable().fnGetFilteredData();
-		// for(var i= 0; i < row.length; i++){
-		// }
-		// var rows = tabla.data();
-		// console.log(data);		
-				
+        /* Para exportar la Datatable se tendra que recorrer */
+		var table = $('#tblFullCaracteristicas').DataTable();
+		var info = table.page.info();
+		var numOfPages = info.pages;
+		var currentpage = info.page;
+		console.log("Current Page " + currentpage);
 		var arrTodos = new Array();
 		var arrEncabezado = new Object();
 		
@@ -560,9 +523,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		arrEncabezado['Encabezado5'] = 'Asunto';
 		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
 		
+		
+		for(var i = 0; i < numOfPages; i++){
+		table.page(i).draw('page');	
+		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
 		$('#tblFullCaracteristicas tbody tr').each(function(index){
 		var arrT = new Object();
-		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
 		$(this).children("td").each(function(index2){
 			switch(index2){
 					case 0: arrT['NO_TRAMITE'] = $(this).text();
@@ -582,13 +548,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
 					case 5: arrT['FECHA_RECIBIDO'] = $(this).text();
 					break;
-					
 				}
 			});
-			
-			arrTodos.push(arrT);
-		});
-		
+			arrTodos.push(arrT);	
+			});
+		}
 		var arrTodo = new Array();
 		
 		arrTodo[0] = arrEncabezado;
