@@ -1,6 +1,6 @@
 <?php
 $servidor = "localhost";
 $user = "root";
-$passwd = "Passw0rd";
+$passwd = "";
 $database = "testsecurity";
 ?>
