@@ -36,7 +36,6 @@
         $dias_festivos = array( "2015"=>array(11 => [20]),
         						"2015"=>array(12 => [1,2,3,25,31]), /* Navidad y año nuevo 2015*/
         						"2016"=>array(1 => [1,6]),	 /* Asueto | Dia de Reyes*/
-        						"2016"=>array(2 => [1]),
         						"2016"=>array(3 => [1,4,5,7])		
    		);
 		
@@ -48,5 +47,10 @@
         if(isset($dias_festivos[$y]) && isset($dias_festivos[$y][$n]) && in_array($j,$dias_festivos[$y][$n])) return true;
         return false;
     }
+    
+    // $fecha = '2016-02-01';
+    // $unixTime = strtotime($fecha);
+    // $dias = sumarDiasTramite($unixTime, 5);
+    // echo "dias ".$dias;
     
 ?>

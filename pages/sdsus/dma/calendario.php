@@ -7,7 +7,7 @@
     $dias_festivos = array(
         "2015"=>array(12 => [25,31]), /* Navidad y año nuevo 2015*/
         "2016"=>array(1 => [1,6]),
-		"2016"=>array(2 => [8,9,10,11,12]) /* Semana santa, festivo del 18 al 31 */
+		"2016"=>array(2 => [5]) /* Semana santa, festivo del 18 al 31 */
     );
     $dias_saltados = array(0,6); // 0: domingo, 1: lunes... 6:sabado
     // dias a sumar 20 dias en este ejemplo
