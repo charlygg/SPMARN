@@ -297,7 +297,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo "<td>".$k['TURNADO_A']."</td>";
 							echo "<td>".$k['EMPRESA']."</td>";
 							echo "<td>".$k['ASUNTO']."</td>";
-							//echo "<td>".$k['REP_FECHA_INICIO_TRAMITE']."</td>";
 							$aux3 =  $k['REP_FECHA_INICIO_TRAMITE'];
 							$arrayT2 = explode('-',$aux3);
 					
@@ -308,7 +307,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo "<td>".sumarDiasTramite($unixTime,20)."</td>";
 							echo "</tr>";
 					}
-					mysqli_close($mysqli);
+					$mysqli->close();
                   	?>
                     </tbody>
                   </table>
