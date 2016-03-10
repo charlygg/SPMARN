@@ -46,8 +46,8 @@ $j= count($arreglo);
 $dia_ = 0;
 for($i=0;$i<=$j;$i++) 
 {
- 
-$dia = $arreglo["$i"]; 
+ /* Con el isser se arregla el error de offset array php*/
+$dia =  isset($arreglo[$i]) ? $arreglo[$i] : null;; 
 
         $fecha = getdate($dia); 
             $feriado = $fecha['mday']."-".$fecha['mon']; 
@@ -61,7 +61,7 @@ $dia = $arreglo["$i"];
                         } 
 } 
 $rlt = $j - $dia_; 
-return $rlt+1; 
+return $rlt; 
 }
 
 // echo "Contar la cantidad de dias habiles del mes de Febrero de 2016";

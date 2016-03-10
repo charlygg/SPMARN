@@ -256,13 +256,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div><!-- /.box-header -->
                 <div class="box-body">
                 	<button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
-                  	<?php
+                   <table id="tblFullCaracteristicas" class="display table table-bordered table-striped">
+                  	<thead>
+                      <tr>
+                        <th>No. Tramite</th>
+                        <th>Tramite</th>
+                        <th>Area</th>
+                        <th>Empresa</th>
+                        <th>Asunto</th>
+                        <th>Recibido</th>
+                        <th>Terminado</th>
+                        <th>Dias tramite</th>
+                      </tr>
+                    </thead>
+                  <tbody>
+                  <?php
 					function getUltimoDiaMes($elAnio,$elMes) {
  						return date("d",(mktime(0,0,0,$elMes+1,1,$elAnio)-1));
 					}
 					
                   	/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   	require('../../../db_connect.php');
+					require('../contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
@@ -274,47 +289,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(7,'$fechaInicial','$fechaTermino')") or die ($mysqli->error.__LINE__);
 	
 					while($k = mysqli_fetch_array($resultado)){
-							$arr = ($k['TURNADO_A']);
-							$arrInfo = array(
-								'NO_TRAMITE' => $k['NO_TRAMITE'],
-								'TRAMITE' => $k['TRAMITE'],
-								'TURNADO' => $k['TURNADO_A'],
-								'EMPRESA' => $k['EMPRESA'],
-								'ASUNTO' => $k['ASUNTO'],
-								'FECHA_INICIO' => $k['REP_FECHA_INICIO_TRAMITE'],
-								'FECHA_TERMINO' => $k['REP_FECHA_CIERRE_TRAMITE']
-							);
-							$arrayT[] = $arr;
-							$arrayInformacion[] = $arrInfo;
+						echo "<tr>";						
+						echo "<td>".$k['NO_TRAMITE']."</td>";
+						echo "<td>".$k['TRAMITE']."</td>";
+						echo "<td>".$k['TURNADO_A']."</td>";
+						echo "<td>".$k['EMPRESA']."</td>";
+						echo "<td>".$k['ASUNTO']."</td>";
+						$aux3 =  $k['REP_FECHA_INICIO_TRAMITE'];
+							$arrayT2 = explode('-',$aux3);
+							
+							$fechaInicial2 = $arrayT2[2]."/".$arrayT2[1]."/".$arrayT2[0];		
+							$fechaInicial2Formato = $arrayT2[2]."-".$arrayT2[1]."-".$arrayT2[0];
+						echo "<td>".$fechaInicial2."</td>";
+						$aux4 =  $k['REP_FECHA_CIERRE_TRAMITE'];
+							$aT2 = explode('-',$aux4);
+							
+							$fechaCierre = $aT2[2]."/".$aT2[1]."/".$aT2[0];		
+							$fechaCierre2Formato = $aT2[2]."-".$aT2[1]."-".$aT2[0];
+						echo "<td>".$fechaCierre."</td>";
+							$diasHabilesTramite = Evalua(DiasHabiles($fechaInicial2Formato, $fechaCierre2Formato));
+						echo "<td>".$diasHabilesTramite."</td>";
+						echo "</tr>";
 					}
 					$arrayT = array_unique($arrayT);
 					mysqli_close($mysqli);
-                  	?>
-                   <table id="tblFullCaracteristicas" class="display table table-bordered table-striped">
-                  	<thead>
-                      <tr>
-                        <th>No. Tramite</th>
-                        <th>Tramite</th>
-                        <th>Area</th>
-                        <th>Empresa</th>
-                        <th>Asunto</th>
-                        <th>Recibido</th>
-                        <th>Terminado</th>
-                      </tr>
-                    </thead>
-                  <tbody>
-                  <?php
-                  	foreach($arrayInformacion as $I){
-                  		echo "<tr>";
-						echo "<td>$I[NO_TRAMITE]</td>";
-						echo "<td>$I[TRAMITE]</td>";
-						echo "<td>$I[TURNADO]</td>";
-						echo "<td>$I[EMPRESA]</td>";
-						echo "<td>$I[ASUNTO]</td>";
-						echo "<td>$I[FECHA_INICIO]</td>";
-						echo "<td>$I[FECHA_TERMINO]</td>";
-						echo "</tr>";
-                  	}
                   	?>
                    </tbody>
                   </table>
@@ -343,7 +341,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- SlimScroll -->
     <script src="../../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <script src="../../../../plugins/fastclick/fastclick.min.js"></script>    
+    <script src="../../../../plugins/fastclick/fastclick.min.js"></script> 
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>   
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
@@ -379,13 +379,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		arrEncabezado['Encabezado5'] = 'Asunto';
 		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
 		arrEncabezado['Encabezado7'] = 'Fecha de finalización';
+		arrEncabezado['Encabezado8'] = 'Dias tramite';
 		
 		for(var i = 0; i < numOfPages; i++){
 		table.page(i).draw('page');	
 		console.log("Se ha cambiado a la pagina numero " + (i+1));
-			
 		$('#tblFullCaracteristicas tbody tr').each(function(index){
-		console.log("Nueva columna");
 		var arrT = new Object();
 		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
 		$(this).children("td").each(function(index2){
@@ -410,9 +409,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
 					case 6: arrT['FECHA_TERMINADO'] = $(this).text();
 					break;
+					
+					case 7: arrT['DIAS_TRAMITE'] = $(this).text();
+					break;
 				}
 			});
-			
 			arrTodos.push(arrT);
 		});
 		}

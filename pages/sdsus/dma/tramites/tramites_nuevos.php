@@ -268,7 +268,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <th>Empresa</th>
                         <th>Asunto</th>
                         <th>Recibido</th>
-                        <th>Dias Tramite</th>
+                        <th>Vencimiento</th>
+                        <th>Dias habiles</th>
                       </tr>
                     </thead>
                   	
@@ -279,12 +280,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					}
                   	/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   	require('../../../db_connect.php');
+					require('../contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
   						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 					}
-								
 					
 					echo "<h4>Tramites del mes</h4>";
 										
@@ -299,12 +300,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo "<td>".$k['ASUNTO']."</td>";
 							$aux3 =  $k['REP_FECHA_INICIO_TRAMITE'];
 							$arrayT2 = explode('-',$aux3);
-					
+							
 							$fechaInicial2 = $arrayT2[2]."/".$arrayT2[1]."/".$arrayT2[0];		
 							$unixTime = strtotime($aux3);
+							$hoy = date("d-m-Y");
+							// cambiando a formato  de dd-MM-yyyy
+							$fechaInicial2Formato = $arrayT2[2]."-".$arrayT2[1]."-".$arrayT2[0];
+							
+							$diasHabiles = Evalua(DiasHabiles($fechaInicial2Formato, $hoy));
 							
 							echo "<td>".$fechaInicial2."</td>";			
 							echo "<td>".sumarDiasTramite($unixTime,20)."</td>";
+							echo "<td>".$diasHabiles."</td>";
 							echo "</tr>";
 					}
 					$mysqli->close();
@@ -506,6 +513,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
     <script src="../../../../plugins/fastclick/fastclick.min.js"></script>    
+    <!-- Table Export Plugin for Datatable--> 
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>  
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
@@ -528,8 +537,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var table = $('#tblFullCaracteristicas').DataTable();
 		var info = table.page.info();
 		var numOfPages = info.pages;
+		var currentpage = info.page;
+		console.log("Current Page " + currentpage);
 		var arrTodos = new Array();
 		var arrEncabezado = new Object();
+		
 		
 		arrEncabezado['Encabezado1'] = 'Num. de Tramite';
 		arrEncabezado['Encabezado2'] = 'Tramite';
@@ -538,7 +550,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		arrEncabezado['Encabezado5'] = 'Asunto';
 		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
 		arrEncabezado['Encabezado7'] = 'Fecha de Vencimiento';
+		arrEncabezado['Encabezado8'] = 'Dias hábiles';
 		
+		for(var i = 0; i < numOfPages; i++){
+		table.page(i).draw('page');	
+		console.log("Se ha cambiado a la pagina numero " + (i+1));
 		$('#tblFullCaracteristicas tbody tr').each(function(index){
 		var arrT = new Object();
 		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
@@ -564,11 +580,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
 					case 6: arrT['FECHA_TERMINADO'] = $(this).text();
 					break;
+					
+					case 7: arrT['DIAS_HABILES'] = $(this).text();
+					break;
 				}
 			});
 			
 			arrTodos.push(arrT);
 		});
+		
+		}
 		
 		var arrTodo = new Array();
 		

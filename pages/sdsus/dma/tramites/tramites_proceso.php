@@ -269,6 +269,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <th>Asunto</th>
                         <th>Recibido</th>
                         <th>Vencimiento</th>
+                        <th>Dias Tramite</th>
                       </tr>
                     </thead>
                   	<tbody>
@@ -279,6 +280,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					include "../calendarioFestivo.php";
                   	/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   	require('../../../db_connect.php');
+                  	require('../contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
@@ -301,8 +303,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
 							$fechaInicial2 = $arrayT2[2]."/".$arrayT2[1]."/".$arrayT2[0];		
 							$unixTime = strtotime($aux3);
+							$hoy = date("d-m-Y");
+							$fechaInicial2Formato = $arrayT2[2]."-".$arrayT2[1]."-".$arrayT2[0];
+							
+							$diasHabiles = Evalua(DiasHabiles($fechaInicial2Formato, $hoy));
+							
 							echo "<td>".$fechaInicial2."</td>";			
 							echo "<td>".sumarDiasTramite($unixTime,20)."</td>";
+							echo "<td>".$diasHabiles."</td>";
 							echo "</tr>";
 					}
 					mysqli_close($mysqli);
@@ -344,6 +352,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
     <script src="../../../../plugins/fastclick/fastclick.min.js"></script>    
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
@@ -366,6 +376,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var table = $('#tblFullCaracteristicas').DataTable();
 		var info = table.page.info();
 		var numOfPages = info.pages;
+		table.page('next').draw('page');	
 		var arrTodos = new Array();
 		var arrEncabezado = new Object();
 		
@@ -376,10 +387,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		arrEncabezado['Encabezado5'] = 'Asunto';
 		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
 		arrEncabezado['Encabezado7'] = 'Fecha de Vencimiento';
+		arrEncabezado['Encabezado8'] = 'Dias Tramite';
 		
+		for(var i = 0; i < numOfPages; i++){
+		table.page(i).draw('page');	
+		console.log("Se ha cambiado a la pagina numero " + (i+1));
 		$('#tblFullCaracteristicas tbody tr').each(function(index){
 		var arrT = new Object();
-		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
+		
 		$(this).children("td").each(function(index2){
 			switch(index2){
 					case 0: arrT['NO_TRAMITE'] = $(this).text();
@@ -402,11 +417,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
 					case 6: arrT['FECHA_TERMINADO'] = $(this).text();
 					break;
+					
+					case 7: arrT['DIAS_TRAMITE'] = $(this).text();
+					break;
 				}
 			});
-			
-			arrTodos.push(arrT);
+			arrTodos.push(arrT); 
+			console.log(arrT);
 		});
+		
+		}
 		
 		var arrTodo = new Array();
 		
@@ -430,8 +450,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 	    document.body.appendChild(form);
     	form.submit();
-    	
-		//window.open("reportes.php?info="+json);
 	}
       
     </script>

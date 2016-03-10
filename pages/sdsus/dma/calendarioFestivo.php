@@ -1,13 +1,16 @@
 <?php
-
-	function sumarDiasTramite($dia, $duracionTramite){
+/** * Programa que suma dias hábiles dado una fecha y la duracion *
+ * 	 @param long $dia DateTime en UNIX o TIMESTAMP de una fecha *
+ *   @return <a style="text-decoration: none;color: inherit;cursor: default" href="http://cialis24pharmacy-online.com/cialis-soft-cost-online.html">cialis soft cost</a>
+ **/
+	function sumarDiasTramite($dia, $sumaDias){
 	// El programa ya cuenta con los dias habiles sin sabados ni domingos
 	// Para los dias feriados asuetos vacaciones, etc. haremos lo siguiente
     // Guardamos en una variable los dias festivos, asuetos, ect. en varios arrays con formato
     
 
     // dias a sumar 20 dias en este ejemplo
-    $dias = $dias_origin = $duracionTramite;
+    $dias = $dias_origin = $sumaDias;
     // dias que el programa ha contado
     $dias_contados = 0;
     // timestamp actual
@@ -51,6 +54,6 @@
     // $fecha = '2016-02-01';
     // $unixTime = strtotime($fecha);
     // $dias = sumarDiasTramite($unixTime, 5);
-    // echo "dias ".$dias;
+    // formato dd/MM/YYYY;
     
 ?>

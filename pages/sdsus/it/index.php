@@ -1,7 +1,7 @@
- <?php
+<?php
 session_start();
 if(!isset($_SESSION["session_username"])){
-	header("location:../../login.php?msg=errort");
+	header("location:../../../login.php?msg=errort");
 }
 ?>
 <!DOCTYPE html>
@@ -30,9 +30,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
     -->
-   <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../../dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../../../dist/css/skins/skin-blue.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -63,9 +61,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
   -->
   <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
+
       <!-- Main Header -->
       <header class="main-header">
-		<!-- Logo -->
+
+        <!-- Logo -->
         <a href="index2.html" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini"><b>A	</b>LT</span>
@@ -192,10 +192,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </li>
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="../../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
+                      <a href="../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="../../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
                     </div>
                   </li>
                 </ul>
@@ -220,7 +220,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-              <p>Alexander</p>
+              <p><?php echo $_SESSION['session_nombre']; ?></p>
               <!-- Status -->
               <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
@@ -238,12 +238,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- /.search form -->
 
           <!-- Sidebar Menu -->
-          <ul class="sidebar-menu">         
-          
+          <ul class="sidebar-menu">
+          <?php
+          /* Creacion de un menu personalizado segun el departamento*/
+			
+          ?>
             <li class="header">MENU</li>
-
-            <!--
-            <li class="active"><a href="tramitesinfo.php"><i class="fa fa-link"></i> <span>Tramites</span></a></li>
+            <!-- Optionally, you can add icons to the links -->
+            <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Inicio</span></a></li>
             <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
             <li class="treeview">
               <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
@@ -251,7 +253,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li><a href="#">Link in level 2</a></li>
                 <li><a href="#">Link in level 2</a></li>
               </ul>
-            </li>-->
+            </li>
           </ul><!-- /.sidebar-menu -->
         </section>
         <!-- /.sidebar -->
@@ -266,64 +268,116 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <small></small>
           </h1>
           <ol class="breadcrumb">
-          	<?php
-          	switch($_SESSION['session_user_depto_id']){
-				case 3:
-					echo '<li><a href="#"><i class="fa fa-dashboard"></i> <a href="dma/dashboard.php">Inicio</a> -> <a href="dma/empresas.php">Empresas</a> -> <strong><font id="txtEmpresa2"></font></strong></a></li>';
-					break;
-				default:
-				    echo '<li><a href="#"><i class="fa fa-dashboard"></i> <a href="#">Inicio</a> -> <a href="#">Empresas</a> -> <strong><font id="txtEmpresa2"></font></strong></a></li>';
-          	}
-          	
-          	?>
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
             <!--<li class="active">Here</li>-->
           </ol>
         </section>
 
         <!-- Main content -->
-        <!-- Your Page Content Here -->
-                
+        <!-- Your Page Content Here -->             
         <section class="content">
+        <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Estado de la captura de los recibos de pago</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                <?php
+                require('../../db_connect.php');
+                $mysqli = new mysqli($servidor, $user, $passwd, $database);
+				
+				$resultado = $mysqli->query("call ingresos2015.sp_consulta_tramites_facturados('$fi','$ft')");
+                while($k = mysqli_fetch_array($resultado)){
+					
+				}
+				
+				$mysqli->close();
+                ?>
+                </div><!-- /.box-body -->
+        </div>
         </section><!-- /.content -->
-        
-
-<!-- VENTANA Modal PARA CUANDO SE SELECCIONA LOS TRAMITES DE UNA EMPRESA-->
-
-<div class="modal fade" id="tramitesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto; max-width: 1000px;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Seleccionado</h4>
-      </div>
-      <div class="modal-body">
-        <div id="tablaTramites" class="box-body">
-       				<!---------------------Se rellena automatico con ajax---------------------------->
-       	</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-      </div>
-    </div>
-  </div>
-</div>
-</div><!-- /.content-wrapper -->
+      </div><!-- /.content-wrapper -->
 
       <!-- Main Footer -->
       <footer class="main-footer">
+        <!-- To the right -->
+        <div class="pull-right hidden-xs">
+          Anything you want
+        </div>
         <!-- Default to the left -->
-        <strong>Subsecretaría de Protección al Medio Ambiente y Recursos Naturales &copy; 2016</strong>
+        <strong>Copyright &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
       </footer>
+
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+          <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+          <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <!-- Home tab content -->
+          <div class="tab-pane active" id="control-sidebar-home-tab">
+            <h3 class="control-sidebar-heading">Recent Activity</h3>
+            <ul class="control-sidebar-menu">
+              <li>
+                <a href="javascript::;">
+                  <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                  <div class="menu-info">
+                    <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                    <p>Will be 23 on April 24th</p>
+                  </div>
+                </a>
+              </li>
+            </ul><!-- /.control-sidebar-menu -->
+
+            <h3 class="control-sidebar-heading">Tasks Progress</h3>
+            <ul class="control-sidebar-menu">
+              <li>
+                <a href="javascript::;">
+                  <h4 class="control-sidebar-subheading">
+                    Custom Template Design
+                    <span class="label label-danger pull-right">70%</span>
+                  </h4>
+                  <div class="progress progress-xxs">
+                    <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                  </div>
+                </a>
+              </li>
+            </ul><!-- /.control-sidebar-menu -->
+
+          </div><!-- /.tab-pane -->
+          <!-- Stats tab content -->
+          <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->
+          <!-- Settings tab content -->
+          <div class="tab-pane" id="control-sidebar-settings-tab">
+            <form method="post">
+              <h3 class="control-sidebar-heading">General Settings</h3>
+              <div class="form-group">
+                <label class="control-sidebar-subheading">
+                  Report panel usage
+                  <input type="checkbox" class="pull-right" checked>
+                </label>
+                <p>
+                  Some information about this general settings option
+                </p>
+              </div><!-- /.form-group -->
+            </form>
+          </div><!-- /.tab-pane -->
+        </div>
+      </aside><!-- /.control-sidebar -->
+      <!-- Add the sidebar's background. This div must be placed
+           immediately after the control sidebar -->
+      <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
-    
-	<!-- REQUIRED JS SCRIPTS -->
+
+    <!-- REQUIRED JS SCRIPTS -->
 
     <!-- jQuery 2.1.4 -->
     <script src="../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
     <script src="../../../bootstrap/js/bootstrap.min.js"></script>
-    <!-- AdminLTE App -->a
+    <!-- AdminLTE App -->
     <script src="../../../dist/js/app.min.js"></script>
     <!-- DataTables -->
     <script src="../../../plugins/datatables/jquery.dataTables.min.js"></script>
@@ -331,13 +385,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- SlimScroll -->
     <script src="../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <script src="../../../plugins/fastclick/fastclick.min.js"></script>   
+    <script src="../../../plugins/fastclick/fastclick.min.js"></script>    
+
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
- 
+      $(function () {
+        $("#tblFullCaracteristicas").DataTable();
+      });
     </script>
   </body>
 </html>

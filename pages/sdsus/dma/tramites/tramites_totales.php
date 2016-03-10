@@ -258,6 +258,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <th>Empresa</th>
                         <th>Asunto</th>
                         <th>Recibido</th>
+                        <th>Dias tramite</th>
                       </tr>
                     </thead>
                   	<tbody>
@@ -268,6 +269,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
                   	/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   	require('../../../db_connect.php');
+					require('../contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
@@ -487,10 +489,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- SlimScroll -->
     <script src="../../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <script src="../../../../plugins/fastclick/fastclick.min.js"></script>    
+    <script src="../../../../plugins/fastclick/fastclick.min.js"></script>   
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
@@ -525,7 +530,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		
 		
 		for(var i = 0; i < numOfPages; i++){
-		table.page(i).draw('page');	
+		table.page(i).draw('page');
 		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
 		$('#tblFullCaracteristicas tbody tr').each(function(index){
 		var arrT = new Object();

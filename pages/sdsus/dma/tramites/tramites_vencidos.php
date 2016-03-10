@@ -247,6 +247,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h3 class="box-title">Consulta de Tramites</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
+                	<button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
                   <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
                   	<thead>
                       <tr>
@@ -273,58 +274,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					if (!$mysqli){
   						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 					}
-					echo "<h4>Tramites del mes</h4>";
 										
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
 					
 					while($k = mysqli_fetch_array($resultado)){
-						// Esta es la fecha de incio del tramite
-						$auxFechaInicio  = $k['REP_FECHA_INICIO_TRAMITE'];
-						$auxFechaInicioLabel = str_replace('-', '/', $auxFechaInicio);
-						$auxFechaInicioLabel = date('d/m/Y', strtotime($auxFechaInicioLabel));
-						// la fecha del dia que se inicio el tramite en unix time
-						$unixFechaInicio = strtotime($auxFechaInicio);
-						// el dia de hoy en unix time
+						$fechaInicioTramite = $k['REP_FECHA_INICIO_TRAMITE'];
+						$fechaInicioTramiteddMMYY = '0000-00-00';
 						
-						$unixHoy = time();
-						$formattedHOY = date('Y-m-d', $unixHoy);
-						// los dias del tramite son 20
-
-						$fechaVencimiento = sumarDiasTramite($unixFechaInicio,20);
-						$fechaV = str_replace('/', '-', $fechaVencimiento);
-						$formattedFechaVencimiento = date('Y-m-d', strtotime($fechaV));
-						$unixFechaVencimiento = strtotime($formattedFechaVencimiento);
-						
-						/* Si la fecha de vencimiento es menor (anterior) a la fecha de hoy*/
-						if($unixFechaVencimiento < $unixHoy){
-						/* EL tramite esta vencido*/
-						$arrayTramiteIndividual = array(
-								"no_tramite" => $k['NO_TRAMITE'],
-								"tramite" => $k['TRAMITE'],
-								"empresa" => $k['EMPRESA'],
-								"asunto" => $k['ASUNTO'],
-								"turnado" => $k['TURNADO_A'],
-								"inicio_tramite" => $auxFechaInicioLabel,
-								"fecha_vencimiento" => $fechaVencimiento					
-						);
-						$arrayTramites[] = $arrayTramiteIndividual;
-						} else {
-							/* Se deja pasar, el tramite esta vigente aun*/
+						if(!empty($fechaInicioTramite)){
+							echo "<script>console.log('No esta vacio');</script>";
+							$arrayT = explode('-',$fechaInicioTramite);		
+							$fechaInicioTramiteddMMYY = $arrayT[2]."/".$arrayT[1]."/".$arrayT[0];
+							echo "<script>console.log(".$fechaInicioTramite.");</script>";
 						}
-
+						
+						$unixInicioTramite = strtotime($fechaInicioTramite);
+						$conteoDias = sumarDiasTramite($unixInicioTramite, 20);
+						echo "<script>console.log(".$conteoDias.");</script>";
+						
 					}
-							
-					    foreach($arrayTramites as $k){
-							echo "<tr>";
-							echo "<td>".$k['no_tramite']."</td>";
-							echo "<td>".$k['tramite']."</td>";
-							echo "<td>".$k['turnado']."</td>";
-							echo "<td>".$k['empresa']."</td>";
-							echo "<td>".$k['asunto']."</td>";
-							echo "<td>".$k['inicio_tramite']."</td>";
-							echo "<td>".$k['fecha_vencimiento']."</td>";
-							echo "</tr>";
-                    	}
 					mysqli_close($mysqli);
                   	?>
                     </tbody>
@@ -356,23 +324,114 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
     <script src="../../../../plugins/fastclick/fastclick.min.js"></script>    
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>  
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
+       	<!-- Sort Date dd/mm/YYYY -->
+   	<script src="../../../../plugins/datatables/extensions/dataTables.dateFormat.js"></script>  
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
       $(function () {
-        $("#tblFullCaracteristicas").dataTable().yadcf([
+        $("#tblFullCaracteristicas").dataTable({
+			"aoColumns": [
+				null,
+				null,
+				null,
+				null,
+				null,
+				{ "sType": "eu_date" },
+				{ "sType": "eu_date" }
+			]
+		}).yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
 		{column_number : 2},
 		{column_number : 3}
 		]);
       });
+      
+      	function getFilasYColumnas(){
+		var table = $('#tblFullCaracteristicas').DataTable();
+		var info = table.page.info();
+		var numOfPages = info.pages;
+		var arrTodos = new Array();
+		var arrEncabezado = new Object();
+		
+		arrEncabezado['Encabezado1'] = 'Num. de Tramite';
+		arrEncabezado['Encabezado2'] = 'Tramite';
+		arrEncabezado['Encabezado3'] = 'Area';
+		arrEncabezado['Encabezado4'] = 'Empresa';
+		arrEncabezado['Encabezado5'] = 'Asunto';
+		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
+		arrEncabezado['Encabezado7'] = 'Fecha de finalización';
+		arrEncabezado['Encabezado8'] = 'Dias tramite';
+		
+		for(var i = 0; i < numOfPages; i++){
+		table.page(i).draw('page');	
+		console.log("Se ha cambiado a la pagina numero " + (i+1));
+		$('#tblFullCaracteristicas tbody tr').each(function(index){
+		var arrT = new Object();
+		/* Convertir la informacion existente en la datatable filtrada o no en un JSON para enviar a reportes.php */
+		$(this).children("td").each(function(index2){
+			switch(index2){
+					case 0: arrT['NO_TRAMITE'] = $(this).text();
+					break;
+					
+					case 1: arrT['TRAMITE'] = $(this).text();
+					break;
+					
+					case 2: arrT['AREA'] = $(this).text();
+					break;
+					
+					case 3: arrT['EMPRESA'] = $(this).text();
+					break;
+					
+					case 4: arrT['ASUNTO'] = $(this).text();
+					break;
+					
+					case 5: arrT['FECHA_RECIBIDO'] = $(this).text();
+					break;
+					
+					case 6: arrT['FECHA_TERMINADO'] = $(this).text();
+					break;
+					
+					case 7: arrT['DIAS_TRAMITE'] = $(this).text();
+					break;
+				}
+			});
+			arrTodos.push(arrT);
+		});
+		}
+		
+		var arrTodo = new Array();
+		
+		arrTodo[0] = arrEncabezado;
+		arrTodo[1] = arrTodos;
+		
+		var jsonTodo = JSON.stringify(arrTodo);
+		
+		console.log(jsonTodo);
+		
+		/* Se enviara la informacion en un form oculto*/
+		var form = document.createElement("form");
+		form.setAttribute('method', 'post');
+		form.setAttribute('action', 'reportes.php');
+		
+		var hiddenField = document.createElement("input");
+   		hiddenField.setAttribute("type", "hidden");
+	    hiddenField.setAttribute("name", "jsonValues");
+	    hiddenField.setAttribute("value", jsonTodo);
+	    form.appendChild(hiddenField);
+
+	    document.body.appendChild(form);
+    	form.submit();
+	}
     </script>
   </body>
 </html>

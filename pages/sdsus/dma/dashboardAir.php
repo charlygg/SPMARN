@@ -113,6 +113,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						$unixHoy = time();
 						$formattedHOY = date('Y-m-d', $unixHoy);
 						// los dias del tramite son 20
+						
+						
 						//semana pasada
 						$semanaPasada = strtotime('-7 day', strtotime($formattedHOY));
 
