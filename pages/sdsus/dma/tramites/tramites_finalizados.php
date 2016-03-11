@@ -416,6 +416,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			});
 			arrTodos.push(arrT);
 		});
+		
 		}
 		
 		var arrTodo = new Array();

@@ -4,6 +4,7 @@ if(!isset($_SESSION["session_username"])){
 	header("location:../../../../login.php?msg=errort");
 }
 date_default_timezone_set("America/Monterrey");
+set_time_limit(0);
 ?>
 <!DOCTYPE html>
 <!--
@@ -160,6 +161,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li><a href="tramites_nuevos.php">Trámites nuevos</a></li>
                 <li><a href="tramites_proceso.php">Trámites en proceso</a></li>
                 <li><a href="tramites_finalizados.php">Trámites finalizados</a></li>
+                <li><a href="tramites_finalizados.php">Trámites urgentes</a></li>
                 <li class="active"><a href="#">Trámites vencidos</a></li>
               </ul>
             </li>
@@ -258,6 +260,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <th>Asunto</th>
                         <th>Inicio tramite</th>
                         <th>Vencimiento</th>
+                        <th>Dias tramite</th>
                       </tr>
                     </thead>
                   	<tbody>
@@ -269,6 +272,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   	/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   	require('../../../db_connect.php');
                   	include('../calendarioFestivo.php');
+					include('../contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
@@ -280,18 +284,44 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					while($k = mysqli_fetch_array($resultado)){
 						$fechaInicioTramite = $k['REP_FECHA_INICIO_TRAMITE'];
 						$fechaInicioTramiteddMMYY = '0000-00-00';
+						$conteoDias = '00/00/0000';
+						$unixInicioTramite = 0;
+						$unixVencimientoTramite = 0;
+						$unixHoy = time();
+						$hoy = date("d-m-Y");
+						$diasTramite = 0;
+						$horasDelDia = date("H",time());
 						
-						if(!empty($fechaInicioTramite)){
-							echo "<script>console.log('No esta vacio');</script>";
-							$arrayT = explode('-',$fechaInicioTramite);		
-							$fechaInicioTramiteddMMYY = $arrayT[2]."/".$arrayT[1]."/".$arrayT[0];
-							echo "<script>console.log(".$fechaInicioTramite.");</script>";
+						if((!empty($fechaInicioTramite)) || is_null($fechaInicioTramite)){
+							
+							if(!is_null($fechaInicioTramite)){$arrayT = explode('-',$fechaInicioTramite); }
+							 
+								$fechaInicioTramiteddMMYY = $arrayT[2]."/".$arrayT[1]."/".$arrayT[0];
+							/* Si no es 00/00/0000 */
+							if(strcmp($fechaInicioTramiteddMMYY, '00/00/0000') == 1){
+								$unixInicioTramite = strtotime($fechaInicioTramite);
+								$conteoDias = sumarDiasTramite($unixInicioTramite, 20);
+								
+								list($dia,$mes,$anio) = explode('/', $conteoDias);
+								$unixVencimientoTramite = mktime(0, 0, 0, $mes, $dia, $anio);
+								
+								list($anioInit, $mesInit, $diaInit) = explode('-',$fechaInicioTramite);
+								 $diasTramite = Evalua(DiasHabiles($diaInit.'-'.$mesInit.'-'.$anioInit, $hoy));
+							}
 						}
 						
-						$unixInicioTramite = strtotime($fechaInicioTramite);
-						$conteoDias = sumarDiasTramite($unixInicioTramite, 20);
-						echo "<script>console.log(".$conteoDias.");</script>";
-						
+						if(($unixHoy - (2 * 3600 * $horasDelDia)) > ($unixVencimientoTramite)){
+							echo "<tr>";
+							echo "<td>".$k['NO_TRAMITE']."</td>";
+							echo "<td>".$k['TRAMITE']."</td>";
+							echo "<td>".$k['TURNADO']."</td>";
+							echo "<td>".$k['EMPRESA']."</td>";
+							echo "<td>".$k['ASUNTO']."</td>";
+							echo "<td>".$fechaInicioTramiteddMMYY."</td>";
+							echo "<td>".$conteoDias."</td>";
+							echo "<td>".$diasTramite."</td>";
+							echo "</tr>";						
+						}
 					}
 					mysqli_close($mysqli);
                   	?>
@@ -340,6 +370,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script>
       $(function () {
         $("#tblFullCaracteristicas").dataTable({
+        	 "bProcessing": true,
 			"aoColumns": [
 				null,
 				null,
@@ -347,7 +378,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				null,
 				null,
 				{ "sType": "eu_date" },
-				{ "sType": "eu_date" }
+				{ "sType": "eu_date" },
+				null
 			]
 		}).yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/

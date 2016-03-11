@@ -91,7 +91,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             	  <?php
                 	require('../../db_connect.php');
 					include('calendarioFestivo.php');
-					
+					include('contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
@@ -103,27 +103,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					$arrayTramites2 = array();
 					
 					while($k = mysqli_fetch_array($resultado)){
-						
-						// Esta es la fecha de incio del tramite
-						$auxFechaInicio  = $k['REP_FECHA_INICIO_TRAMITE'];
-						// la fecha del dia que se inicio el tramite en unix time
-						$unixFechaInicio = strtotime($auxFechaInicio);
-						// el dia de hoy en unix time
-						
+						$fechaInicioTramite = $k['REP_FECHA_INICIO_TRAMITE'];
+						$fechaInicioTramiteddMMYY = '0000-00-00';
+						$conteoDias = '00/00/0000';
+						$unixInicioTramite = 0;
+						$unixVencimientoTramite = 0;
 						$unixHoy = time();
-						$formattedHOY = date('Y-m-d', $unixHoy);
-						// los dias del tramite son 20
-						//semana pasada
-						$semanaPasada = strtotime('-7 day', strtotime($formattedHOY));
-
-						$fechaVencimiento = sumarDiasTramite($unixFechaInicio,20);
-						$fechaV = str_replace('/', '-', $fechaVencimiento);
-						$formattedFechaVencimiento = date('Y-m-d', strtotime($fechaV));
-						$unixFechaVencimiento = strtotime($formattedFechaVencimiento);
+						$hoy = date("d-m-Y");
+						$diasTramite = 0;
+						$horasDelDia = date("H",time());
 						
-						/* Si la fecha de vencimiento es menor (anterior) a la fecha de hoy*/
-						/* Fecha de vencimiento a una semana de hoy */
-						if( ($unixFechaVencimiento > $unixHoy) && ($unixFechaVencimiento < $semanaPasada)){
+						if((!empty($fechaInicioTramite)) || is_null($fechaInicioTramite)){
+							
+							if(!is_null($fechaInicioTramite)){$arrayT = explode('-',$fechaInicioTramite); }
+							 
+								$fechaInicioTramiteddMMYY = $arrayT[2]."/".$arrayT[1]."/".$arrayT[0];
+							/* Si no es 00/00/0000 */
+							if(strcmp($fechaInicioTramiteddMMYY, '00/00/0000') == 1){
+								$unixInicioTramite = strtotime($fechaInicioTramite);
+								$conteoDias = sumarDiasTramite($unixInicioTramite, 20);
+								
+								list($dia,$mes,$anio) = explode('/', $conteoDias);
+								$unixVencimientoTramite = mktime(0, 0, 0, $mes, $dia, $anio);
+								
+								list($anioInit, $mesInit, $diaInit) = explode('-',$fechaInicioTramite);
+								 $diasTramite = Evalua(DiasHabiles($diaInit.'-'.$mesInit.'-'.$anioInit, $hoy));
+							}
+						}
+						
+						if(( ($unixHoy - (2 * 3600 * $horasDelDia)) < ($unixVencimientoTramite) ) && ($diasTramite>=16 && $diasTramite<=20) ){
 							$i2 = $i2 + 1;
 							$arrayTramiteIndividual2 = array(
 								"no_tramite" => $k['NO_TRAMITE'],
@@ -131,21 +139,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								"empresa" => $k['EMPRESA'],
 								"asunto" => $k['ASUNTO'],
 								"turnado" => $k['TURNADO_A'],
-								"inicio_tramite" => $auxFechaInicio,
-								"fecha_vencimiento" => $fechaVencimiento					
+								"inicio_tramite" => $fechaInicioTramiteddMMYY			
 							);
 							$arrayTramites2[] = $arrayTramiteIndividual2;
-							} else {
-								/* Se deja pasar, el tramite esta vigente aun*/
 							}
 						}
 					
-					mysqli_close($mysqli); 
+					$mysqli->close(); 
                   ?>
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning">40</span>
+                  <span class="label label-warning"><?php echo $i2; ?></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">Listado de tramites urgentes</li>
@@ -163,7 +168,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     		';
                     		}
                     	?>
-                      <li>
                     </ul>
                   </li>
                   <li class="footer"><a href="tramites/tramites_urgentes.php">Ver todos los tramites</a></li>

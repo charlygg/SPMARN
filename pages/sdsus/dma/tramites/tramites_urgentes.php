@@ -4,6 +4,7 @@ if(!isset($_SESSION["session_username"])){
 	header("location:../../../../login.php?msg=errort");
 }
 date_default_timezone_set("America/Monterrey");
+set_time_limit(0);
 ?>
 <!DOCTYPE html>
 <!--
@@ -181,7 +182,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Trámites vencidos
+            Trámites urgentes 
             <small></small>
           </h1>
           <ol class="breadcrumb">
@@ -258,6 +259,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <th>Asunto</th>
                         <th>Inicio tramite</th>
                         <th>Vencimiento</th>
+                        <th>Dias tramite</th>
                       </tr>
                     </thead>
                   	<tbody>
@@ -269,63 +271,57 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   	/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   	require('../../../db_connect.php');
                   	include('../calendarioFestivo.php');
+					include('../contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
   						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 					}
-					echo "<h4>Tramites del mes</h4>";
 										
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
 					
 					while($k = mysqli_fetch_array($resultado)){
-						// Esta es la fecha de incio del tramite
-						$auxFechaInicio  = $k['REP_FECHA_INICIO_TRAMITE'];
-						$auxFechaInicioLabel = str_replace('-', '/', $auxFechaInicio);
-						$auxFechaInicioLabel = date('d/m/Y', strtotime($auxFechaInicioLabel));
-						// la fecha del dia que se inicio el tramite en unix time
-						$unixFechaInicio = strtotime($auxFechaInicio);
-						// el dia de hoy en unix time
-						
+						$fechaInicioTramite = $k['REP_FECHA_INICIO_TRAMITE'];
+						$fechaInicioTramiteddMMYY = '0000-00-00';
+						$conteoDias = '00/00/0000';
+						$unixInicioTramite = 0;
+						$unixVencimientoTramite = 0;
 						$unixHoy = time();
-						$formattedHOY = date('Y-m-d', $unixHoy);
-						// los dias del tramite son 20
-
-						$fechaVencimiento = sumarDiasTramite($unixFechaInicio,20);
-						$fechaV = str_replace('/', '-', $fechaVencimiento);
-						$formattedFechaVencimiento = date('Y-m-d', strtotime($fechaV));
-						$unixFechaVencimiento = strtotime($formattedFechaVencimiento);
+						$hoy = date("d-m-Y");
+						$diasTramite = 0;
+						$horasDelDia = date("H",time());
 						
-						/* Si la fecha de vencimiento es menor (anterior) a la fecha de hoy*/
-						if($unixFechaVencimiento < $unixHoy){
-						/* EL tramite esta vencido*/
-						$arrayTramiteIndividual = array(
-								"no_tramite" => $k['NO_TRAMITE'],
-								"tramite" => $k['TRAMITE'],
-								"empresa" => $k['EMPRESA'],
-								"asunto" => $k['ASUNTO'],
-								"turnado" => $k['TURNADO_A'],
-								"inicio_tramite" => $auxFechaInicioLabel,
-								"fecha_vencimiento" => $fechaVencimiento					
-						);
-						$arrayTramites[] = $arrayTramiteIndividual;
-						} else {
-							/* Se deja pasar, el tramite esta vigente aun*/
-						}
-
-					}
+						if((!empty($fechaInicioTramite)) || is_null($fechaInicioTramite)){
 							
-					    foreach($arrayTramites as $k){
+							if(!is_null($fechaInicioTramite)){$arrayT = explode('-',$fechaInicioTramite); }
+							 
+								$fechaInicioTramiteddMMYY = $arrayT[2]."/".$arrayT[1]."/".$arrayT[0];
+							/* Si no es 00/00/0000 */
+							if(strcmp($fechaInicioTramiteddMMYY, '00/00/0000') == 1){
+								$unixInicioTramite = strtotime($fechaInicioTramite);
+								$conteoDias = sumarDiasTramite($unixInicioTramite, 20);
+								
+								list($dia,$mes,$anio) = explode('/', $conteoDias);
+								$unixVencimientoTramite = mktime(0, 0, 0, $mes, $dia, $anio);
+								
+								list($anioInit, $mesInit, $diaInit) = explode('-',$fechaInicioTramite);
+								 $diasTramite = Evalua(DiasHabiles($diaInit.'-'.$mesInit.'-'.$anioInit, $hoy));
+							}
+						}
+						
+						if(( ($unixHoy - (2 * 3600 * $horasDelDia)) < ($unixVencimientoTramite) ) && ($diasTramite>=16 && $diasTramite<=20) ){
 							echo "<tr>";
-							echo "<td>".$k['no_tramite']."</td>";
-							echo "<td>".$k['tramite']."</td>";
-							echo "<td>".$k['turnado']."</td>";
-							echo "<td>".$k['empresa']."</td>";
-							echo "<td>".$k['asunto']."</td>";
-							echo "<td>".$k['inicio_tramite']."</td>";
-							echo "<td>".$k['fecha_vencimiento']."</td>";
-							echo "</tr>";
-                    	}
+							echo "<td>".$k['NO_TRAMITE']."</td>";
+							echo "<td>".$k['TRAMITE']."</td>";
+							echo "<td>".$k['TURNADO']."</td>";
+							echo "<td>".$k['EMPRESA']."</td>";
+							echo "<td>".$k['ASUNTO']."</td>";
+							echo "<td>".$fechaInicioTramiteddMMYY."</td>";
+							echo "<td>".$conteoDias."</td>";
+							echo "<td>".$diasTramite."</td>";
+							echo "</tr>";						
+						}
+					}
 					mysqli_close($mysqli);
                   	?>
                     </tbody>
@@ -364,13 +360,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
+       	<!-- Sort Date dd/mm/YYYY -->
+   	<script src="../../../../plugins/datatables/extensions/dataTables.dateFormat.js"></script>  
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
       $(function () {
-        $("#tblFullCaracteristicas").dataTable().yadcf([
+        $("#tblFullCaracteristicas").dataTable({
+        	 "bProcessing": true,
+			"aoColumns": [
+				null,
+				null,
+				null,
+				null,
+				null,
+				{ "sType": "eu_date" },
+				{ "sType": "eu_date" },
+				null
+			]
+		}).yadcf([
 		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
 		{column_number : 2},
 		{column_number : 3}
