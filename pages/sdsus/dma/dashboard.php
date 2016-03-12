@@ -99,9 +99,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					}
 										/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
-					$i2 = 0;
-					$arrayTramites2 = array();
-					
+					$i2 = 0; // Conteo de tramites urgentes
+					$i = 0;  // Conteo de tramites vencidos
+					$arrayTramites2 = array(); // Array de tramites urgentes
+					$arrayTramiteIndividual = array(); // Array de tramites vencidos
 					while($k = mysqli_fetch_array($resultado)){
 						$fechaInicioTramite = $k['REP_FECHA_INICIO_TRAMITE'];
 						$fechaInicioTramiteddMMYY = '0000-00-00';
@@ -130,8 +131,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								 $diasTramite = Evalua(DiasHabiles($diaInit.'-'.$mesInit.'-'.$anioInit, $hoy));
 							}
 						}
-						
-						if(( ($unixHoy - (2 * 3600 * $horasDelDia)) < ($unixVencimientoTramite) ) && ($diasTramite>=16 && $diasTramite<=20) ){
+						/* If para filtrar los tramites en proceso*/
+						if((($unixHoy - (2 * 3600 * $horasDelDia)) < ($unixVencimientoTramite) ) && ($diasTramite>=16 && $diasTramite<=20) ){
 							$i2 = $i2 + 1;
 							$arrayTramiteIndividual2 = array(
 								"no_tramite" => $k['NO_TRAMITE'],
@@ -143,8 +144,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							);
 							$arrayTramites2[] = $arrayTramiteIndividual2;
 							}
+						
+						/* If para filtrar los tramites vencidos*/						
+						if(($unixHoy - (2 * 3600 * $horasDelDia)) > ($unixVencimientoTramite)){
+							$i = $i + 1;
+							$arrayTramiteIndividual = array(
+								"no_tramite" => $k['NO_TRAMITE'],
+								"tramite" => $k['TRAMITE'],
+								"empresa" => $k['EMPRESA'],
+								"asunto" => $k['ASUNTO'],
+								"turnado" => $k['TURNADO_A'],
+								"inicio_tramite" => $fechaInicioTramiteddMMYY
+							);
+							$arrayTramites[] = $arrayTramiteIndividual;				
 						}
-					
+					}
 					$mysqli->close(); 
                   ?>
               <li class="dropdown notifications-menu">
@@ -162,7 +176,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     		echo '
                     		 <li>
                         	<a href="#">
-                          		<i class="fa fa-warning text-yellow"></i>No.  '.$t['no_tramite'].' , '.$t['tramite'].'
+                          		<i class="fa fa-warning text-yellow"></i>No. '.$t['no_tramite'].' , '.$t['tramite'].'
                         	</a>
                       		</li>
                     		';
@@ -175,52 +189,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
               	<!----------------------------------------------- FIN DE LAS NOTIFICACIONES------------------------------------->
                 <!----------------------------------------------- TRAMITES VENCIDOS   ----------------------------------------->
-                  <?php
-					$mysqli = new mysqli($servidor, $user, $passwd, $database);
-                  	
-					if (!$mysqli){
-  						die ("Error en la conexion con el servidor de bases de datos: ".mysql_error());
-					}
-					/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
-					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
-					$i = 0;
-					while($k = mysqli_fetch_array($resultado)){
-						// Esta es la fecha de incio del tramite
-						$auxFechaInicio  = $k['REP_FECHA_INICIO_TRAMITE'];
-						// la fecha del dia que se inicio el tramite en unix time
-						$unixFechaInicio = strtotime($auxFechaInicio);
-						// el dia de hoy en unix time
-						
-						$unixHoy = time();
-						$formattedHOY = date('Y-m-d', $unixHoy);
-						// los dias del tramite son 20
-
-						$fechaVencimiento = sumarDiasTramite($unixFechaInicio,20);
-						$fechaV = str_replace('/', '-', $fechaVencimiento);
-						$formattedFechaVencimiento = date('Y-m-d', strtotime($fechaV));
-						$unixFechaVencimiento = strtotime($formattedFechaVencimiento);
-						
-						/* Si la fecha de vencimiento es menor (anterior) a la fecha de hoy*/
-						if($unixFechaVencimiento < $unixHoy){
-							$i = $i + 1;
-						/* EL tramite esta vencido*/
-							$arrayTramiteIndividual = array(
-								"no_tramite" => $k['NO_TRAMITE'],
-								"tramite" => $k['TRAMITE'],
-								"empresa" => $k['EMPRESA'],
-								"asunto" => $k['ASUNTO'],
-								"turnado" => $k['TURNADO_A'],
-								"inicio_tramite" => $auxFechaInicio,
-								"fecha_vencimiento" => $fechaVencimiento					
-							);
-							$arrayTramites[] = $arrayTramiteIndividual;
-							} else {
-								/* Se deja pasar, el tramite esta vigente aun*/
-							}
-						}
-					
-					mysqli_close($mysqli); 
-                  ?>
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
@@ -241,21 +209,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       		  </a>
                       		</li>
                     		';
-                    	}
+                    		}
                     	?>
-                      <!--<li> Task item 
-                        <a href="#">
-                          <h3>
-                            Design some buttons
-                            <small class="pull-right">20%</small>
-                          </h3>
-                          <div class="progress xs">
-                            <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                              <span class="sr-only">20% Complete</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>-->
                     </ul>
                   </li>
                   <li class="footer">
@@ -336,9 +291,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="treeview">
               <a href="#"><i class="fa fa-link"></i> <span>Menu trámites</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li><a href="tramites/tramites_nuevos.php">Trámites nuevos</a></li>
-                <li><a href="tramites/tramites_proceso.php">Trámites en proceso</a></li>
-                <li><a href="tramites/tramites_finalizados.php">Trámites finalizados</a></li>
+              	<?php	
+					if(empty($_GET)){
+						echo '<li class="active"><a href="">Trámites nuevos</a></li>';
+						echo '<li><a href="tramites_proceso.php">Trámites en proceso</a></li>';
+						echo '<li><a href="tramites_finalizados.php">Trámites finalizados</a></li>';
+						echo '<li><a href="tramites_urgentes.php">Trámites urgentes</a></li>';
+						echo '<li><a href="tramites_vencidos.php">Trámites vencidos</a></li>';
+					} else{
+						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
+							$urlParametros = "?metodoSeleccionFecha=".$_GET['metodoSeleccionFecha']."&anio=".$_GET['anio']."&mes=".$_GET['mes'];
+							echo '<li class="active"><a href="">Trámites nuevos</a></li>';
+							echo '<li><a href="tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
+							echo '<li><a href="tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
+							echo '<li><a href="tramites_urgentes.php'.$urlParametros.'">Trámites urgentes</a></li>';
+							echo '<li><a href="tramites_vencidos.php'.$urlParametros.'">Trámites vencidos</a></li>';
+						}
+					}
+          		?>
               </ul>
             </li>
           </ul><!-- /.sidebar-menu -->
@@ -648,13 +618,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
-      <!-- <div class="modal-body">
-			<div id="graficoTres" style="width:100%; height:400px;"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-      </div> -->
-    
     </div>
   </div>
 </div>
@@ -697,11 +660,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script>
       $(function (){
       	/* Si no elejimos que fecha de inicio y termino queremos, por defecto traera las del mes actuales desde el primer dia
-      	 hasta el ultimo segun sea el mes*/
-      	//Date range picker
+      	 hasta el ultimo segun sea el mes actuals*/
       	llenaGraficoUno();    
       	setTimeout(function() { llenaGraficoD();}, 1000);
-      	
+		/* Traducciones de HighCharts al español*/      	
       	Highcharts.setOptions({
       		lang: {
       			months: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],

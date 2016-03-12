@@ -295,7 +295,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </table>
                 </div><!-- /.box-body -->
         </div>
-        
         <div class="box">Estados de los tramites</div>
 		</section><!-- /.content -->
         		

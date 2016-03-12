@@ -157,6 +157,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						echo '<li class="active"><a href="">Trámites nuevos</a></li>';
 						echo '<li><a href="tramites_proceso.php">Trámites en proceso</a></li>';
 						echo '<li><a href="tramites_finalizados.php">Trámites finalizados</a></li>';
+						echo '<li><a href="tramites_urgentes.php">Trámites urgentes</a></li>';
 						echo '<li><a href="tramites_vencidos.php">Trámites vencidos</a></li>';
 					} else{
 						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
@@ -164,6 +165,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo '<li class="active"><a href="">Trámites nuevos</a></li>';
 							echo '<li><a href="tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
 							echo '<li><a href="tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
+							echo '<li><a href="tramites_urgentes.php'.$urlParametros.'">Trámites urgentes</a></li>';
 							echo '<li><a href="tramites_vencidos.php'.$urlParametros.'">Trámites vencidos</a></li>';
 						}
 					}

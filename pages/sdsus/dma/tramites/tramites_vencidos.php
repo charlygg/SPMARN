@@ -464,6 +464,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	    document.body.appendChild(form);
     	form.submit();
 	}
+	
+	function Typer(callback){
+		return true;
+	}
     </script>
   </body>
 </html>
