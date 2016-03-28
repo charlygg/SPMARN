@@ -344,44 +344,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Main content -->
         <!-- Your Page Content Here -->
-        <section class="content">
-        	<!--
-        <div class="row">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="info-box bg-aqua">
-                <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
-                <div class="info-box-content">
-                  <span class="info-box-text">Bookmarks</span>
-                  <span class="info-box-number">41,410</span>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 70%"></div>
-                  </div>
-                  <span class="progress-description">
-                    70% Increase in 30 Days
-                  </span>
-                </div><!-- /.info-box-content --
-              </div><!-- /.info-box 
-            </div><!-- /.col 
-        </div>-->
-		<?php
-		 
-		 /*
-		echo $_SESSION['session_idusername']."<br>";
-		echo $_SESSION['session_nombre']."<br>";
-	 	echo $_SESSION['session_apPat']."<br>";
-		echo $_SESSION['session_apMat']."<br>";
-		echo $_SESSION['session_username']."<br>"; 
-		echo $_SESSION['session_email']."<br>";
-		echo $_SESSION['session_role']."<br>";
-		echo $_SESSION['session_enabled']."<br>";
-		echo "<p>Informacion del departamento</p>";
-		echo $_SESSION['session_user_depto_id']."<br>";
-		echo $_SESSION['session_user_depto_nombre']."<br>";
-		echo $_SESSION['session_user_depto_descripcion']."<br>";
-		echo $_SESSION['session_user_depto_role']."<br>";
-		  
-		  */
-		?>		
+        <section class="content">	
        	        <div class="box">
                 <div class="box-header with-border">
                 <h3 class="box-title">Tramites entrantes recientes</h3>

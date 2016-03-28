@@ -255,7 +255,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h3 class="box-title"><?php echo "Consulta de Tramites desde ".$labelFechaInicial." hasta ".$labelFechaTermino; ?></h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-                	<button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
+                <button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
                    <table id="tblFullCaracteristicas" class="display table table-bordered table-striped">
                   	<thead>
                       <tr>
@@ -364,8 +364,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			
 		$('#contain2er').css( 'display', 'block');
       });
+      
 	
 	function getFilasYColumnas(){
+		Typer(function retornarHoja(););
+	}
+	
+	function Typer(callback){
 		var table = $('#tblFullCaracteristicas').DataTable();
 		var info = table.page.info();
 		var numOfPages = info.pages;
@@ -416,7 +421,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			});
 			arrTodos.push(arrT);
 		});
-		
 		}
 		
 		var arrTodo = new Array();
@@ -441,7 +445,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 	    document.body.appendChild(form);
     	form.submit();
+		return true;
 	}
+	
+	function retortarHoja(){
+		console.log("");
+	}
+	
     </script>
   </body>
 </html>

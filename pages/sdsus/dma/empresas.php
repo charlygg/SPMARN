@@ -240,7 +240,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo "</tr>";
 					}
 					
-					mysqli_close($mysqli);
+					$mysqli->close();
                   	?>	
                     </tbody>
                   </table>

@@ -26,12 +26,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../../../dist/css/AdminLTE.min.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../plugins/datatables/dataTables.bootstrap.css">
+    <!-- Select2-->
+    <link rel="stylesheet" href="../../../plugins/select2/select2.min.css">
+        <!-- daterange picker -->
+    <link rel="stylesheet" href="../../plugins/daterangepicker/daterangepicker-bs3.css">
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
     -->
     <link rel="stylesheet" href="../../../dist/css/skins/skin-blue.min.css">
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -82,39 +85,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Navbar Right Menu -->
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-              <!-- Messages: style can be found in dropdown.less-->
-              <li class="dropdown messages-menu">
-                <!-- Menu toggle button -->
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fa fa-envelope-o"></i>
-                  <span class="label label-success">4</span>
-                </a>
-                <ul class="dropdown-menu">
-                  <li class="header">You have 4 messages</li>
-                  <li>
-                    <!-- inner menu: contains the messages -->
-                    <ul class="menu">
-                      <li><!-- start message -->
-                        <a href="#">
-                          <div class="pull-left">
-                            <!-- User Image -->
-                            <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                          </div>
-                          <!-- Message title and timestamp -->
-                          <h4>
-                            Support Team
-                            <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                          </h4>
-                          <!-- The message -->
-                          <p>Why not buy a new awesome theme?</p>
-                        </a>
-                      </li><!-- end message -->
-                    </ul><!-- /.menu -->
-                  </li>
-                  <li class="footer"><a href="#">See All Messages</a></li>
-                </ul>
-              </li><!-- /.messages-menu -->
-
               <!-- Notifications Menu -->
               <li class="dropdown notifications-menu">
                 <!-- Menu toggle button -->
@@ -177,14 +147,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <!-- Menu Toggle Button -->
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <!-- The user image in the navbar-->
-                  <img src="../../dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                  <img src="../../../dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
                   <!-- hidden-xs hides the username on small devices so only the image appears. -->
                   <span class="hidden-xs"><?php echo $_SESSION['session_nombre']." ".$_SESSION['session_apPat']; ?></span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- The user image in the menu -->
                   <li class="user-header">
-                    <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                    <img src="../../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                     <p><?php echo $_SESSION['session_nombre']." ".$_SESSION['session_apPat']; ?>
                        - <?php echo $_SESSION['session_user_depto_nombre']; ?><!--
                       <small>Member since Nov. 2012</small> -->
@@ -192,10 +162,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </li>
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
+                      <a href="../../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="../../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
                     </div>
                   </li>
                 </ul>
@@ -217,7 +187,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Sidebar user panel (optional) -->
           <div class="user-panel">
             <div class="pull-left image">
-              <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+              <img src="../../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
               <p><?php echo $_SESSION['session_nombre']; ?></p>
@@ -246,7 +216,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="header">MENU</li>
             <!-- Optionally, you can add icons to the links -->
             <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Inicio</span></a></li>
-            <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+            <li><a href="captura_recibos_correspondencia.php"><i class="fa fa-link"></i> <span>Captura de Recibos</span></a></li>
             <li class="treeview">
               <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
@@ -263,10 +233,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-          <h1>
-            Pagina principal
-            <small></small>
-          </h1>
+          <h1>Captura de comprobantes de Pago</h1>
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
             <!--<li class="active">Here</li>-->
@@ -278,22 +245,260 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <section class="content">
         <div class="box">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Estado de la captura de los recibos de pago</h3>
+                  <h2 class="box-title" style="font-weight: 600;">Datos de la empresa</h2>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-                <?php
-                require('../../db_connect.php');
-                $mysqli = new mysqli($servidor, $user, $passwd, $database);
-				
-				$resultado = $mysqli->query("call ingresos2015.sp_consulta_tramites_facturados('$fi','$ft')");
-                while($k = mysqli_fetch_array($resultado)){
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <p>Empresas</p>
+                    <select class="form-control select2" style="width: 100%;" onchange="seleccionarEmpresa(this)" onkeyup="seleccionarEmpresa(this)" onkeydown="seleccionarEmpresa(this)" onkeypress="seleccionarEmpresa(this)">
+                    	<option selected="selected">Seleccione una empresa</option>
+                    	<?php
+                  		/* Extrayendo el listado de catalogo empresas de la base de datos*/
+                  		require('../../db_connect.php');
+						$mysqli = new mysqli($servidor, $user, $passwd, $database);
+                  	
+						if (!$mysqli){
+  							die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
+						}
+
+						$resultado = $mysqli->query("call ingresos2015.sp_consultat_perfilempresa()");
 					
-				}
+						while($k = mysqli_fetch_array($resultado)){
+							echo '<option value="'.$k['idcatalogo_perfilempresa'].'">'.$k['nombreEmpresa'].'</option>';
+						}
+						$mysqli->close();                    	
+                    	?>
+                    </select>
+                  </div><!-- /.form-group -->
+                  <div class="form-group">
+                    <p>Sucursales</p>
+                    <select class="form-control select2" style="width: 100%;">
+                      <option selected="selected">Seleccione una sucursal</option>
+                    </select>
+                  </div><!-- /.form-group -->
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+              <hr/>
+              <form class="form-horizontal">
+                <div class="box-body">
+                <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <p for="inputRepLegal" class="col-sm-2 control-label">Rep. Legal</p>
+                    <div class="col-sm-10">
+                    <input type="text" class="form-control" id="repLegal" disabled="true" />
+                    </div>
+				  </div>
+				</div><!-- div class col md 6-->
+				</div><!-- div class row -->
 				
-				$mysqli->close();
-                ?>
+				<div class="row">
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-2 control-label">Calle</p>
+                    	<div class="col-sm-10">
+                    		<input type="text" class="form-control" id="calle" disabled="true"/>
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-9 -->
+				  
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-3 control-label">No. Ext.</p>
+                    	<div class="col-sm-9">
+                    		<input type="text" class="form-control" id="noExt" disabled="true" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-3 -->
+				</div><!-- div class row -->
+				
+				<div class="row">
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-2 control-label">Colonia</p>
+                    	<div class="col-sm-10">
+                    		<input type="text" class="form-control" id="colonia" disabled="true"/>
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-9 -->
+				  
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-3 control-label">No. Int.</p>
+                    	<div class="col-sm-9">
+                    		<input type="text" class="form-control" id="noInt" disabled="true" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-3 -->
+				</div><!-- div class row -->
+				
+				<div class="row">
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-2 control-label">Municipio</p>
+                    	<div class="col-sm-10">
+                    		<input type="text" class="form-control" id="municipio" disabled="true" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-9 -->
+				  
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-3 control-label">Teléfono</p>
+                    	<div class="col-sm-9">
+                    		<input type="text" class="form-control" id="telefono"  disabled="true"/>
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-6-->
+				</div><!-- div class row -->
+				<hr>
+				<h4 class="box-title" style="font-weight: 600;">Trámite a Facturar</h4>
+				
+				<div class="row">
+				  <div class="col-md-6">
+				  	<div class="form-group">
+						<div class="col-sm-2">
+							<p for="inputRepLegal" class="control-label">No.</p>
+						</div>				  		
+                    	<div class="col-sm-10">
+                    		<input type="text" class="form-control" id="noTramite" disabled="true" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-6 -->
+				  
+				  <div class="col-md-6">
+				  	<div class="form-group">
+				  		<div class="col-md-6"><button class="btn btn-success">Agregar No. Tramite</button></div>
+				  		<div class="col-md-6"><button class="btn btn-success">Agregar tramite</button></div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-6 -->
+				</div><!-- div class row -->
+				
+				<div class="row">
+				  <div class="col-md-6">
+				  	<div class="form-group">
+						<div class="col-sm-2">
+							<p for="inputRepLegal" class="control-label">Trámite</p>
+						</div>				  		
+                    	<div class="col-sm-10">
+                    		<input type="text" class="form-control" id="tramite" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-12 -->
+				</div><!-- div class row -->
+				<hr>
+				<h4 class="box-title" style="font-weight: 700;">Concepto de Pago</h4>
+				
+				<div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <p for="inputRepLegal" class="col-sm-1 control-label">Servicio</p>
+                    <div class="col-sm-10">
+                    <select class="form-control select2" style="width: 100%;">
+                    		<option>Opcion uno</option>
+                    	</select>
+                    </div>
+				  </div>
+				</div>
+				</div><!-- div class row -->
+
+				<div class="row">
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-2 control-label">Precio</p>
+                    	<div class="col-sm-10">
+                    		<input type="text" class="form-control" id="precio" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-9 -->
+				  
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-3 control-label">Folio</p>
+                    	<div class="col-sm-9">
+                    		<input type="text" class="form-control" id="folio" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-6-->
+				</div><!-- div class row -->
+				
+				<div class="row">
+				  <div class="col-md-6">
+                  <div class="form-group">
+                    <p>Fecha de Pago:</p>
+                    <div class="input-group">
+                      <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                      </div>
+                      <input id="fechaPago" type="text" class="form-control col-sm-10" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                    </div><!-- /.input group -->
+                  </div><!-- /.form group -->	
+				  </div><!-- div class col-md-9 -->
+				  <div class="col-md-6">
+                  <div class="form-group">
+                    <p>Fecha de Correspondencia:</p>
+                    <div class="input-group">
+                      <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                      </div>
+                      <input id="fechaCorrepondencia" type="text" class="form-control col-sm-10" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                    </div><!-- /.input group -->
+                  </div><!-- /.form group -->				  	
+				  </div><!-- div class col-md-6-->
+				</div><!-- div class row -->
+				
+				<div class="row">
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-2 control-label">No. Factura</p>
+                    	<div class="col-sm-10">
+                    		<input type="text" class="form-control" id="noFactura" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-9 -->
+				  
+				  <div class="col-md-6">
+				  	<div class="form-group">
+                    	<p for="inputRepLegal" class="col-sm-3 control-label">Caja</p>
+                    	<div class="col-sm-9">
+                    		<input type="text" class="form-control" id="caja" />
+                    	</div>
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-6-->
+				</div><!-- div class row -->
+				
+				<div class="row">
+				  <div class="col-md-12">
+				  	<div class="form-group">
+				  		<div class="col-sm-3">
+				  			<a class="btn btn-app">
+                    			<i class="fa fa-plus-square"></i> Nuevo
+                  			</a>	
+				  		</div>
+				  		<div class="col-sm-3">
+				  			<a class="btn btn-app">
+                    			<i class="fa fa-save"></i> Guardar
+                  			</a>	
+				  		</div>
+				  		<div class="col-sm-3">
+				  			<a class="btn btn-app">
+                    			<i class="fa fa-edit"></i> Editar
+                  			</a>	
+				  		</div>
+				  		<div class="col-sm-3">
+				  			<a class="btn btn-app">
+                    			<i class="fa fa-bitbucket"></i> Borrar
+                  			</a>	
+				  		</div>			  		
+				  	</div><!-- div class form group -->
+				  </div><!-- div class col-md-9 -->
+				</div><!-- div class row -->				
+				
+				
                 </div><!-- /.box-body -->
-        </div>
+              </form>
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
 
@@ -304,7 +509,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           Anything you want
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
       </footer>
 
       <!-- Control Sidebar -->
@@ -372,7 +577,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </div><!-- ./wrapper -->
 
     <!-- REQUIRED JS SCRIPTS -->
-
+    
     <!-- jQuery 2.1.4 -->
     <script src="../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
@@ -382,19 +587,58 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- DataTables -->
     <script src="../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- InputMask -->
+    <script src="../../../plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="../../../plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="../../../plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    
     <!-- SlimScroll -->
     <script src="../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
     <script src="../../../plugins/fastclick/fastclick.min.js"></script>    
-
+    <!-- Select2 -->
+    <script src="../../../plugins/select2/select2.full.min.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
       $(function () {
-        $("#tblFullCaracteristicas").DataTable();
+        $(".select2").select2();
+        //Datemask dd/mm/yyyy
+        $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});       
       });
+    </script>
+    
+    <script>
+    	function seleccionarEmpresa(idEmpresa){
+    	console.log(idEmpresa.value);
+        $.ajax({
+        	data: { "idempresa" : idEmpresa.value},
+        	type: "POST",
+        	dataType: "json",
+        	url: "../getSucursalesFromIdEmpresa.php",
+        })
+        .done(function(data, textStatus, jqXHR){
+        	if(console && console.log){
+        		console.log("La solicitud se ha completado correctamente");
+        	}
+        	llenaDatosSucursales(data, idEmpresa);
+        })
+        .fail(function(jqXHR, textStatus, errorThrown){
+        	if(console && console.log){
+        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
+        	}
+        });			    		
+    	}
+    	
+    	function llenaDatosSucursales(data, idEmpresa){
+    		console.log(data);
+			var repLegal = data[0].representanteLegal;
+			var repLegal 
+			var txtRepLegal = document.getElementById('repLegal');
+			txtRepLegal.value = repLegal;
+    	}
     </script>
   </body>
 </html>
