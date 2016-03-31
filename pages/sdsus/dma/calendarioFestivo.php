@@ -38,8 +38,9 @@
     	// $dias_festivos [año] => array ([mes] => [dias festivos]);
         $dias_festivos = array( "2015"=>array(11 => [20]),
         						"2015"=>array(12 => [1,2,3,25,31]), /* Navidad y año nuevo 2015*/
-        						"2016"=>array(1 => [1,6])	 /* Asueto | Dia de Reyes*/
-        						
+        						"2016"=>array(1 => [1,6]),	 /* Asueto | Dia de Reyes*/
+        						"2016"=>array(3 => [21,22,23,24,25,28,29,30,31]),
+								"2016"=>array(4 => [1])
    		);
 		
         $w = date("w",$time); // dia de la semana en formato 0-6

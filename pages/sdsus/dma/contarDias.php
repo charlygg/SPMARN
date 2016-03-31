@@ -25,6 +25,16 @@ return $newArray;
 function Evalua($arreglo) { 
 $feriados = array( 
 '1-1',  //  Año Nuevo (irrenunciable), Formato d-M
+'3-21', //vacaciones semana santa
+'3-22', //vacaciones semana santa
+'3-23', //vacaciones semana santa
+'3-24', //vacaciones semana santa
+'3-25', //vacaciones semana santa
+'3-28', //vacaciones semana santa
+'3-29', //vacaciones semana santa
+'3-30', //vacaciones semana santa
+'3-31', //vacaciones semana santa
+'4-1',  //vacaciones semana santa
 '10-4',  //  Viernes Santo (feriado religioso) 
 '11-4',  //  Sábado Santo (feriado religioso) 
 '1-5',  //  Día Nacional del Trabajo (irrenunciable) 

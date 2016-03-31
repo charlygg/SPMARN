@@ -252,8 +252,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="col-md-12">
                   <div class="form-group">
                     <p>Empresas</p>
-                    <select class="form-control select2" style="width: 100%;" onchange="seleccionarEmpresa(this)" onkeyup="seleccionarEmpresa(this)" onkeydown="seleccionarEmpresa(this)" onkeypress="seleccionarEmpresa(this)">
-                    	<option selected="selected">Seleccione una empresa</option>
+                    <select id="cmbEmpresas" class="form-control select2" style="width: 100%;" onchange="seleccionarEmpresa(this)" onkeyup="seleccionarEmpresa(this)" onkeydown="seleccionarEmpresa(this)" onkeypress="seleccionarEmpresa(this)">
+                    	<option value="0" selected="selected">Seleccione una empresa</option>
                     	<?php
                   		/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   		require('../../db_connect.php');
@@ -274,8 +274,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </div><!-- /.form-group -->
                   <div class="form-group">
                     <p>Sucursales</p>
-                    <select class="form-control select2" style="width: 100%;">
-                      <option selected="selected">Seleccione una sucursal</option>
+                    <select class="form-control select2" style="width: 100%;" id="cmbSucursales" onchange="seleccionarSucursal(this)" onkeyup="seleccionarSucursal(this)" onkeydown="seleccionarSucursal(this)" onkeypress="seleccionarSucursal(this)">
+                      <option value="0" selected="selected">Seleccione una sucursal</option>
                     </select>
                   </div><!-- /.form-group -->
                 </div><!-- /.col -->
@@ -370,8 +370,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				  
 				  <div class="col-md-6">
 				  	<div class="form-group">
-				  		<div class="col-md-6"><button class="btn btn-success">Agregar No. Tramite</button></div>
-				  		<div class="col-md-6"><button class="btn btn-success">Agregar tramite</button></div>
+				  		<div class="col-md-6"><input type="button" id="btnAgregarNoTramite" class="btn btn-success" disabled="true" value="Agregar No. Tramite"/></div>
+				  		<div class="col-md-6"><input type="button" id="btnAgregarTramite" class="btn btn-success" disabled="true" data-toggle="modal" data-target="#tramitesModal" value="Agregar Tramite" onclick="busquedaTramites()"/></div>
 				  	</div><!-- div class form group -->
 				  </div><!-- div class col-md-6 -->
 				</div><!-- div class row -->
@@ -501,6 +501,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </form>
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
+      
+<!-- VENTANA MODAL PARA AGREGAR LOS TRAMITES UNA VEZ SELECCIONADA LA EMPRESA, SUCURSAL Y DANDOLE CLIC AL BOTON AGREGAR TRAMITE-->
+<div class="modal fade" id="tramitesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto; max-width: 1000px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Trámites de la Empresa</h4>
+      </div>
+      <div class="modal-body">
+        <div id="tablaTramites" class="box-body">
+       		<!---------------------Se rellena automatico con ajax---------------------------->
+       	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+      </div>
+    </div>
+  </div>
+</div> <!-- Fin de ventana modal-->
 
       <!-- Main Footer -->
       <footer class="main-footer">
@@ -613,6 +634,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script>
     	function seleccionarEmpresa(idEmpresa){
     	console.log(idEmpresa.value);
+    	if(idEmpresa.value == 0){
+    		
+    	limpiarCampos();
+    	var txtRepLegal = document.getElementById("repLegal");	
+    	txtRepLegal.value = "";
+    	
+		$('#cmbSucursales').find('option').remove().end();
+		// var cmbSucursales = document.getElementById("cmbSucursales");
+		$('#cmbSucursales').append("<option value='0' selected='selected' >Seleccione una sucursal</option>").val("0");    	
+    	
+    	} else {
+    	limpiarCampos();
         $.ajax({
         	data: { "idempresa" : idEmpresa.value},
         	type: "POST",
@@ -629,16 +662,177 @@ scratch. This page gets rid of all links and provides the needed markup only.
         	if(console && console.log){
         		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
         	}
-        });			    		
-    	}
+        });
+       	} // else
+    	} // seleccionarEmpresa
     	
     	function llenaDatosSucursales(data, idEmpresa){
     		console.log(data);
+    		/* Rellenar Rep. Legal al seleccionar la Empresa*/
 			var repLegal = data[0].representanteLegal;
-			var repLegal 
-			var txtRepLegal = document.getElementById('repLegal');
+			var txtRepLegal = document.getElementById("repLegal");
 			txtRepLegal.value = repLegal;
+			/* Limpiar combo de las sucursales que tenga para cargar las nuevas seleccionadas*/
+			$('#cmbSucursales').find('option').remove().end();
+			// var cmbSucursales = document.getElementById("cmbSucursales");
+			$('#cmbSucursales').append("<option value='0'>Seleccione una sucursal</option>").val("0");
+			for(var key in data){
+				var nombreEmpresa = data[key].nombreEmpresa;
+				var calle = data[key].calle;
+				var numExt = data[key].numeroExterior;
+				var idSucursal = data[key].idcatalogo_perfilestablecimiento;
+				var textoCombo = nombreEmpresa + "( "+calle+" / " + numExt + " )";
+				
+				$('#cmbSucursales').append($('<option>', {
+					value: idSucursal,
+					text: textoCombo
+				}));				
+			}
+			$('#cmbSucursales option')[0].selected = true;
+			$('#select2-cmbSucursales-container').text("Seleccione una sucursal");
+			$('#select2-cmbSucursales-container').attr('title', "Seleccione una sucursal");
     	}
+    	
+    	function seleccionarSucursal(idSucursal){
+    	console.log(idSucursal.value);
+    	if(idSucursal.value == 0){
+    		limpiarCampos();
+    	} else {
+    		
+    	var idEmpresa = document.getElementById("cmbEmpresas");
+        $.ajax({
+        	data: { "idempresa" : idEmpresa.value , "idsucursal" : idSucursal.value},
+        	type: "POST",
+        	dataType: "json",
+        	url: "../getInfoFromSucursal.php",
+        })
+        .done(function(data, textStatus, jqXHR){
+        	if(console && console.log){
+        		console.log("La solicitud se ha completado correctamente");
+        	}
+        	llenaCamposSucursales(data);
+        })
+        .fail(function(jqXHR, textStatus, errorThrown){
+        	if(console && console.log){
+        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
+        	}
+        });	//ajax
+        
+    	  } // else
+    	} // seleccionarSucursal
+    	
+    	function llenaCamposSucursales(data){
+    		console.log(data);
+    			var txtCalle = document.getElementById("calle");
+				var txtNoExt = document.getElementById('noExt');
+				var txtNoInt = document.getElementById('noInt');
+				var txtColonia = document.getElementById('colonia');
+				var txtMunicipio = document.getElementById('municipio');
+				var txtTelefono = document.getElementById('telefono');
+				
+				txtCalle.value = data[0].CALLE;
+				txtNoInt.value = data[0].NO_INTERIOR;
+				txtNoExt.value = data[0].NO_EXTERIOR;
+				txtColonia.value = data[0].COLONIA;
+				txtMunicipio.value = data[0].MUNICIPIO;
+				txtTelefono.value = data[0].TELEFONO;
+				
+				$("#btnAgregarTramite").prop('disabled',false);
+			} // llenaCamposSucursal
+    	
+    	function limpiarCampos(){
+    		    var txtCalle = document.getElementById("calle");
+				var txtNoExt = document.getElementById('noExt');
+				var txtNoInt = document.getElementById('noInt');
+				var txtColonia = document.getElementById('colonia');
+				var txtMunicipio = document.getElementById('municipio');
+				var txtTelefono = document.getElementById('telefono');
+				
+				txtCalle.value = "";
+				txtNoExt.value = "";
+				txtNoInt.value = "";
+				txtColonia.value = "";
+				txtMunicipio.value = "";
+				txtTelefono.value = "";
+				
+				$("#btnAgregarTramite").prop('disabled',true);
+			} // limpiarCampos
+			
+	    function busquedaTramites(){
+	    	var idEmpresa = document.getElementById("cmbEmpresas");
+	    	var idSucursal = document.getElementById("cmbSucursales");
+	    	
+	    	if((idEmpresa.value == 0 ) || (idSucursal.value == 0 )){
+	    		//no procede
+	    	} else {
+				$.ajax({
+		        	data: { "idempresa" : idEmpresa.value , "idsucursal" : idSucursal.value},
+		        	type: "POST",
+        			dataType: "json",
+		        	url: "../getTramitesFromIdSucYEmp.php",
+        		})
+		        .done(function(data, textStatus, jqXHR){
+		        	if(console && console.log){
+		        		console.log("La solicitud se ha completado correctamente");
+		        	}
+		        	llenaTramitesEmpresa(data);
+        		})
+		        .fail(function(jqXHR, textStatus, errorThrown){
+		        	if(console && console.log){
+		        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
+		        	}
+        		});	//ajax
+	    	}
+	    }	
+	    
+	    function llenaTramitesEmpresa(data){
+			console.log(data);
+			var divTabla = document.getElementById("tablaTramites");
+			var strTabla = '<table id="tblFullCaracteristicas" class="table table-bordered table-striped">';
+		    strTabla += '<thead>';
+      		strTabla += '<tr>';
+      		strTabla += '<th>No. Tramite</th>';
+      		strTabla += '<th>Tramite</th>';
+      		strTabla += '<th>Facturado</th>';
+      		strTabla += '<th>No. Factura</th>';
+      		strTabla += '<th>Seleccion</th>';
+	      	strTabla += '</tr>';
+      		strTabla += '</thead>';
+      		strTabla += '<tbody>';
+      		for(var key in data){
+      			strTabla += '<tr>';
+      			strTabla += '<td>' + data[key].ID_NUM_TRAMITE+'</td>';
+      			strTabla += '<td>' + data[key].TRAMITE+'</td>';
+      			strTabla += '<td>' + data[key].FACTURADO+'</td>';
+      			strTabla += '<td>' + data[key].NO_FACTURA+'</td>';
+      			strTabla += '<td>';
+      			console.log(data[key].FACTURADO);
+      			var aux = data[key].FACTURADO;
+      			if(aux == 'NO'){
+      				strTabla += '<input type="button" class="btn btn-success" data-dismiss="modal" value="Agregar"/>';
+      			} else {
+      				strTabla += '<input type="button" class="btn" data-dismiss="modal" disabled="true" value="Agregar"/>';
+      			}
+      			strTabla += '</td>';
+      			strTabla += '</tr>';      			
+      		}
+       		strTabla += '';
+      		divTabla.innerHTML = strTabla;
+      		declararTablaTramites();
+	    }
+	    
+      function declararTablaTramites(){
+      	var table = $('#tblFullCaracteristicas').DataTable();
+      	$('#tblFullCaracteristicas tbody').on( 'click', 'tr', function () {
+        	if ( $(this).hasClass('selected') ) {
+            	$(this).removeClass('selected');
+        }
+        else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        	}
+    	}); 
+      }
     </script>
   </body>
 </html>
