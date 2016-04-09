@@ -28,7 +28,7 @@ if($resultado->num_rows>0){
 
 $json = json_encode($array);
 
-mysqli_close($mysqli);
+$mysqli->close();
 
 echo $json;
 

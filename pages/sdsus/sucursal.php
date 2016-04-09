@@ -239,7 +239,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
        			<div class="box-header with-border">
                   <h3 class="box-title">Sucursales</h3>
                 </div>
-       			<div id="tablaSucursales" class="box-body">
+       			<div id="tablaSucursales" class="box-body table-responsive">
        				<!--------------------Se rellena automatico con ajax----------------------------->
        			</div>
        		</div>
@@ -255,7 +255,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <h4 class="modal-title" id="myModalLabel">Seleccionado</h4>
       </div>
       <div class="modal-body">
-        <div id="tablaTramites" class="box-body">
+        <div id="tablaTramites" class="box-body table-responsive">
        				<!---------------------Se rellena automatico con ajax---------------------------->
        	</div>
       </div>
@@ -324,7 +324,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
    		$("#myModalLabel").innerHTML="Seleccionado la sucursal";
    		var divTabla = document.getElementById("tablaTramites");
    		$("#tablaTramites").empty();
-      	var strTabla = '<table id="tblFullTramites" class="table table-bordered table-striped">';
+      	var strTabla = '<table id="tblFullTramites" class="table table-bordered table-condensed">';
       	strTabla += '<thead>';
       	strTabla += '<tr>';
       	strTabla += '<th>No. Tramite</th>';
@@ -415,7 +415,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	d.innerHTML = nombreEmpresa;
       	/* Escribimos dinamicamente el codigo usando javascript*/
       	var divTabla = document.getElementById("tablaSucursales");
-      	var strTabla = '<table id="tblFullCaracteristicas" class="table table-bordered table-striped">';
+      	var strTabla = '<table id="tblFullCaracteristicas" class="table table-bordered table-condensed">';
       	strTabla += '<input type="hidden" id="idEmpresa_hidden" value='+idEmpresa+'>';
       	strTabla += '<thead>';
       	strTabla += '<tr>';

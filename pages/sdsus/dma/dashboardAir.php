@@ -12,7 +12,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>SPMARN | Dashboard</title>
     <!-- Tell the browser to be responsive to screen width -->
@@ -64,7 +64,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   |               | sidebar-mini                            |
   |---------------------------------------------------------|
   -->
-  <body class="hold-transition skin-blue sidebar-mini">
+  <body class="hold-transition skin-black sidebar-mini">
     <div class="wrapper">
 
       <!-- Main Header -->
@@ -87,180 +87,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Navbar Right Menu -->
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav"> 
-            	<!---------------------------------------------NOTIFICACIONES------------------------------------------------------>
-            	  <?php
-                	require('../../db_connect.php');
-					include('calendarioFestivo.php');
-					
-					$mysqli = new mysqli($servidor, $user, $passwd, $database);
-                  	
-					if (!$mysqli){
-  						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
-					}
-										/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
-					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
-					$i2 = 0;
-					$arrayTramites2 = array();
-					
-					while($k = mysqli_fetch_array($resultado)){
-						
-						// Esta es la fecha de incio del tramite
-						$auxFechaInicio  = $k['REP_FECHA_INICIO_TRAMITE'];
-						// la fecha del dia que se inicio el tramite en unix time
-						$unixFechaInicio = strtotime($auxFechaInicio);
-						// el dia de hoy en unix time
-						
-						$unixHoy = time();
-						$formattedHOY = date('Y-m-d', $unixHoy);
-						// los dias del tramite son 20
-						
-						
-						//semana pasada
-						$semanaPasada = strtotime('-7 day', strtotime($formattedHOY));
-
-						$fechaVencimiento = sumarDiasTramite($unixFechaInicio,20);
-						$fechaV = str_replace('/', '-', $fechaVencimiento);
-						$formattedFechaVencimiento = date('Y-m-d', strtotime($fechaV));
-						$unixFechaVencimiento = strtotime($formattedFechaVencimiento);
-						
-						/* Si la fecha de vencimiento es menor (anterior) a la fecha de hoy*/
-						/* Fecha de vencimiento a una semana de hoy */
-						if( ($unixFechaVencimiento > $unixHoy) && ($unixFechaVencimiento < $semanaPasada)){
-							$i2 = $i2 + 1;
-							$arrayTramiteIndividual2 = array(
-								"no_tramite" => $k['NO_TRAMITE'],
-								"tramite" => $k['TRAMITE'],
-								"empresa" => $k['EMPRESA'],
-								"asunto" => $k['ASUNTO'],
-								"turnado" => $k['TURNADO_A'],
-								"inicio_tramite" => $auxFechaInicio,
-								"fecha_vencimiento" => $fechaVencimiento					
-							);
-							$arrayTramites2[] = $arrayTramiteIndividual2;
-							} else {
-								/* Se deja pasar, el tramite esta vigente aun*/
-							}
-						}
-					
-					mysqli_close($mysqli); 
-                  ?>
-              <li class="dropdown notifications-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning">40</span>
-                </a>
-                <ul class="dropdown-menu">
-                  <li class="header">Listado de tramites urgentes</li>
-                  <li>
-                    <!-- inner menu: contains the actual data -->
-                    <ul class="menu">
-                    	<?php
-                    	foreach($arrayTramites2 as $t){
-                    		echo '
-                    		 <li>
-                        	<a href="#">
-                          		<i class="fa fa-warning text-yellow"></i>No.  '.$t['no_tramite'].' , '.$t['tramite'].'
-                        	</a>
-                      		</li>
-                    		';
-                    		}
-                    	?>
-                      <li>
-                    </ul>
-                  </li>
-                  <li class="footer"><a href="tramites/tramites_urgentes.php">Ver todos los tramites</a></li>
-                </ul>
-              </li>
-              	<!----------------------------------------------- FIN DE LAS NOTIFICACIONES------------------------------------->
-                <!----------------------------------------------- TRAMITES VENCIDOS   ----------------------------------------->
-                  <?php
-					$mysqli = new mysqli($servidor, $user, $passwd, $database);
-                  	
-					if (!$mysqli){
-  						die ("Error en la conexion con el servidor de bases de datos: ".mysql_error());
-					}
-					/* LO enviamos sin argumentos, son todos los tramites desde el inicio*/
-					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(8,'0000-00-00','0000-00-00')") or die ($mysqli->error.__LINE__);
-					$i = 0;
-					while($k = mysqli_fetch_array($resultado)){
-						// Esta es la fecha de incio del tramite
-						$auxFechaInicio  = $k['REP_FECHA_INICIO_TRAMITE'];
-						// la fecha del dia que se inicio el tramite en unix time
-						$unixFechaInicio = strtotime($auxFechaInicio);
-						// el dia de hoy en unix time
-						
-						$unixHoy = time();
-						$formattedHOY = date('Y-m-d', $unixHoy);
-						// los dias del tramite son 20
-
-						$fechaVencimiento = sumarDiasTramite($unixFechaInicio,20);
-						$fechaV = str_replace('/', '-', $fechaVencimiento);
-						$formattedFechaVencimiento = date('Y-m-d', strtotime($fechaV));
-						$unixFechaVencimiento = strtotime($formattedFechaVencimiento);
-						
-						/* Si la fecha de vencimiento es menor (anterior) a la fecha de hoy*/
-						if($unixFechaVencimiento < $unixHoy){
-							$i = $i + 1;
-						/* EL tramite esta vencido*/
-							$arrayTramiteIndividual = array(
-								"no_tramite" => $k['NO_TRAMITE'],
-								"tramite" => $k['TRAMITE'],
-								"empresa" => $k['EMPRESA'],
-								"asunto" => $k['ASUNTO'],
-								"turnado" => $k['TURNADO_A'],
-								"inicio_tramite" => $auxFechaInicio,
-								"fecha_vencimiento" => $fechaVencimiento					
-							);
-							$arrayTramites[] = $arrayTramiteIndividual;
-							} else {
-								/* Se deja pasar, el tramite esta vigente aun*/
-							}
-						}
-					
-					mysqli_close($mysqli); 
-                  ?>
-              <li class="dropdown notifications-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fa fa-flag-o"></i>
-                  <span class="label label-danger"><?php echo $i;?></span>
-                </a>
-                <ul class="dropdown-menu">
-                  <li class="header">Listado de tramites vencidos</li>
-                  <li>
-                    <!-- inner menu: contains the actual data -->
-                    <ul class="menu">
-                    	<?php 
-                    	
-                    	foreach($arrayTramites as $tramite){
-							echo '
-                    		<li>
-                       		 <a href="#">
-                      	   		 <i class="fa fa-warning text-yellow"></i>No. '.$tramite['no_tramite'].' , '.$tramite['tramite'].'
-                      		  </a>
-                      		</li>
-                    		';
-                    	}
-                    	?>
-                      <!--<li> Task item 
-                        <a href="#">
-                          <h3>
-                            Design some buttons
-                            <small class="pull-right">20%</small>
-                          </h3>
-                          <div class="progress xs">
-                            <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                              <span class="sr-only">20% Complete</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>-->
-                    </ul>
-                  </li>
-                  <li class="footer">
-                    <a href="tramites/tramites_vencidos.php">Ver mas detalles</a>
-                  </li>
-                </ul>
-              </li>
             	
               <!-- User Account Menu -->
               <li class="dropdown user user-menu">
@@ -327,7 +153,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <ul class="sidebar-menu">
             <li class="header">MENU</li>
             <!-- Optionally, you can add icons to the links -->
-            <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Inicio</span></a></li>
+            <li><a href="dashboard.php"><i class="fa fa-link"></i> <span>Inicio</span></a></li>
+            <li class="active"><a href="#"><i class="fa fa-link"></i> <span>AIR (Solo SO)</span></a></li>
             <li><a href="empresas.php"><i class="fa fa-link"></i> <span>Empresas y Sucursales</span></a></li>
             <!--<li><a href="tramites.php"><i class="fa fa-link"></i><span>Tramites</span></a></li>-->
             
@@ -424,80 +251,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Your Page Content Here -->
         <section class="content">		
 		<?php
-		/* Obtencion de los totales de los tramites*/
-		require('../../db_connect.php');
-		
-		$aux = basename($_SERVER['REQUEST_URI']);
-		$arrayAux = explode("?",$aux);
-
-		$urlParametros = "";	
-
-		if(empty($arrayAux[1])){
-		} else {
-			$urlParametros = $arrayAux[1];
-		}
-		
-		$mysqli = new mysqli($servidor, $user, $passwd, $database);
+		require('../../db_connect_air.php');
+		/* Obtencion de los totales de los tramites DEL */
+		$mysqli = new mysqli($servidor, $user, $passwd, $database, $port);
 		$fi = $GLOBALS['fechaInicial'];
 		$ft = $GLOBALS['fechaTermino'];
-		
-		$EN = 0;
-		$NU = 0;
-		$REC = 0;
-		$PRO = 0;
-		$TER_MES = 0;
-		$TER = 0;
-	
+						
 		if (!$mysqli){
   			die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 		}
+						
+		$resultado = $mysqli->query("call sds.sp_reporte_diario_solicitudes('$fi','$ft')")
+		or trigger_error($mysqli->error);
 		
-		$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(4,'$fi','$ft')");
-		while($k = mysqli_fetch_array($resultado)){
-			$EN = $k['TOTAL_TRAMITES_ENTRANTES'];
-			$NU = $k['TOTAL_TRAMITES_NUEVOS'];
-			$REC = $k['TOTAL_TRAMITES_RECIBIDOS'];
-			$PRO = $k['TOTAL_TRAMITES_PROCESO'];
-			$TER_MES = $k['TOTAL_TRAMITES_MES_T'];
-			$TER = $k['TOTAL_TRAMITES_TERMINADOS'];
-		}
+		while ($row = $resultado->fetch_array(MYSQLI_ASSOC)){
+			// echo "<td>".$row['salesorder_no']."</td>";
+		}	
+		
 		$mysqli->close();
 		?>
           <div class="row">
             <div class="col-md-3 col-sm-6 col-xs-12">
-            <a href="tramites/tramites_nuevos.php?<?php echo $urlParametros ?>" style="color: #000;">
-              <div class="info-box">
-                <span class="info-box-icon bg-aqua"><i class="fa fa-envelope-o"></i></span>
-                <div class="info-box-content">
-                  <span class="info-box-text">Nuevos tramites</span>
-                  <span class="info-box-number"><?php echo $NU ?></span>
-                  <br>
-                  <span class="info-box-text">(En recepcion)</span>
-                </div><!-- /.info-box-content -->
-              </div><!-- /.info-box -->
-            </a>
-            </div><!-- /.col -->
-            <div class="col-md-3 col-sm-6 col-xs-12">
-            <a href="tramites/tramites_proceso.php?<?php echo $urlParametros ?>" style="color: #000;">
+            <a href="tramitesAIR/tramites_proceso.php?<?php echo $urlParametros ?>" style="color: #000;">
               <div class="info-box">
                 <span class="info-box-icon bg-green"><i class="fa fa-flag-o"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">En Proceso (En el area)</span>
-                  <span class="info-box-number"><?php echo $PRO + $TER_MES; ?></span>
-                  <span class="info-box-text">Recibidos (En el area)</span>
-                  <span class="info-box-number"><?php echo $REC ?></span>
+                  <span class="info-box-text">En Proceso</span>
+                  <span class="info-box-number"></span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
             </a>
             </div><!-- /.col -->
             <div class="col-md-3 col-sm-6 col-xs-12">
-            <a href="tramites/tramites_finalizados.php?<?php echo $urlParametros ?>" style="color: #000;">
+            <a href="tramitesAIR/tramites_finalizados.php?<?php echo $urlParametros ?>" style="color: #000;">
               <div class="info-box">
                 <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">Finalizados</span>
-                  <span class="info-box-number"><?php echo $TER ?></span>
-                  <span class="info-box-text">Notificados</span>
+                  <span class="info-box-number"></span>
+                  <span class="info-box-text"></span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
             </a>
@@ -505,16 +297,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <div class="col-md-3 col-sm-6 col-xs-12">
            <!--	<a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;"> -->
               <div class="info-box">
-              	<a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;">
+              	<a href="tramitesAIR/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;">
                 <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
                 </a>
                 <div class="info-box-content">
                 <a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;">
                   <span class="info-box-text">ENTRANTES DEL MES</span>
-                  <span class="info-box-number"><?php echo $EN ?></span>
+                  <span class="info-box-number"></span>
                   <span class="info-box-text">CUMPLIMIENTO</span>
                 </a>
-                  <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." % - ";  ?>
+                  <span class="info-box-number">
                   	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="despliegaGraficoAreas()" class="fa fa-fw fa-pie-chart">Areas</i>
                   </span>
                   
@@ -528,8 +320,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <ul class="nav nav-tabs pull-right">
                   <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites (Capturados en el dia en gris y los recibidos en azul)</li>
                 </ul>
-                <div class="tab-content no-padding">
-					<div id="myChart" style="width:100%; height:400px;"></div>                	
+                <div class="tab-content no-padding"> 
+					<!-- <div id="myChart" style="width:100%; height:400px;"></div>               	 -->
 					<table>
 						<tr>
 							<td><div class="form-group"><label style="padding-left: 10px; padding-right: 10px;">Seleccionar otro mes de actividad </label></div></td>
@@ -540,8 +332,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<?php
 										$arrayAnio2 = explode('-',$GLOBALS['labelFechaTermino']);
 										$anioLabel = $arrayAnio2[2];
-										$arrayAnio = array('2015'=>'2015',
-															'2016' =>'2016');
+										$arrayAnio = array( '2009'=>'2009',
+															'2010'=>'2010',
+															'2011'=>'2011',
+															'2012'=>'2012',
+															'2013'=>'2013',
+															'2014'=>'2014',
+															'2015'=>'2015',
+															'2016'=>'2016');
 										foreach($arrayAnio as $anio=>$valor){
 											if($anioLabel == $anio){
 												echo "<option value=".$anio." selected='selected'>".$valor."</option>";		
@@ -560,7 +358,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<?php
 										$arrayFecha2 = explode('-',$GLOBALS['labelFechaTermino']);
 										$mesLabel = $arrayFecha2[1];
-										
 										$arraySemana = array('01' => 'Enero',
 															'02' => 'Febrero',
 															'03' => 'Marzo',
@@ -590,27 +387,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</div>
 							</td>
 						</tr>
-						<!--
-						<tr>
-							<td><label style="padding-left: 10px;">O selecciona un rango de fecha</label></td>
-							<td colspan="2">
-								<div class="form-group">
-									<div class="input-group">
-                      					<div class="input-group-addon">
-                        					<i class="fa fa-calendar"></i>
-				                      	</div>
-                      					<input type="text" class="form-control pull-right" id="rangoFecha">
-                    				</div>
-                    				
-                    				
-								</div>
-							</td>
-							<td>
-								<div class="form-group">
-									<button class="btn btn-block btn-success" onclick="setFechaDos()">Elegir</button>
-								</div>
-							</td>
-						</tr>-->
 					</table>
                 </div>
               </div>
@@ -618,10 +394,58 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <div class="nav-tabs-custom">
                 <!-- Tabs within a box -->
                 <ul class="nav nav-tabs pull-right">
-                  <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites entrantes vs finalizados</li>
+                  <li class="pull-left header"><i class="fa fa-inbox"></i> Reporte Diario de Solicitudes AIR</li>
                 </ul>
                 <div class="tab-content no-padding">
-                	<div id="myChartFinalizados" style="width:100%; height:400px;"></div>                	
+                	<table id="tblFullCaracteristicas" class="table table-bordered table-striped">
+                  	<thead>
+                        <th>No. Tramite</th>
+                        <th>Tramite</th>
+                        <th>Area</th>
+                        <th>Empresa</th>
+                        <th>Asunto</th>
+                        <th>Recibido</th>
+                    </thead>
+                    <tbody>
+                  	<?php
+						require('../../db_connect_air.php');
+
+						$aux = basename($_SERVER['REQUEST_URI']);
+						$arrayAux = explode("?",$aux);
+
+						$urlParametros = "";	
+
+						if(empty($arrayAux[1])){
+							} else {
+							$urlParametros = $arrayAux[1];
+						}
+		
+						$mysqli = new mysqli($servidor, $user, $passwd, $database, $port);
+						$fi = $GLOBALS['fechaInicial'];
+						$ft = $GLOBALS['fechaTermino'];
+						
+						if (!$mysqli){
+  							die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
+						}
+						
+						$resultado = $mysqli->query("call sds.sp_reporte_diario_solicitudes('$fi','$ft')")
+						or trigger_error($mysqli->error);
+						
+						while ($row = $resultado->fetch_array(MYSQLI_ASSOC)){
+							echo "<tr>";
+							// echo "<td><a href='visor_so.php?so=".$row['salesorder_no']."'>".$row['salesorder_no']."</a></td>";
+							echo "<td>".$row['salesorder_no']."</td>";
+							echo "<td>".utf8_encode($row['cf_556'])."</td>";
+							echo "<td>".utf8_encode($row['cf_578'])."</td>";
+							echo "<td>".utf8_encode($row['accountname'])."</td>";
+							echo "<td>".utf8_encode($row['tramiteDescripcion'])."</td>";
+							echo "<td>".$row['cf_552']."</td>";
+							echo "</tr>";
+						}	
+						$mysqli->close();
+					?>
+                    </tbody>
+                    </table>
                 </div>
               </div>
 	  </section>
@@ -646,24 +470,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
-      <!-- <div class="modal-body">
-			<div id="graficoTres" style="width:100%; height:400px;"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-      </div> -->
-    
     </div>
   </div>
 </div>
  <!-- Main Footer -->
       <footer class="main-footer">
-        <!-- To the right -->
-        <div class="pull-right hidden-xs">
-          Anything you want
-        </div>
         <!-- Default to the left -->
-        <strong>SPMARN &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
+        <strong>SPMARN &copy; 2016 <a href="#"></a>.</strong>
       </footer>
 </div><!-- ./wrapper -->
 
@@ -686,8 +499,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- HighCharts Plugin-->
     <script src="../../../plugins/highcharts/js/highcharts.js"></script>
     <script src="../../../plugins/highcharts/js/modules/exporting.js"></script>
-        <!-- Chart JS -->
-    <script src="../../../plugins/chartjs/Chart.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
@@ -698,7 +509,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	 hasta el ultimo segun sea el mes*/
       	//Date range picker
       	llenaGraficoUno();    
-      	setTimeout(function() { llenaGraficoD();}, 1000);
       	
       	Highcharts.setOptions({
       		lang: {
@@ -725,10 +535,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     		llenaGraficoUno();
     	}
     	
-    	function recargarGraficoDos(){
-    		llenaGraficoDos();
-    	}
-    
     	function llenaGraficoUno(){
     	//$('#rangoFecha').daterangepicker();
       	var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
@@ -769,22 +575,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	var fechaInicio = "<?php echo $GLOBALS['labelFechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['labelFechaTermino']; ?>";
       	
-		var i = 0;
-      	for(var key in data2){
-      		/* Algunas fechas dan null en un arreglo mienstras que en el otro no, el if es para detectar esos nulls*/
-      	    if (data2[key].fechaRecibido == null) { 
-      	 		arrayDias[i] = data2[key].fechaCaptura;
-      	 	} else {
-      	 		arrayDias[i] = data2[key].fechaRecibido;
-      	 	}
-      
-      		var num = isNaN(parseInt(data2[key].noTramiteCapturados)) ? 0 : parseInt(data2[key].noTramiteCapturados)
-			arrayTramites[i] = num;
-			
-			var num2 = isNaN(parseInt(data2[key].noTramiteRecibidos)) ? 0 : parseInt(data2[key].noTramiteRecibidos)
-			arrayTramites2[i] = num2;
-			i++;
-      	}    
+		var i = 0;  
       	
       	$('#myChart').highcharts({
         chart: {
