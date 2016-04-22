@@ -419,14 +419,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </div><!-- /.content-wrapper -->
 
       <!-- Main Footer -->
-      <footer class="main-footer">
-        <!-- To the right -->
-        <div class="pull-right hidden-xs">
-          Anything you want
-        </div>
-        <!-- Default to the left -->
-        <strong>SPMARN &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
-      </footer>
+<?php include("../footer.php"); ?>
     </div><!-- ./wrapper -->
 
     <!-- REQUIRED JS SCRIPTS -->

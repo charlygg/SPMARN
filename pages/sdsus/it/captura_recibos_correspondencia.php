@@ -30,8 +30,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../../../plugins/datatables/dataTables.bootstrap.css">
     <!-- Select2-->
     <link rel="stylesheet" href="../../../plugins/select2/select2.min.css">
-        <!-- daterange picker -->
-    <link rel="stylesheet" href="../../plugins/daterangepicker/daterangepicker-bs3.css">
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
@@ -489,22 +487,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				  <div class="col-md-12">
 				  	<div class="form-group">
 				  		<div class="col-sm-3">
-				  			<a class="btn btn-app" onclick="limpiarCampos()">
+				  			<a id="btnNuevo" class="btn btn-app" onclick="limpiarCampos(1)">
                     			<i class="fa fa-plus-square"></i> Nuevo
                   			</a>	
 				  		</div>
 				  		<div class="col-sm-3">
-				  			<a class="btn btn-app" onclick="nuevoRecibo()">
+				  			<a id="btnGuardar" class="btn btn-app" onclick="nuevoRecibo()">
                     			<i class="fa fa-save"></i> Guardar
                   			</a>	
 				  		</div>
 				  		<div class="col-sm-3">
-				  			<a class="btn btn-app">
+				  			<a id="btnEditar" class="btn btn-app">
                     			<i class="fa fa-edit"></i> Editar
                   			</a>	
 				  		</div>
 				  		<div class="col-sm-3">
-				  			<a class="btn btn-app"  data-toggle="modal" data-target="#tramitesCompletado">
+				  			<a id="btnEliminar" class="btn btn-app"  data-toggle="modal" data-target="#tramitesCompletado">
                     			<i class="fa fa-bitbucket"></i> Borrar
                   			</a>	
 				  		</div>			  		
@@ -750,7 +748,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     	console.log(idEmpresa.value);
     	if(idEmpresa.value == 0){
     		
-    	limpiarCampos();
+    	limpiarCampos(2);
     	var txtRepLegal = document.getElementById("repLegal");	
     	txtRepLegal.value = "";
     	
@@ -758,7 +756,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		$('#cmbSucursales').append("<option value='0' selected='selected' >Seleccione una sucursal</option>").val("0");    	
     	
     	} else {
-    	limpiarCampos();
+    	limpiarCampos(2);
         $.ajax({
         	data: { "idempresa" : idEmpresa.value},
         	type: "POST",
@@ -809,7 +807,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     	function seleccionarSucursal(idSucursal){
     	console.log(idSucursal.value);
     	if(idSucursal.value == 0){
-    		limpiarCampos();
+    		limpiarCampos(2);
     	} else {
     		
     	var idEmpresa = document.getElementById("cmbEmpresas");
@@ -858,47 +856,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				$("#btnAgregarTramite").prop('disabled',false);
 			} // llenaCamposSucursal
     	
-    	function limpiarCampos(){
-    		    var txtCalle = document.getElementById("calle");
-				var txtNoExt = document.getElementById('noExt');
-				var txtNoInt = document.getElementById('noInt');
-				var txtColonia = document.getElementById('colonia');
-				var txtMunicipio = document.getElementById('municipio');
-				var txtTelefono = document.getElementById('telefono');
-				var txtNoTramite = document.getElementById("noTramite");
-				var txtPrecio = document.getElementById("precio");
-				var txtFolio = document.getElementById("folio");
-				var fechaPago = document.getElementById("fechaPago");
-				var fechaCorrespondencia = document.getElementById("fechaCorrespondencia");
-				var txtNoFactura = document.getElementById("noFactura");
-				var txtCaja = document.getElementById("caja");
-				
-				txtCalle.value = "";
-				txtNoExt.value = "";
-				txtNoInt.value = "";
-				txtColonia.value = "";
-				txtMunicipio.value = "";
-				txtTelefono.value = "";
-				txtNoTramite.value = "";
-				txtPrecio.value = "";
-				txtFolio.value = "";
-				fechaPago.value = "";
-				fechaCorrespondencia.value = "";
-				txtNoFactura.value = "";
-				txtCaja.value = "";
-				
-				$("#btnAgregarTramite").prop('disabled',true);
-				
-			} // limpiarCampos
-		
-		function bloquearCampos(){
-			
-		}
-		
-		function habilitarCampos(){
-			
-		}
-			
 	    function busquedaTramites(){
 	    	var idEmpresa = document.getElementById("cmbEmpresas");
 	    	var idSucursal = document.getElementById("cmbSucursales");
@@ -928,6 +885,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	    
 	    function llenaTramitesEmpresa(data){
 			console.log(data);
+			$("#tablaTramites").empty();
 			var divTabla = document.getElementById("tablaTramites");
 			var strTabla = '<table id="tblFullCaracteristicas" class="table table-bordered table-striped">';
 		    strTabla += '<thead>';
@@ -1001,47 +959,47 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	
       	if(cmbEmpresa.value == 0){
       		console.log("No se ha seleccioado la empresa");
-      		lleno = !lleno;
+      		if(lleno) lleno = !lleno;
       	}
       	
       	if(cmbSucursal.value == 0){
       		console.log("No se ha seleccioado la sucursal");
-      		lleno = !lleno;
+      		if(lleno) lleno = !lleno;
       	}
       	
       	if(cmbServicio.value == 0){
       		console.log("No se ha seleccioado el servicio");
-      		lleno = !lleno;
+      		if(lleno) lleno = !lleno;
       	}
       	
       	if(txtFolioComprobante.value == ""){
       		console.log("Falta de capturar el folio");
-      		lleno = !lleno;
+      		if(lleno) lleno = !lleno;
       	}
       	
       	if(txtCaja.value == ""){
       		console.log("Falta de capturar el numero de caja");
-      		lleno = !lleno;
+      		if(lleno) lleno = !lleno;
       	}
       	
       	if(txtTotal.value == ""){
       		console.log("Falta de capturar el total");
-      		lleno = !lleno;
+      		if(lleno) lleno = !lleno;
       	}
       	
       	// if(txtTipoTramite.value == ""){
       		// console.log("Error interno ");
-      		// lleno = !lleno;
+      		// if(lleno) lleno = !lleno;
       	// }
       	
       	if(idTramite.value == ""){
       		console.log("No se ha seleccionado el Tramite a Facturar");
-      		lleno = !lleno;
+      		if(lleno) lleno = !lleno;
       	}
       	
       	// if(txtDescTramite.value == ""){
       		// console.log("Error interno 3");
-      		// lleno = !lleno;
+      		// if(lleno) lleno = !lleno;
       	// }
       
       	console.log("ID EMPRESA: " + cmbEmpresa.value);
@@ -1092,7 +1050,91 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	txtNoFactura.value = data[0].FOLIO_FACTURA;
       	txtNoFacturaModal.innerHTML = data[0].FOLIO_FACTURA;
       	txtbtnResultadoVModal.click();
+      	
+      	bloquearTodosLosCampos(1);
       }
+      
+      function bloquearTodosLosCampos(sit){
+      	// si es 1 habilitar Nuevo y deshabilitar guardar
+      	// si es 2 habiliar Editar
+      	$('#cmbEmpresas').prop('disabled', true);
+      	$('#cmbSucursales').prop('disabled', true);
+      	$('#btnAgregarTramite').prop('disabled', true);
+      	$('#btnAgregarNoTramite').prop('disabled', true);
+      	$('#cmbServicio').prop('disabled', true);
+      	$("#precio").prop('disabled', true);
+      	$('#folio').prop('disabled', true);
+      	$('#fechaPago').prop('disabled', true);
+      	$('#fechaCorrespondencia').prop('disabled', true);
+      	$('#caja').prop('disabled', true);
+		
+		switch(sit){
+			case 1: $('#btnGuardar').addClass("disabled");
+					$('#btnGuardar').prop('disabled', true); break;
+		}
+      }
+      
+      function habilitarCampos(aux){
+      	switch(aux){
+      		case 1:
+      			    $('#cmbEmpresas').prop('disabled', false);
+      				$('#cmbSucursales').prop('disabled', false);
+      				$('#btnAgregarTramite').prop('disabled', false);
+      				$('#btnAgregarNoTramite').prop('disabled', false);
+      				$('#cmbServicio').prop('disabled', false);
+      				$("#precio").prop('disabled', false);
+      				$('#folio').prop('disabled', false);
+      				$('#fechaPago').prop('disabled', false);
+      				$('#fechaCorrespondencia').prop('disabled', false);
+      				$('#caja').prop('disabled', false);
+      				$('#btnGuardar').removeClass("disabled");
+      			break;
+      			
+      	}
+      }
+      
+       function limpiarCampos(type){
+    			// si es 1 proviene de btnNuevo
+    			// si es 2 proviened de las empresas y/o sucursales
+    		    var txtCalle = document.getElementById("calle");
+				var txtNoExt = document.getElementById('noExt');
+				var txtNoInt = document.getElementById('noInt');
+				var txtColonia = document.getElementById('colonia');
+				var txtMunicipio = document.getElementById('municipio');
+				var txtTelefono = document.getElementById('telefono');
+				var txtNoTramite = document.getElementById("noTramite");
+				var txtPrecio = document.getElementById("precio");
+				var txtFolio = document.getElementById("folio");
+				// var fechaPago = document.getElementById("fechaPago");
+				// var fechaCorrespondencia = document.getElementById("fechaCorrespondencia");
+				var txtNoFactura = document.getElementById("noFactura");
+				var txtNoFolioModal = document.getElementById("txtNoFolioModal");
+				var txtCaja = document.getElementById("caja");
+				var txtTramiteFacturar = document.getElementById("tramite");		
+				var txtIDTTramite = document.getElementById("idTipoTramite");		
+				
+				txtCalle.value = "";
+				txtNoExt.value = "";
+				txtNoInt.value = "";
+				txtColonia.value = "";
+				txtMunicipio.value = "";
+				txtTelefono.value = "";
+				txtNoTramite.value = "";
+				txtPrecio.value = "";
+				txtFolio.value = "";
+				// fechaPago.value = "";
+				// fechaCorrespondencia.value = "";
+				txtNoFactura.value = "";
+				txtCaja.value = "";
+				txtNoFolioModal.value = "";
+				txtTramiteFacturar.value = "";
+				txtIDTTramite.value = "";
+				
+				switch(type){
+					case 1: habilitarCampos(1); break;
+				}
+				
+			} // limpiarCampos
       
       function buscarEmpSucTramiteByNumId(){
       	var ModalTxtNoTramite = document.getElementById("ModalTxtNoTramite");
@@ -1154,6 +1196,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					setTimeout(function(){
 	      				$('#noTramite').val($('#ModalTxtNoTramite').val());
     	  				$('#tramite').val($('#ModalCmbTramite option:selected').text());
+    	  				$('#idTipoTramite').val(''+idTipoTramite);
     	  			}, 200 );
       		} else {
       				setTimeout(function(){

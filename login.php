@@ -23,32 +23,6 @@ if(isset($_SESSION["session_username"])){
     <!-- iCheck -->
     <link rel="stylesheet" href="plugins/iCheck/square/blue.css">
   </head>
-<!--
-  <body>
-	
-    <div class="container">
-
-      <form class="form-signin" name='loginForm' action="procedimiento.php" method='POST'>
-      <img src="imagenes/SGN.png" class="img-responsive" alt="Responsive image">
-        <label for="inputEmail" class="sr-only">Usuario</label>
-        <input type="text" id="username" name="username" class="form-control" placeholder="Usuario" required autofocus>
-        <label for="inputPassword" class="sr-only">Contraseña</label>
-        <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
-        <br>
-        <button class="btn btn-lg btn-success btn-block" type="submit" name="login" >Entrar</button>
-        <?php
-        if(isset($_GET["msg"])){
-        	echo "<p>Error en el inicio de sesion</p>";
-        };
-        ?>
-      </form>
-
-    </div> <!-- /container 
-	
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug 
-    <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
-  	<script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-  	</body>-->
 <body class="hold-transition login-page">
     <div class="login-box">
       <div class="login-logo">
@@ -61,7 +35,7 @@ if(isset($_SESSION["session_username"])){
         <form action="procedimiento.php" method="post">
           <div class="form-group has-feedback">
             <input type="username" id="username" name="username" class="form-control" placeholder="Usuario">
-            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">
             <input type="password" id="password" name="password" class="form-control" placeholder="Password">
@@ -88,7 +62,7 @@ if(isset($_SESSION["session_username"])){
 					break;
 					
 				default: 
-					echo "<p>Error desconocido</p>";
+					echo "<p>Error en el inicio de sesión</p>";
 					
 			}
 			

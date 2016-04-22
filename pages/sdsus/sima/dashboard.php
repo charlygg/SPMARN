@@ -12,7 +12,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html>
   <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>SPMARN | Dashboard</title>
     <!-- Tell the browser to be responsive to screen width -->
@@ -64,7 +64,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   |               | sidebar-mini                            |
   |---------------------------------------------------------|
   -->
-  <body class="hold-transition skin-black sidebar-mini">
+  <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
 
       <!-- Main Header -->
@@ -87,7 +87,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Navbar Right Menu -->
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav"> 
-            	
+            	<!---------------------------------------------NOTIFICACIONES------------------------------------------------------>
               <!-- User Account Menu -->
               <li class="dropdown user user-menu">
                 <!-- Menu Toggle Button -->
@@ -143,7 +143,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <div class="input-group">
               <input type="text" name="q" class="form-control" placeholder="Search...">
               <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
               </span>
             </div>
           </form>
@@ -153,19 +153,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <ul class="sidebar-menu">
             <li class="header">MENU</li>
             <!-- Optionally, you can add icons to the links -->
-            <li><a href="dashboard.php"><i class="fa fa-link"></i> <span>SMG</span></a></li>
-            <li class="active"><a href="#"><i class="fa fa-link"></i> <span>AIR (Solo SO)</span></a></li>
+            <li class="active"><a href="?"><i class="fa fa-link"></i><span>SMG</span></a></li>
+            <li><a href="dashboardAir.php"><i class="fa fa-link"></i><span>AIR (Solo lectura)</span></a></li>
             <li><a href="empresas.php"><i class="fa fa-link"></i> <span>Empresas y Sucursales</span></a></li>
             <!--<li><a href="tramites.php"><i class="fa fa-link"></i><span>Tramites</span></a></li>-->
-            
             <li class="treeview">
-            	<?php	
+              <a href="#"><i class="fa fa-link"></i> <span>Menu trámites SMG</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+              	<?php	
 					if(empty($_GET)){
 						echo '<li class="active"><a href="">Trámites nuevos</a></li>';
 						echo '<li><a href="tramites_proceso.php">Trámites en proceso</a></li>';
 						echo '<li><a href="tramites_finalizados.php">Trámites finalizados</a></li>';
-						echo '<li><a href="tramites_urgentes.php">Trámites urgentes</a></li>';
-						echo '<li><a href="tramites_vencidos.php">Trámites vencidos</a></li>';
 					} else{
 						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
 							$urlParametros = "?metodoSeleccionFecha=".$_GET['metodoSeleccionFecha']."&anio=".$_GET['anio']."&mes=".$_GET['mes'];
@@ -175,11 +174,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						}
 					}
           		?>
-              <a href="#"><i class="fa fa-link"></i> <span>Menu trámites AIR</span> <i class="fa fa-angle-left pull-right"></i></a>
-              <ul class="treeview-menu">
-                <li><a href="tramites/tramites_nuevos.php">Trámites nuevos</a></li>
-                <li><a href="tramites/tramites_proceso.php">Trámites en proceso</a></li>
-                <li><a href="tramites/tramites_finalizados.php">Trámites finalizados</a></li>
               </ul>
             </li>
           </ul><!-- /.sidebar-menu -->
@@ -192,7 +186,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Estado de los tramites
+            Estado global de los tramites
            <?php
            	function getUltimoDiaMes($elAnio,$elMes) {
  		 		return date("d",(mktime(0,0,0,$elMes+1,1,$elAnio)-1));
@@ -249,7 +243,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				
 				$labelFechaInicial = $primerDia."-".$mesActual."-".$anio;					
 				$labelFechaTermino = $ultimoDia."-".$mesActual."-".$anio;
-				
+				 
 				echo " desde ".$GLOBALS['labelFechaInicial']." hasta ".$GLOBALS['labelFechaTermino'];
 			 }
 			
@@ -267,11 +261,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Your Page Content Here -->
         <section class="content">		
 		<?php
-		require('../../db_connect_air.php');
-		/* Obtencion de los totales de los tramites DEL */
-		$mysqli = new mysqli($servidor, $user, $passwd, $database, $port);
-		$fi = $GLOBALS['fechaInicial'];
-		$ft = $GLOBALS['fechaTermino'];
+		/* Obtencion de los totales de los tramites*/
+		require('../../db_connect.php');
 		
 		$aux = basename($_SERVER['REQUEST_URI']);
 		$arrayAux = explode("?",$aux);
@@ -283,84 +274,79 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			$urlParametros = $arrayAux[1];
 		}
 		
-		$numProceso = 0;
-		$numTerminado = 0;
-						
+		$mysqli = new mysqli($servidor, $user, $passwd, $database);
+		$fi = $GLOBALS['fechaInicial'];
+		$ft = $GLOBALS['fechaTermino'];
+		
+		$EN = 0;
+		$NU = 0;
+		$REC = 0;
+		$PRO = 0;
+		$TER_MES = 0;
+		$TER = 0;
+	
 		if (!$mysqli){
   			die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 		}
-		/* Consultamos la informacion que esta en proceso*/				
-		$resultado = $mysqli->query("call sds.sp_reporte_diario_generico(2, '$fi','$ft')")
-		or trigger_error($mysqli->error);
 		
-		while ($row = $resultado->fetch_array(MYSQLI_ASSOC)){
-			$numProceso = $numProceso + 1;
-		}	
-		$mysqli->close();
-		
-		/* Consultamos la informacion que esta temrinada*/
-		$mysqli = new mysqli($servidor, $user, $passwd, $database, $port);
-		if (!$mysqli){
-  			die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
+		$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(4,'$fi','$ft')");
+		while($k = mysqli_fetch_array($resultado)){
+			$EN = $k['TOTAL_TRAMITES_ENTRANTES'];
+			$NU = $k['TOTAL_TRAMITES_NUEVOS'];
+			$REC = $k['TOTAL_TRAMITES_RECIBIDOS'];
+			$PRO = $k['TOTAL_TRAMITES_PROCESO'];
+			$TER_MES = $k['TOTAL_TRAMITES_MES_T'];
+			$TER = $k['TOTAL_TRAMITES_TERMINADOS'];
 		}
-		$resultado = $mysqli->query("call sds.sp_reporte_diario_generico(3, '$fi','$ft')")
-		or trigger_error($mysqli->error);
-		
-		while ($row = $resultado->fetch_array(MYSQLI_ASSOC)){
-			$numTerminado = $numTerminado + 1;
-		}	
-		
 		$mysqli->close();
 		?>
           <div class="row">
             <div class="col-md-3 col-sm-6 col-xs-12">
-            <a href="tramitesAIR/tramitesSO_proceso.php?<?php echo $urlParametros ?>" style="color: #000;">
+            <a href="tramites/tramites_nuevos.php?<?php echo $urlParametros ?>" style="color: #000;">
               <div class="info-box">
-                <span class="info-box-icon bg-green"><i class="fa fa-flag-o"></i></span>
+                <span class="info-box-icon bg-aqua"><i class="fa fa-envelope-o"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">En Proceso</span>
-                  <span class="info-box-number"><?php echo $numProceso; ?></span>
+                  <span class="info-box-text">Nuevos tramites</span>
+                  <span class="info-box-number"><?php echo $NU ?></span>
+                  <br>
+                  <span class="info-box-text">(En recepcion)</span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
             </a>
             </div><!-- /.col -->
             <div class="col-md-3 col-sm-6 col-xs-12">
-            <a href="tramitesAIR/tramitesSO_finalizados.php?<?php echo $urlParametros; ?>" style="color: #000;">
+            <a href="tramites/tramites_proceso.php?<?php echo $urlParametros ?>" style="color: #000;">
+              <div class="info-box">
+                <span class="info-box-icon bg-green"><i class="fa fa-flag-o"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">En Proceso (En el area)</span>
+                  <span class="info-box-number"><?php echo $PRO + $TER_MES; ?></span>
+                  <span class="info-box-text">Recibidos (En el area)</span>
+                  <span class="info-box-number"><?php echo $REC ?></span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </a>
+            </div><!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+            <a href="tramites/tramites_finalizados.php?<?php echo $urlParametros ?>" style="color: #000;">
               <div class="info-box">
                 <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">Finalizados</span>
-                  <span class="info-box-number"><?php echo $numTerminado; ?></span>
-                  <span class="info-box-text"></span>
+                  <span class="info-box-number"><?php echo $TER ?></span>
+                  <span class="info-box-text">Notificados</span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
             </a>
-            </div><!-- /.col -->
-            <div class="col-md-3 col-sm-6 col-xs-12">
-           <!--	<a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;"> -->
-              <div class="info-box">
-                <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
-                </a>
-                <div class="info-box-content">
-                <!-- <a href="tramites/tramites_totales.php?<?php echo $urlParametros ?>" style="color: #000;"> -->
-                  <span class="info-box-text">ENTRANTES</span>
-                  <span class="info-box-number"></span>
-                  <span class="info-box-text">CUMPLIMIENTO</span>
-                  <span class="info-box-number"><?php echo number_format(($numTerminado/$numProceso)*100,2)." % - ";  ?>
-                  	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="despliegaGraficoAreas()" class="fa fa-fw fa-pie-chart">Areas</i>
-                  </span>
-                </div><!-- /.info-box-content -->
-              </div><!-- /.info-box -->
-			<!--</a>-->
-            </div><!-- /.col -->         
+            </div><!-- /.col -->      
           </div><!-- /.row -->
               <div class="nav-tabs-custom">
                 <!-- Tabs within a box -->
                 <ul class="nav nav-tabs pull-right">
-                  <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites (Recibidos vs Finalizados)</li>
+                  <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites (Capturados en el dia en gris y los recibidos en azul)</li>
                 </ul>
-                <div class="tab-content no-padding"> 
-					<div id="myChart" style="width:100%; height:400px;"></div>               	
+                <div class="tab-content no-padding">
+					<div id="myChart" style="width:100%; height:400px;"></div>                	
 					<table>
 						<tr>
 							<td><div class="form-group"><label style="padding-left: 10px; padding-right: 10px;">Seleccionar otro mes de actividad </label></div></td>
@@ -371,14 +357,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<?php
 										$arrayAnio2 = explode('-',$GLOBALS['labelFechaTermino']);
 										$anioLabel = $arrayAnio2[2];
-										$arrayAnio = array( '2009'=>'2009',
-															'2010'=>'2010',
-															'2011'=>'2011',
-															'2012'=>'2012',
-															'2013'=>'2013',
-															'2014'=>'2014',
-															'2015'=>'2015',
-															'2016'=>'2016');
+										$arrayAnio = array('2015'=>'2015',
+															'2016' =>'2016');
 										foreach($arrayAnio as $anio=>$valor){
 											if($anioLabel == $anio){
 												echo "<option value=".$anio." selected='selected'>".$valor."</option>";		
@@ -397,6 +377,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<?php
 										$arrayFecha2 = explode('-',$GLOBALS['labelFechaTermino']);
 										$mesLabel = $arrayFecha2[1];
+										
 										$arraySemana = array('01' => 'Enero',
 															'02' => 'Febrero',
 															'03' => 'Marzo',
@@ -433,89 +414,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <div class="nav-tabs-custom">
                 <!-- Tabs within a box -->
                 <ul class="nav nav-tabs pull-right">
-                  <li class="pull-left header"><i class="fa fa-inbox"></i> Reporte Diario de Solicitudes AIR</li>
+                  <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites entrantes vs finalizados</li>
                 </ul>
                 <div class="tab-content no-padding">
-                	<table id="tblFullCaracteristicas" class="table table-bordered table-striped">
-                  	<thead>
-                        <th>No. Tramite</th>
-                        <th>Tramite</th>
-                        <th>Area</th>
-                        <th>Empresa</th>
-                        <th>Asunto</th>
-                        <th>Recibido</th>
-                    </thead>
-                    <tbody>
-                  	<?php
-						require('../../db_connect_air.php');
-
-						$aux = basename($_SERVER['REQUEST_URI']);
-						$arrayAux = explode("?",$aux);
-
-						$urlParametros = "";	
-
-						if(empty($arrayAux[1])){
-							} else {
-							$urlParametros = $arrayAux[1];
-						}
-		
-						$mysqli = new mysqli($servidor, $user, $passwd, $database, $port);
-						$fi = $GLOBALS['fechaInicial'];
-						$ft = $GLOBALS['fechaTermino'];
-						
-						if (!$mysqli){
-  							die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
-						}
-						
-						$resultado = $mysqli->query("call sds.sp_reporte_diario_generico(1, '$fi','$ft')")
-						or trigger_error($mysqli->error);
-						
-						while ($row = $resultado->fetch_array(MYSQLI_ASSOC)){
-							echo "<tr>";
-							// echo "<td><a href='visor_so.php?so=".$row['salesorder_no']."'>".$row['salesorder_no']."</a></td>";
-							echo "<td>".$row['salesorder_no']."</td>";
-							echo "<td>".utf8_encode($row['cf_556'])."</td>";
-							echo "<td>".utf8_encode($row['cf_578'])."</td>";
-							echo "<td>".utf8_encode($row['accountname'])."</td>";
-							echo "<td>".utf8_encode($row['tramiteDescripcion'])."</td>";
-							echo "<td>".$row['cf_552']."</td>";
-							echo "</tr>";
-						}	
-						$mysqli->close();
-					?>
-                    </tbody>
-                    </table>
+                	<div id="myChartFinalizados" style="width:100%; height:400px;"></div>                	
                 </div>
               </div>
 	  </section>
 </div><!-- /.content-wrapper -->
-<!-- VENTANA Modal PARA MOSTRAR EL % DE CUMPLIMIENTO A NIVEL AREA, SE MUESTRA CUANDO SE LE DA CLIC AL BOTON DE GRAFICO -->
-<div class="modal fade" id="graficoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto; max-width: 600px;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Cumplimiento por áreas</h4>
-      </div>
-       <div class="modal-body">
-      	<div class="row">
-      		<div class="col-md-12">
-				<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
-			</div>
-		</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
- <!-- Main Footer -->
 <?php include("../footer.php"); ?>
+ <!-- Main Footer -->
 </div><!-- ./wrapper -->
-
-    <!-- REQUIRED JS SCRIPTS -->
-
     <!-- jQuery 2.1.4 -->
     <script src="../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
@@ -532,16 +441,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- HighCharts Plugin-->
     <script src="../../../plugins/highcharts/js/highcharts.js"></script>
     <script src="../../../plugins/highcharts/js/modules/exporting.js"></script>
+        <!-- Chart JS -->
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
       $(function (){
-      	var table =	$('#tblFullCaracteristicas').dataTable();
       	/* Si no elejimos que fecha de inicio y termino queremos, por defecto traera las del mes actuales desde el primer dia
-      	 hasta el ultimo segun sea el mes*/
+      	 hasta el ultimo segun sea el mes actuals*/
       	llenaGraficoUno();    
+      	setTimeout(function() { llenaGraficoD();}, 1000);
+		/* Traducciones de HighCharts al español*/      	
       	Highcharts.setOptions({
       		lang: {
       			months: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
@@ -559,6 +471,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       			resetZoomTitle: 'Reiniciar zoom a 1:1'
       		}
       	});
+        $("#tblFullCaracteristicas").DataTable();
 	  });
     </script>
     <script>
@@ -566,6 +479,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     		llenaGraficoUno();
     	}
     	
+    	function recargarGraficoDos(){
+    		llenaGraficoDos();
+    	}
+    
     	function llenaGraficoUno(){
     	//$('#rangoFecha').daterangepicker();
       	var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
@@ -577,7 +494,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
         	type: "POST",
         	dataType: "json",
-        	url: "../getAirTramitesEntranteVsSaliente.php",
+        	url: "../getFlujoTramitePersonalizado.php",
         })
         .done(function(data, textStatus, jqXHR){
         	if(console && console.log){
@@ -598,6 +515,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
       	var arrayDias = new Array();
       	var arrayTramites = new Array();
+      	var arrayTramitesNum = new Array();
+      	
+      	var arrayDias2 = new Array();
       	var arrayTramites2 = new Array();
       	
       	var fechaInicio = "<?php echo $GLOBALS['labelFechaInicial']; ?>";
@@ -606,15 +526,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		var i = 0;
       	for(var key in data2){
       		/* Algunas fechas dan null en un arreglo mienstras que en el otro no, el if es para detectar esos nulls*/
-   	 		arrayDias[i] = data2[key].FECHA_RECIBIDO;
+      	    if (data2[key].fechaRecibido == null) { 
+      	 		arrayDias[i] = data2[key].fechaCaptura;
+      	 	} else {
+      	 		arrayDias[i] = data2[key].fechaRecibido;
+      	 	}
       
-      		var num = isNaN(parseInt(data2[key].NUM_TRAMITES_RECIBIDOS)) ? 0 : parseInt(data2[key].NUM_TRAMITES_RECIBIDOS)
+      		var num = isNaN(parseInt(data2[key].noTramiteCapturados)) ? 0 : parseInt(data2[key].noTramiteCapturados)
 			arrayTramites[i] = num;
 			
-			var num2 = isNaN(parseInt(data2[key].NUM_TRAMITES_FINALIZADOS)) ? 0 : parseInt(data2[key].NUM_TRAMITES_FINALIZADOS)
+			var num2 = isNaN(parseInt(data2[key].noTramiteRecibidos)) ? 0 : parseInt(data2[key].noTramiteRecibidos)
 			arrayTramites2[i] = num2;
 			i++;
-      	}     
+      	}    
       	
       	$('#myChart').highcharts({
         chart: {
@@ -643,16 +567,80 @@ scratch. This page gets rid of all links and provides the needed markup only.
             }
         },
         series: [{
-            name: 'Tramites finalizados',
-            data: arrayTramites2
+            name: 'Tramites capturados',
+            data: arrayTramites
         }, {
             name: 'Tramites recibidos',
-            data: arrayTramites
+            data: arrayTramites2
         }]
     });
 }
 
-       	
+        
+        function llenaGraficoDos(data2){
+        console.log(data2);
+        
+        var fechaInicio = "<?php echo $GLOBALS['labelFechaInicial']; ?>";
+      	var fechaTermino = "<?php echo $GLOBALS['labelFechaTermino']; ?>";
+      	
+      	var arrayDias = new Array();
+      	var arrayTramites = new Array();
+      	
+      	var arrayDias2 = new Array();
+      	var arrayTramites2 = new Array();
+      	
+		var i = 0;
+      	for(var key in data2){
+      		
+      	 	if (data2[key].fechaRecibido == null) { 
+      	 		arrayDias[i] = data2[key].fechaFinalizados;
+      	 	} else {
+      	 		arrayDias[i] = data2[key].fechaRecibido;
+      	 	}
+      		
+      		var num = isNaN(parseInt(data2[key].noTramiteFinalizados)) ? 0 : parseInt(data2[key].noTramiteFinalizados)
+			arrayTramites[i] = num;
+			
+			var num2 = isNaN(parseInt(data2[key].noTramiteRecibidos)) ? 0 : parseInt(data2[key].noTramiteRecibidos)
+			arrayTramites2[i] = num2;
+			i++;
+      	}        
+      	
+      	$('#myChartFinalizados').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Flujo de los trámites mensuales'
+        },
+        subtitle: {
+            text: 'Fechas: Desde ' + fechaInicio + ' hasta ' + fechaTermino
+        },
+        xAxis: {
+            categories: arrayDias
+        },
+        yAxis: {
+            title: {
+                text: 'No. de Trámites'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: true
+            }
+        },
+        series: [{
+            name: 'Tramites finalizados',
+            data: arrayTramites
+        }, {
+            name: 'Tramites recibidos',
+            data: arrayTramites2
+        }]
+    });	
+}
     /* Funciones Javascript separadas*/
     	function setFechaUno(){
     		var metodo = 1;
@@ -679,75 +667,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		}
 		
 		function despliegaGraficoAreas(){
-		var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
-      	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
-      	$.ajax({
-        	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
-        	type: "POST",
-        	dataType: "json",
-        	url: "../getAirFlujoTramiteFinalizadoPorArea.php",
-        })
-        .done(function(data, textStatus, jqXHR){
-        	if(console && console.log){
-        		console.log("La solicitud se ha completado correctamente");
-        	}
-        	setGraficoPay(data);
-        })
-        .fail(function(jqXHR, textStatus, errorThrown){
-        	if(console && console.log){
-        		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
-        	}
-        });	
+			setTimeout(function() { llenaGraficoModal();}, 200);
 		}
-		
-		function setGraficoPay(data){
-		setTimeout(function() {
-		console.log(data);
-		var datas = [];
-		i=0;
-		for(var k in data){
-			var aux = data[k].NUM_TRAMITES;
-			var yAux = parseFloat( ( aux / <?php echo $numTerminado; ?> ) * 100 );
-			var serie = new Object();
-			serie.name = data[k].DEPARTAMENTO;
-			serie.y = yAux;
-			serie.drilldown = data[k].DEPARTAMENTO;
-			datas.push(serie);
-		}
-
-		var jsonConfig = JSON.stringify(datas);
-		console.log(jsonConfig);
-		
-		$('#container').highcharts({
-        chart: {
-            type: 'pie'
-        },
-        title: {
-            text: 'Cumplimiento de las Áreas'
-        },
-        subtitle: {
-            text: ''
-        },
-        plotOptions: {
-            series: {
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}: {point.y:.1f}%'
-                }
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-        },
-        series: [{
-            name: 'Tramites',
-            colorByPoint: true,
-            data: datas
-        	}]
-    	}); // Fin Chart
-		}, 200);
-	}
    </script>
   </body>
-</html>

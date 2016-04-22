@@ -1,16 +1,15 @@
 <?php
 
-require('../db_connect.php');
+require('../db_connect_air.php');
 
-$mysqli = new mysqli($servidor, $user, $passwd, $database);
+$mysqli = new mysqli($servidor, $user, $passwd, $database, $port);
 /* Comprobamos que no esta creada ninguna variable tipo idempresa*/				
 if (!$mysqli){
 	die ("Error en la conexion con el servidor de bases de datos: ".mysql_error());
 }
 $fechaInicial = $_POST['fechaInicio'];
 $fechaTermino = $_POST['fechaTermino'];
-
-$resultado = $mysqli->query("call testsecurity.sp_flujo_tramite_personalizado(2, '$fechaInicial', '$fechaTermino')");
+$resultado = $mysqli->query("call sds.sp_reporte_diario_generico(5, '$fechaInicial', '$fechaTermino')");
 
 $array = array();
 
@@ -26,5 +25,3 @@ $json = json_encode($array);
 $mysqli->close();
 
 echo $json;
-
-?>

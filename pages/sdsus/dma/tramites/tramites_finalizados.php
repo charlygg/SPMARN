@@ -283,7 +283,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					if (!$mysqli){
   						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 					}
-										
+					
 					$arrayT = array();
 					$arrayInformacion = array();
 					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(7,'$fechaInicial','$fechaTermino')") or die ($mysqli->error.__LINE__);
@@ -321,15 +321,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</section><!-- /.content -->
       </div><!-- /.content-wrapper -->
       <!-- Main Footer -->
-      <footer class="main-footer">
-        <!-- To the right -->
-        <div class="pull-right hidden-xs">
-          Anything you want
-        </div>
-        <!-- Default to the left -->
-        <strong>SPMARN &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
-      </footer>
-     
+<?php include("../../footer.php"); ?>
     </div><!-- ./wrapper -->
     <!-- REQUIRED JS SCRIPTS -->
     <!-- jQuery 2.1.4 -->
@@ -367,7 +359,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       
 	
 	function getFilasYColumnas(){
-		Typer(function retornarHoja(););
+		Typer(retornarHoja());
 	}
 	
 	function Typer(callback){

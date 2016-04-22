@@ -284,13 +284,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <ul class="sidebar-menu">
             <li class="header">MENU</li>
             <!-- Optionally, you can add icons to the links -->
-            <li class="active"><a href="#"><i class="fa fa-link"></i><span>Inicio</span></a></li>
+            <li class="active"><a href="?"><i class="fa fa-link"></i><span>SMG</span></a></li>
             <li><a href="dashboardAir.php"><i class="fa fa-link"></i><span>AIR (Solo lectura)</span></a></li>
             <li><a href="empresas.php"><i class="fa fa-link"></i> <span>Empresas y Sucursales</span></a></li>
             <!--<li><a href="tramites.php"><i class="fa fa-link"></i><span>Tramites</span></a></li>-->
-            
             <li class="treeview">
-              <a href="#"><i class="fa fa-link"></i> <span>Menu trámites</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <a href="#"><i class="fa fa-link"></i> <span>Menu trámites SMG</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
               	<?php	
 					if(empty($_GET)){
@@ -305,8 +304,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							echo '<li class="active"><a href="">Trámites nuevos</a></li>';
 							echo '<li><a href="tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
 							echo '<li><a href="tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
-							echo '<li><a href="tramites_urgentes.php'.$urlParametros.'">Trámites urgentes</a></li>';
-							echo '<li><a href="tramites_vencidos.php'.$urlParametros.'">Trámites vencidos</a></li>';
 						}
 					}
           		?>
@@ -379,7 +376,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				
 				$labelFechaInicial = $primerDia."-".$mesActual."-".$anio;					
 				$labelFechaTermino = $ultimoDia."-".$mesActual."-".$anio;
-				
+				 
 				echo " desde ".$GLOBALS['labelFechaInicial']." hasta ".$GLOBALS['labelFechaTermino'];
 			 }
 			
@@ -488,7 +485,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <span class="info-box-text">CUMPLIMIENTO</span>
                 </a>
                   <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." % - ";  ?>
-                  	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="despliegaGraficoAreas()" class="fa fa-fw fa-pie-chart">Areas</i>
+                  	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="llenaGraficoModal()" class="fa fa-fw fa-pie-chart">Areas</i>
                   </span>
                   
                 </div><!-- /.info-box-content -->
@@ -563,27 +560,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</div>
 							</td>
 						</tr>
-						<!--
-						<tr>
-							<td><label style="padding-left: 10px;">O selecciona un rango de fecha</label></td>
-							<td colspan="2">
-								<div class="form-group">
-									<div class="input-group">
-                      					<div class="input-group-addon">
-                        					<i class="fa fa-calendar"></i>
-				                      	</div>
-                      					<input type="text" class="form-control pull-right" id="rangoFecha">
-                    				</div>
-                    				
-                    				
-								</div>
-							</td>
-							<td>
-								<div class="form-group">
-									<button class="btn btn-block btn-success" onclick="setFechaDos()">Elegir</button>
-								</div>
-							</td>
-						</tr>-->
 					</table>
                 </div>
               </div>
@@ -601,19 +577,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </div><!-- /.content-wrapper -->
 <!-- VENTANA Modal PARA MOSTRAR EL % DE CUMPLIMIENTO A NIVEL AREA, SE MUESTRA CUANDO SE LE DA CLIC AL BOTON DE GRAFICO -->
 <div class="modal fade" id="graficoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto; max-width: 600px;">
+  <div class="modal-dialog" >
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Cumplimiento por áreas</h4>
+        <h4 class="modal-title" id="myModalLabel">Gráfico de cumplimiento</h4>
       </div>
        <div class="modal-body">
       	<div class="row">
-      		<div class="col-md-6">
-				<canvas id="chartCumpimiento"></canvas>
+      		<div class="col-md-12">
+				<!-- <canvas id="chartCumpimiento"></canvas> -->
+				<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
 			</div>
-			<div class="col-md-5" id="tablaColoresCumplimiento">
-			</div>
+			<!-- <div class="col-md-5" id="tablaColoresCumplimiento"> -->
+			<!-- </div> -->
 		</div>
       </div>
       <div class="modal-footer">
@@ -622,24 +599,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </div>
   </div>
 </div>
+<?php include("../footer.php"); ?>
  <!-- Main Footer -->
-      <footer class="main-footer">
-        <!-- To the right -->
-        <div class="pull-right hidden-xs">
-          Anything you want
-        </div>
-        <!-- Default to the left -->
-        <strong>SPMARN &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
-      </footer>
 </div><!-- ./wrapper -->
-
-    <!-- REQUIRED JS SCRIPTS -->
-
     <!-- jQuery 2.1.4 -->
     <script src="../../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- Bootstrap 3.3.5 -->
     <script src="../../../bootstrap/js/bootstrap.min.js"></script>
-    
     <!-- AdminLTE App -->
     <script src="../../../dist/js/app.min.js"></script>
     <!-- SlimScroll -->
@@ -653,7 +619,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../../../plugins/highcharts/js/highcharts.js"></script>
     <script src="../../../plugins/highcharts/js/modules/exporting.js"></script>
         <!-- Chart JS -->
-    <script src="../../../plugins/chartjs/Chart.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
@@ -836,7 +802,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
       	 		arrayDias[i] = data2[key].fechaRecibido;
       	 	}
       		
-      		
       		var num = isNaN(parseInt(data2[key].noTramiteFinalizados)) ? 0 : parseInt(data2[key].noTramiteFinalizados)
 			arrayTramites[i] = num;
 			
@@ -879,7 +844,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             data: arrayTramites2
         }]
     });	
-}    
+}
 	
 		function llenaGraficoModal(){
 		/*	Ajax para rellenar el grafico de % de cumplimiento a nivel area*/
@@ -894,7 +859,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         .done(function(data, textStatus, jqXHR){
         	if(console && console.log){
         		console.log("La solicitud se ha completado correctamente");
-        		llenaGraficoTres(data);
+        		setGraficoPay(data);
         	}
         	
         })
@@ -904,86 +869,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         		alert("Algo ha fallado " + textStatus + " " + errorThrown);
         	}
         }); /* Fin de Ajax*/
-} /* Fin de llenaGraficoTres*/
-
-		function llenaGraficoTres(datos){
-        console.log(datos);
-        var arrayTerminado = new Array();
-        var i = 0;
-        for(var key in datos){
-        	var tramites = [];
-        	tramites['value'] = datos[i].NUM_TRAMITES;
-        	tramites['color'] = datos[i].color_rgb;
-        	tramites['label'] = datos[i].vc_departamento;
-        	arrayTerminado[i] = tramites;
-        	i++;
-        }
-        ctx2 = $("#chartCumpimiento").get(0).getContext("2d");
-		var myNewChart3 = new Chart(ctx2).Pie(arrayTerminado, {
-			                //Boolean - Show a backdrop to the scale label
-                scaleShowLabelBackdrop: true,
-                //String - The colour of the label backdrop
-                scaleBackdropColor: "rgba(255,255,255,0.75)",
-                // Boolean - Whether the scale should begin at zero
-                scaleBeginAtZero: true,
-                //Number - The backdrop padding above & below the label in pixels
-                scaleBackdropPaddingY: 2,
-                //Number - The backdrop padding to the side of the label in pixels
-                scaleBackdropPaddingX: 2,
-                //Boolean - Show line for each value in the scale
-                scaleShowLine: true,
-                //Boolean - Stroke a line around each segment in the chart
-                segmentShowStroke: true,
-                //String - The colour of the stroke on each segement.
-                segmentStrokeColor: "#fff",
-                //Number - The width of the stroke value in pixels
-                segmentStrokeWidth: 2,
-                //Number - Amount of animation steps
-                animationSteps: 100,
-                //String - Animation easing effect.
-                animationEasing: "easeOutBounce",
-                //Boolean - Whether to animate the rotation of the chart
-                //animateRotate: true,
-                //Boolean - Whether to animate scaling the chart from the centre
-                animateScale: false
-		});
-		//Llamamos a la otra funcion que dibuja la tabla de los colores
-		setTimeout(function() { llenaTablaColores(datos);}, 200);
-} /* Fin de llenaGraficoTres(data)*/	
-		function llenaTablaColores(datos){
-			var divTabla = document.getElementById("tablaColoresCumplimiento");
-			$("#tablaColoresCumplimiento").empty();
-			var strTabla = '<table id="tblFullTramites" style="padding-left: 10px;">';
-	      	strTabla += '<thead>';
-      		strTabla += '<tr>';
-      		strTabla += '<th>Color</th>';
-      		strTabla += '<th style="padding-left: 20px;"></th>';
-      		strTabla += '<th>Tramite</th>';
-      		strTabla += '</tr>';
-      		
-      		strTabla += '</tr>';
-      		strTabla += '<td style="padding: 5px;" colspan=3></td>';
-      		strTabla += '</tr>';
-      		
-      		strTabla += '</thead>';
-      		strTabla += '<tbody>';
-      		var i = 0;
-			for(var key in datos){
-				strTabla += '<tr>';
-				strTabla += '<td bgcolor="'+datos[i].color_rgb+'"></td>';
-				strTabla += '<td></td>';
-				strTabla += '<td>'+datos[i].vc_departamento+'</td>';
-				strTabla += '</tr>';
-				
-				strTabla += '</tr>';
-      			strTabla += '<td style="padding: 5px;" colspan=3></td>';
-      			strTabla += '</tr>';
-				
-				i++;
-			}
-      		strTabla += '</tbody>';
-      		divTabla.innerHTML = strTabla;
-		} /* Fin de llenaTablaColores */       	
+} /* Fin de llenaGraficoTres*/ 	
 
     /* Funciones Javascript separadas*/
     	function setFechaUno(){
@@ -1013,7 +899,100 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		function despliegaGraficoAreas(){
 			setTimeout(function() { llenaGraficoModal();}, 200);
 		}
- 
+		
+		function setGraficoPay(data){
+		setTimeout(function() {
+		console.log(data);
+		var datas = [];
+		i=0;
+		for(var k in data){
+			var aux = parseFloat(data[k].NUM_TRAMITES);
+			var yAux = parseFloat( ( aux / <?php echo $TER; ?> ) * 100 );
+			var serie = new Object();
+			serie.name = data[k].vc_departamento;
+			serie.y = yAux;
+			serie.drilldown = data[k].vc_departamento;
+			datas.push(serie);
+		}
+		// objConfig.data = arrayDatos;
+		// arrData[0] = objConfig;
+		var jsonConfig = JSON.stringify(datas);
+		console.log(jsonConfig);
+		
+		$('#container').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Cumplimiento de las Áreas'
+        },
+        subtitle: {
+            text: ''
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.y:.1f}%'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+        },
+        series: [{
+            name: 'Tramites',
+            colorByPoint: true,
+            data: datas
+            // [{
+                // name: 'Microsoft Internet Explorer',
+                // y: 56.33,
+                // drilldown: 'Microsoft Internet Explorer'
+            // }, {
+                // name: 'Chrome',
+                // y: 24.03,
+                // drilldown: 'Chrome'
+            // }]
+        }]
+        // usaremos el drilldown por si se quiere mostrar un desplegado de los tramites
+        // drilldown: { 
+            // series: [{
+                // name: 'Microsoft Internet Explorer',
+                // id: 'Microsoft Internet Explorer',
+                // data: [
+                    // ['v11.0', 24.13],
+                    // ['v8.0', 17.2],
+                    // ['v9.0', 8.11],
+                    // ['v10.0', 5.33],
+                    // ['v6.0', 1.06],
+                    // ['v7.0', 0.5]
+                // ]
+            // }, {
+                // name: 'Chrome',
+                // id: 'Chrome',
+                // data: [
+                    // ['v40.0', 5],
+                    // ['v41.0', 4.32],
+                    // ['v42.0', 3.68],
+                    // ['v39.0', 2.96],
+                    // ['v36.0', 2.53],
+                    // ['v43.0', 1.45],
+                    // ['v31.0', 1.24],
+                    // ['v35.0', 0.85],
+                    // ['v38.0', 0.6],
+                    // ['v32.0', 0.55],
+                    // ['v37.0', 0.38],
+                    // ['v33.0', 0.19],
+                    // ['v34.0', 0.14],
+                    // ['v30.0', 0.14]
+                // ]
+            // }]
+        // }
+    	}); // Fin Chart
+	}, 200);
+		}
    </script>
   </body>
 </html>
