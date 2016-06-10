@@ -73,9 +73,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Logo -->
         <a href="" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>A	</b>LT</span>
+          <span class="logo-mini"><b>SDS</b></span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>Admin</b>LTE</span>
+          <span class="logo-lg"><b>SPMARN</b></span>
         </a>
 
         <!-- Header Navbar -->
@@ -128,7 +128,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								$unixVencimientoTramite = mktime(0, 0, 0, $mes, $dia, $anio);
 								
 								list($anioInit, $mesInit, $diaInit) = explode('-',$fechaInicioTramite);
-								 $diasTramite = Evalua(DiasHabiles($diaInit.'-'.$mesInit.'-'.$anioInit, $hoy));
+								  $diasTramite = Evalua(DiasHabiles($diaInit.'-'.$mesInit.'-'.$anioInit, $hoy));
 							}
 						}
 						/* If para filtrar los tramites en proceso*/
@@ -309,6 +309,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           		?>
               </ul>
             </li>
+            <li><a href="reportes.php"><i class="fa fa-link"></i> <span>Reportes de tramites</span></a></li>
           </ul><!-- /.sidebar-menu -->
         </section>
         <!-- /.sidebar -->
@@ -484,7 +485,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <span class="info-box-number"><?php echo $EN ?></span>
                   <span class="info-box-text">CUMPLIMIENTO</span>
                 </a>
-                  <span class="info-box-number"><?php echo number_format(($TER/$EN)*100,2)." % - ";  ?>
+                  <span class="info-box-number"><?php  
+                  if(number_format($EN) == 0){
+                  	echo "0 % -";
+                  } else if (number_format(($TER/$EN)*100,2) > 100){
+                  	echo "100 % - ";
+                  } else echo number_format(($TER/$EN)*100,2)." % - ";  ?>
                   	<i style="cursor: pointer;" data-toggle="modal" data-target="#graficoModal" onclick="llenaGraficoModal()" class="fa fa-fw fa-pie-chart">Areas</i>
                   </span>
                   

@@ -25,11 +25,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Theme style -->
     <link rel="stylesheet" href="../../../dist/css/AdminLTE.min.css">
     <!-- DataTables -->
-    <link rel="stylesheet" href="../../../plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.material.min.css">
+
+    <!-- <link rel="stylesheet" href="../../../plugins/datatables/dataTables.bootstrap.css"> -->
    <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../dist/css/skins/_all-skins.min.css">
-
+    
+    
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -66,9 +69,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Logo -->
         <a href="index2.html" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>A	</b>LT</span>
+          <span class="logo-mini"><b>SDS</b></span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>Admin</b>LTE</span>
+          <span class="logo-lg"><b>SPMARN</b></span>
         </a>
 
         <!-- Header Navbar -->
@@ -175,7 +178,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Pagina principal
+            CATALOGO DE EMPRESAS
             <small></small>
           </h1>
           <ol class="breadcrumb">
@@ -206,12 +209,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  
 		  */
 		?>		
-       	        <div class="box">
+       	        <div class="box box-info">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Listado de Empresas</h3>
+                  <h3 class="box-title">Para ver las sucursales de una empresa, haga clic en el nombre de la empresa</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-				<p>Para ver las sucursales de una empresa, haga clic en el nombre de la empresa</p>
                   <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
                   	<thead>
                       <tr>
@@ -444,7 +446,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
          fixed layout. -->
     <script>
       $(function () {
-        $("#tblFullCaracteristicas").DataTable();
+        $("#tblFullCaracteristicas").DataTable( {
+        columnDefs: [
+            {
+            	/* target se utiliza para definir las columnas con el estilo*/
+                targets: [ 0, 1],
+                className: 'mdl-data-table__cell--non-numeric'
+            }
+        ]
+    });
       });
     </script>
   </body>

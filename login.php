@@ -27,7 +27,7 @@ if(isset($_SESSION["session_username"])){
     <div class="login-box">
       <div class="login-logo">
         <a href="login.php"><b>
-        	<img src="imagenes/SGN.png" />
+        	<img src="imagenes/SGN.png" width="320" height="150"/>
         </b></a>
       </div><!-- /.login-logo -->
       <div class="login-box-body">
@@ -63,9 +63,7 @@ if(isset($_SESSION["session_username"])){
 					
 				default: 
 					echo "<p>Error en el inicio de sesión</p>";
-					
 			}
-			
         } 
         ?>
 		<br>

@@ -252,7 +252,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				
 						$labelFechaInicial = $primerDia."-".$mesActual."-".$anio;					
 						$labelFechaTermino = $ultimoDia."-".$mesActual."-".$anio;
+				
 					 }
+ 
 ?>		
        	        <div class="box">
                 <div class="box-header with-border">
@@ -441,4 +443,3 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	}
     </script>
   </body>
-</html>

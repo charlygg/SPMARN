@@ -178,6 +178,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           		?>
               </ul>
             </li>
+            
           </ul><!-- /.sidebar-menu -->
         </section>
       </aside>
@@ -307,6 +308,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							$fechaCierre = $aT2[2]."/".$aT2[1]."/".$aT2[0];		
 							$fechaCierre2Formato = $aT2[2]."-".$aT2[1]."-".$aT2[0];
 						echo "<td>".$fechaCierre."</td>";
+							
+							
 							$diasHabilesTramite = Evalua(DiasHabiles($fechaInicial2Formato, $fechaCierre2Formato));
 						echo "<td>".$diasHabilesTramite."</td>";
 						echo "</tr>";
@@ -359,10 +362,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       
 	
 	function getFilasYColumnas(){
-		Typer(retornarHoja());
-	}
 	
-	function Typer(callback){
 		var table = $('#tblFullCaracteristicas').DataTable();
 		var info = table.page.info();
 		var numOfPages = info.pages;
@@ -434,14 +434,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	    hiddenField.setAttribute("name", "jsonValues");
 	    hiddenField.setAttribute("value", jsonTodo);
 	    form.appendChild(hiddenField);
-
+q
 	    document.body.appendChild(form);
     	form.submit();
 		return true;
-	}
-	
-	function retortarHoja(){
-		console.log("");
 	}
 	
     </script>

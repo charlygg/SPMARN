@@ -12,12 +12,11 @@ if(!isset($_POST['idsucursal'])){ $idsucursal = -1; } else {
 	$idsucursal = $_POST['idsucursal'];
 }				
 
-
 if (!$mysqli){
 	die ("Error en la conexion con el servidor de bases de datos: ".mysql_error());
 }
 
-$resultado = $mysqli->query("call ingresos2015.sp_consultar_tramites_by_emp_suc($idempresa, $idsucursal)");
+$resultado = $mysqli->query("call ingresos2015.sp_relaciones_diarias_solicitudes_otros(4, $idempresa, $idsucursal)");
 
 $array = array();
 /* Comprobamos que contiene datos, en caso contrario mostrar un mesaje json de error*/

@@ -4,8 +4,6 @@ if(!isset($_SESSION["session_username"])){
 	header("location:../../../../login.php?msg=errort");
 }
 date_default_timezone_set("America/Monterrey");
-include ("../../clases/Database.php");
-
 ?>
 <!DOCTYPE html>
 <!--
@@ -30,10 +28,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.css" />
     <!-- DataTables -->
     <link rel="stylesheet" href="../../../../plugins/datatables/dataTables.bootstrap.css">
-   	<!-- AdminLTE Skins. Choose a skin from the css/skins
+    <!-- FixedColumns fro Datatables -->
+	<!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../../../../dist/css/skins/_all-skins.min.css"> 
 
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Sobreescritura de los css para mejor personalizacion en la pagina-->
     <style type="text/css">
     	.yadcf-filter{
     		width: 100%;
@@ -67,11 +73,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <header class="main-header">
 
         <!-- Logo -->
-        <a href="index2.html" class="logo">
+        <a class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini"><b>A	</b>LT</span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>Admin</b>LTE</span>
+          <span class="logo-lg"><b>Administración</b></span>
         </a>
 
         <!-- Header Navbar -->
@@ -101,10 +107,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </li>
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="../../../../myprofilesettings.php" class="btn btn-default btn-flat">Mi cuenta</a>
+                      <a href="../../../../myprofilesettings.php" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="../../../../logoutsession.php" class="btn btn-default btn-flat">Cerrar sesión</a>
+                      <a href="../../../../logoutsession.php" class="btn btn-default btn-flat">Sign out</a>
                     </div>
                   </li>
                 </ul>
@@ -150,41 +156,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="header">MENU</li>
             <!-- Optionally, you can add icons to the links -->
             <li><a href="../dashboard.php"><i class="fa fa-link"></i> <span>Inicio</span></a></li>
-            <li class="treeview"><a href="../empresas.php"><i class="fa fa-link"></i> <span>Empresas y Sucursales</span></a></li>
             <li class="treeview active">
               <a href="#"><i class="fa fa-link"></i> <span>Menu trámites</span> <i class="fa fa-angle-left pull-right "></i></a>
               <ul class="treeview-menu">
               	<?php	
 					if(empty($_GET)){
-						echo '<li class="active"><a href="">Trámites nuevos</a></li>';
+						echo '<li><a href="tramites_nuevos.php">Trámites nuevos</a></li>';
 						echo '<li><a href="tramites_proceso.php">Trámites en proceso</a></li>';
-						echo '<li><a href="tramites_finalizados.php">Trámites finalizados</a></li>';
-						echo '<li><a href="tramites_urgentes.php">Trámites urgentes</a></li>';
-						echo '<li><a href="tramites_vencidos.php">Trámites vencidos</a></li>';
+						echo '<li class="active"><a href="">Trámites finalizados</a></li>';
 					} else{
 						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
 							$urlParametros = "?metodoSeleccionFecha=".$_GET['metodoSeleccionFecha']."&anio=".$_GET['anio']."&mes=".$_GET['mes'];
-							echo '<li class="active"><a href="">Trámites nuevos</a></li>';
+							echo '<li><a href="tramites_nuevos.php'.$urlParametros.'">Trámites nuevos</a></li>';
 							echo '<li><a href="tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
-							echo '<li><a href="tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
-							echo '<li><a href="tramites_urgentes.php'.$urlParametros.'">Trámites urgentes</a></li>';
-							echo '<li><a href="tramites_vencidos.php'.$urlParametros.'">Trámites vencidos</a></li>';
+							echo '<li class="active"><a href="">Trámites finalizados</a></li>';
 						}
 					}
           		?>
               </ul>
             </li>
-            <!--            
-            <li class="treeview">
-              <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
-              <ul class="treeview-menu">
-                <li><a href="#">Link in level 2</a></li>
-                <li><a href="#">Link in level 2</a></li>
-              </ul>
-            </li>-->
           </ul><!-- /.sidebar-menu -->
         </section>
-        <!-- /.sidebar -->
       </aside>
 
       <!-- Content Wrapper. Contains page content -->
@@ -192,11 +184,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Tramites en Estatus Nuevo
+
+            Tramites Finalizados
             <small></small>
           </h1>
           <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard -> </a>Trámites nuevos</li>
+            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard -> </a> Trámites finalizados</li>
             <!--<li class="active">Here</li>-->
           </ol>
         </section>
@@ -204,9 +197,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <!-- Your Page Content Here -->
         <section class="content">
-			<?php
-					include "../calendarioFestivo.php";		
-		  			if(isset($_GET['metodoSeleccionFecha'])){
+		<?php		  
+		  		  	if(isset($_GET['metodoSeleccionFecha'])){
 			 	
 			 		if($_GET['metodoSeleccionFecha'] == 1){
 			 		/* Seleccion de fecha por rango mensual*/	
@@ -252,80 +244,75 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				
 						$labelFechaInicial = $primerDia."-".$mesActual."-".$anio;					
 						$labelFechaTermino = $ultimoDia."-".$mesActual."-".$anio;
+				
 					 }
-?>		
+		?>		
        	        <div class="box">
                 <div class="box-header with-border">
                   <h3 class="box-title"><?php echo "Consulta de Tramites desde ".$labelFechaInicial." hasta ".$labelFechaTermino; ?></h3>
-
                 </div><!-- /.box-header -->
                 <div class="box-body">
-                 <button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
-                  <table id="tblFullCaracteristicas" class="table table-bordered table-striped">
+                <button class="btn btn-primary btn-lg" onclick="getFilasYColumnas()">Exportar a Excel</button>
+                   <table id="tblFullCaracteristicas" class="display table table-bordered table-striped">
                   	<thead>
                       <tr>
                         <th>No. Tramite</th>
                         <th>Tramite</th>
                         <th>Area</th>
                         <th>Empresa</th>
+                        <th>Calle</th>
+                        <th>No. Ext</th>
+                        <th>No. Int</th>
+                        <th>Colonia</th>
                         <th>Asunto</th>
                         <th>Recibido</th>
-                        <th>Vencimiento</th>
-                        <th>Dias habiles</th>
+                        <th>Terminado</th>
                       </tr>
                     </thead>
-                  	
-                  	<tbody>
-                  	<?php
+                  <tbody>
+                  <?php
 					function getUltimoDiaMes($elAnio,$elMes) {
  						return date("d",(mktime(0,0,0,$elMes+1,1,$elAnio)-1));
 					}
+					
                   	/* Extrayendo el listado de catalogo empresas de la base de datos*/
                   	require('../../../db_connect.php');
-					require('../contarDias.php');
 					$mysqli = new mysqli($servidor, $user, $passwd, $database);
                   	
 					if (!$mysqli){
   						die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 					}
 					
-					echo "<h4>Tramites del mes</h4>";
-										
-					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(5,'$fechaInicial','$fechaTermino')") or die ($mysqli->error.__LINE__);
-					
+					$arrayT = array();
+					$arrayInformacion = array();
+					$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico_otros(7,".$_SESSION['session_user_depto_id'].",'$fechaInicial','$fechaTermino')") or die ($mysqli->error.__LINE__);
+	
 					while($k = mysqli_fetch_array($resultado)){
-							echo "<tr>";
-							echo "<td>".$k['NO_TRAMITE']."</td>";
-							echo "<td>".$k['TRAMITE']."</td>";
-							echo "<td>".$k['TURNADO_A']."</td>";
-							echo "<td>".$k['EMPRESA']."</td>";
-							echo "<td>".$k['ASUNTO']."</td>";
-							$aux3 =  $k['REP_FECHA_INICIO_TRAMITE'];
-							$arrayT2 = explode('-',$aux3);
-							
-							$fechaInicial2 = $arrayT2[2]."/".$arrayT2[1]."/".$arrayT2[0];		
-							$unixTime = strtotime($aux3);
-							$hoy = date("d-m-Y");
-							// cambiando a formato  de dd-MM-yyyy
-							$fechaInicial2Formato = $arrayT2[2]."-".$arrayT2[1]."-".$arrayT2[0];
-							
-							$diasHabiles = Evalua(DiasHabiles($fechaInicial2Formato, $hoy));
-							
-							echo "<td>".$fechaInicial2."</td>";			
-							echo "<td>".sumarDiasTramite($unixTime,20)."</td>";
-							echo "<td>".$diasHabiles."</td>";
-							echo "</tr>";
+						echo "<tr>";
+						echo "<td>".$k['NO_TRAMITE']."</td>";
+						echo "<td>".$k['TRAMITE']."</td>";
+						echo "<td>".$k['TURNADO_A']."</td>";
+						echo "<td>".$k['EMPRESA']."</td>";
+						echo "<td>".$k['CALLE']."</td>";
+						echo "<td>".$k['NUM_EXT']."</td>";
+						echo "<td>".$k['NUM_INT']."</td>";
+						echo "<td>".$k['COLONIA']."</td>";
+						echo "<td>".$k['ASUNTO']."</td>";
+						echo "<td>".$k['REP_FECHA_INICIO_TRAMITE']."</td>";
+						echo "<td>".$k['REP_FECHA_CIERRE_TRAMITE']."</td>";
+						echo "</tr>";
 					}
-					$mysqli->close();
+					$arrayT = array_unique($arrayT);
+					mysqli_close($mysqli);
                   	?>
-                    </tbody>
+                   </tbody>
                   </table>
                 </div><!-- /.box-body -->
-        </div>
-      <div class="control-sidebar-bg"></div>
+        	</div>
+		</section><!-- /.content -->
       </div><!-- /.content-wrapper -->
       <!-- Main Footer -->
-	<?php include("../../footer.php"); ?>
+<?php include("../../footer.php"); ?>
     </div><!-- ./wrapper -->
     <!-- REQUIRED JS SCRIPTS -->
     <!-- jQuery 2.1.4 -->
@@ -337,45 +324,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- SlimScroll -->
     <script src="../../../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <script src="../../../../plugins/fastclick/fastclick.min.js"></script>    
-    <!-- Table Export Plugin for Datatable--> 
-    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>  
+    <script src="../../../../plugins/fastclick/fastclick.min.js"></script> 
+    <!-- Table Export Plugin for Datatable-->
+    <script src="../../../../plugins/datatables/extensions/Export/datatables.min.js"></script>   
     <!-- DataTables -->
     <script src="../../../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- FixedColumn Datatable, para establecer la tabla que no se mueva -->
     <!-- Yatch -->
     <script src="../../../../plugins/yadcf-master/jquery.dataTables.yadcf.js"></script>
-    <!-- Optionally, you can add Slimscroll and FastClick plugins.
+	    <!-- Optionally, you can add Slimscroll and FastClick plugins.
          Both of these plugins are recommended to enhance the
          user experience. Slimscroll is required when using the
          fixed layout. -->
     <script>
-    $(document).ready(function(){
-    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf([
-		{column_number : 1}, /* Columnas donde queremos aplicar un filtro em combobox*/
-		{column_number : 2},
-		{column_number : 3}
-		]);
-});
-
-      	function getFilasYColumnas(){
+      $(document).ready(function () {
+    	var table =	$('#tblFullCaracteristicas').dataTable().yadcf();
+			
+		$('#contain2er').css( 'display', 'block');
+      });
+      
+	
+	function getFilasYColumnas(){
 		var table = $('#tblFullCaracteristicas').DataTable();
 		var info = table.page.info();
 		var numOfPages = info.pages;
-		var currentpage = info.page;
-		console.log("Current Page " + currentpage);
 		var arrTodos = new Array();
 		var arrEncabezado = new Object();
-		
 		
 		arrEncabezado['Encabezado1'] = 'Num. de Tramite';
 		arrEncabezado['Encabezado2'] = 'Tramite';
 		arrEncabezado['Encabezado3'] = 'Area';
 		arrEncabezado['Encabezado4'] = 'Empresa';
-		arrEncabezado['Encabezado5'] = 'Asunto';
-		arrEncabezado['Encabezado6'] = 'Fecha de Recibido';
-		arrEncabezado['Encabezado7'] = 'Fecha de Vencimiento';
-		arrEncabezado['Encabezado8'] = 'Dias hábiles';
+		arrEncabezado['Encabezado5'] = 'Calle';
+		arrEncabezado['Encabezado6'] = 'No. Ext';
+		arrEncabezado['Encabezado7'] = 'No. Int';
+		arrEncabezado['Encabezado8'] = 'Colonia';
+		arrEncabezado['Encabezado9'] = 'Asunto';
+		arrEncabezado['Encabezado10'] = 'Fecha de Recibido';
+		arrEncabezado['Encabezado11'] = 'Fecha de finalización';
 		
 		for(var i = 0; i < numOfPages; i++){
 		table.page(i).draw('page');	
@@ -397,23 +384,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					case 3: arrT['EMPRESA'] = $(this).text();
 					break;
 					
-					case 4: arrT['ASUNTO'] = $(this).text();
+					case 4: arrT['CALLE'] = $(this).text();
 					break;
 					
-					case 5: arrT['FECHA_RECIBIDO'] = $(this).text();
+					case 5: arrT['NO_EXT'] = $(this).text();
 					break;
 					
-					case 6: arrT['FECHA_TERMINADO'] = $(this).text();
+					case 6: arrT['NO_INT'] = $(this).text();
 					break;
 					
-					case 7: arrT['DIAS_HABILES'] = $(this).text();
+					case 7: arrT['COLONIA'] = $(this).text();
+					break;
+					
+					case 8: arrT['ASUNTO'] = $(this).text();
+					break;
+					
+					case 9: arrT['FECHA_RECIBIDO'] = $(this).text();
+					break;
+					
+					case 10: arrT['FECHA_TERMINADO'] = $(this).text();
 					break;
 				}
 			});
-			
 			arrTodos.push(arrT);
 		});
-		
 		}
 		
 		var arrTodo = new Array();
@@ -439,6 +433,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	    document.body.appendChild(form);
     	form.submit();
 	}
+	
+
+		
     </script>
   </body>
 </html>

@@ -37,7 +37,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../../dist/css/skins/_all-skins.min.css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- HTML5 Shim and Respond.	js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -155,22 +155,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- Optionally, you can add icons to the links -->
             <li class="active"><a href="?"><i class="fa fa-link"></i><span>SMG</span></a></li>
             <li><a href="dashboardAir.php"><i class="fa fa-link"></i><span>AIR (Solo lectura)</span></a></li>
-            <li><a href="empresas.php"><i class="fa fa-link"></i> <span>Empresas y Sucursales</span></a></li>
             <!--<li><a href="tramites.php"><i class="fa fa-link"></i><span>Tramites</span></a></li>-->
             <li class="treeview">
               <a href="#"><i class="fa fa-link"></i> <span>Menu trámites SMG</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
               	<?php	
 					if(empty($_GET)){
-						echo '<li class="active"><a href="">Trámites nuevos</a></li>';
-						echo '<li><a href="tramites_proceso.php">Trámites en proceso</a></li>';
-						echo '<li><a href="tramites_finalizados.php">Trámites finalizados</a></li>';
+						echo '<li class="active"><a href="tramites/tramites_nuevos.php">Trámites nuevos</a></li>';
+						echo '<li><a href="tramites/tramites_proceso.php">Trámites en proceso</a></li>';
+						echo '<li><a href="tramites/tramites_finalizados.php">Trámites finalizados</a></li>';
 					} else{
 						if(isset($_GET["anio"]) && isset($_GET['metodoSeleccionFecha']) && isset($_GET['mes'])){
 							$urlParametros = "?metodoSeleccionFecha=".$_GET['metodoSeleccionFecha']."&anio=".$_GET['anio']."&mes=".$_GET['mes'];
-							echo '<li class="active"><a href="">Trámites nuevos</a></li>';
-							echo '<li><a href="tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
-							echo '<li><a href="tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
+							echo '<li class="active"><a href="tramites/tramites_nuevos.php">Trámites nuevos</a></li>';
+							echo '<li><a href="tramites/tramites_proceso.php'.$urlParametros.'">Trámites en proceso</a></li>';
+							echo '<li><a href="tramites/tramites_finalizados.php'.$urlParametros.'">Trámites finalizados</a></li>';
 						}
 					}
           		?>
@@ -246,9 +245,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				 
 				echo " desde ".$GLOBALS['labelFechaInicial']." hasta ".$GLOBALS['labelFechaTermino'];
 			 }
-			
            ?>
-           
             <small></small>
           </h1>
           <ol class="breadcrumb">
@@ -268,7 +265,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		$arrayAux = explode("?",$aux);
 
 		$urlParametros = "";	
-
+		$cargaGrafico = 0;
 		if(empty($arrayAux[1])){
 		} else {
 			$urlParametros = $arrayAux[1];
@@ -288,8 +285,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		if (!$mysqli){
   			die ("Error en la conexion con el servidor de bases de datos: " . mysql_error());
 		}
-		
-		$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico(4,'$fi','$ft')");
+		/* Tipo reporte, area, fechainicio, fechafin*/
+		$resultado = $mysqli->query("call testsecurity.sp_reporte_tramites_generico_otros(4, ".$_SESSION['session_user_depto_id'].",'$fi','$ft')");
 		while($k = mysqli_fetch_array($resultado)){
 			$EN = $k['TOTAL_TRAMITES_ENTRANTES'];
 			$NU = $k['TOTAL_TRAMITES_NUEVOS'];
@@ -298,7 +295,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			$TER_MES = $k['TOTAL_TRAMITES_MES_T'];
 			$TER = $k['TOTAL_TRAMITES_TERMINADOS'];
 		}
-		$mysqli->close();
+		$mysqli->close();	
 		?>
           <div class="row">
             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -320,9 +317,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <span class="info-box-icon bg-green"><i class="fa fa-flag-o"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">En Proceso (En el area)</span>
-                  <span class="info-box-number"><?php echo $PRO + $TER_MES; ?></span>
+                  <span class="info-box-number"><?php echo $PRO ; ?></span>
                   <span class="info-box-text">Recibidos (En el area)</span>
-                  <span class="info-box-number"><?php echo $REC ?></span>
+                  <span class="info-box-number"><?php echo $REC ; ?></span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
             </a>
@@ -343,10 +340,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <div class="nav-tabs-custom">
                 <!-- Tabs within a box -->
                 <ul class="nav nav-tabs pull-right">
-                  <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites (Capturados en el dia en gris y los recibidos en azul)</li>
+                  <li class="pull-left header"><i class="fa fa-inbox"></i> Cambiar Fecha de los trámites</li>
                 </ul>
-                <div class="tab-content no-padding">
-					<div id="myChart" style="width:100%; height:400px;"></div>                	
+                <div class="tab-content no-padding">          	
 					<table>
 						<tr>
 							<td><div class="form-group"><label style="padding-left: 10px; padding-right: 10px;">Seleccionar otro mes de actividad </label></div></td>
@@ -414,7 +410,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <div class="nav-tabs-custom">
                 <!-- Tabs within a box -->
                 <ul class="nav nav-tabs pull-right">
-                  <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites entrantes vs finalizados</li>
+                  <li class="pull-left header"><i class="fa fa-inbox"></i> Flujo de los tramites entrantes vs finalizados de Calidad del Aire</li>
                 </ul>
                 <div class="tab-content no-padding">
                 	<div id="myChartFinalizados" style="width:100%; height:400px;"></div>                	
@@ -451,8 +447,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       $(function (){
       	/* Si no elejimos que fecha de inicio y termino queremos, por defecto traera las del mes actuales desde el primer dia
       	 hasta el ultimo segun sea el mes actuals*/
-      	llenaGraficoUno();    
-      	setTimeout(function() { llenaGraficoD();}, 1000);
+      	llenaGraficoDos();    
 		/* Traducciones de HighCharts al español*/      	
       	Highcharts.setOptions({
       		lang: {
@@ -475,109 +470,51 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	  });
     </script>
     <script>
-    	function recargarGraficoUno(){
-    		llenaGraficoUno();
-    	}
-    	
-    	function recargarGraficoDos(){
-    		llenaGraficoDos();
-    	}
+    	var cargaGrafos = 0;
     
-    	function llenaGraficoUno(){
-    	//$('#rangoFecha').daterangepicker();
-      	var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
+ 		function llenaGraficoDos(){
+		/*
+        	AJAX QUE RELLENA EL GRAFICO DE LOS TRAMITES ENTRANTES CONTRA LOS FINALIZADOS
+        */
+        var fechaInicio = "<?php echo $GLOBALS['fechaInicial']; ?>";
       	var fechaTermino = "<?php echo $GLOBALS['fechaTermino']; ?>";
-      	/*
-      	 * AJAX QUE RELLENA EL GRAFICO NUMERO UNO DE LOS TRAMITES CAPTURADOS CONTRA LOS RECIBIDOS
-      	 */
-      	$.ajax({
-        	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino},
+      	var depto = "<?php echo $_SESSION['session_user_depto_id']; ?>";
+      	
+      	console.log(fechaInicio);
+      	console.log(fechaTermino);
+      	console.log(depto);
+        
+        $.ajax({
+        	data: { "fechaInicio" : fechaInicio, "fechaTermino" : fechaTermino, "noArea" : depto},
         	type: "POST",
         	dataType: "json",
-        	url: "../getFlujoTramitePersonalizado.php",
+        	url: "funciones/getCoasFlujoTramiteEntranteVsFinalizados.php",
         })
         .done(function(data, textStatus, jqXHR){
         	if(console && console.log){
         		console.log("La solicitud se ha completado correctamente");
         	}
-        	llenaGrafico(data);
+        	llenaGraficoUno(data);
         })
         .fail(function(jqXHR, textStatus, errorThrown){
         	if(console && console.log){
         		console.log("La solicitud ha fallado " + textStatus + " " + errorThrown);
-        		recargarGraficoUno();
+        		cargaGrafos = cargaGrafos + 1;
+        		if(cargaGrafos < 5){
+        			recargaGraficoDos();
+        		} else {
+        			console.log("Intentos de cargar el grafico mayores a 5, hay un problema" + cargaGrafos);
+        			alert("Intentos de cargar el grafico mayores han fallado, " + textStatus + " " + errorThrown);	
+        		}
         	}
         });
- }
-        
-        function llenaGrafico(data2){
-        console.log(data2);
+}   	
 
-      	var arrayDias = new Array();
-      	var arrayTramites = new Array();
-      	var arrayTramitesNum = new Array();
-      	
-      	var arrayDias2 = new Array();
-      	var arrayTramites2 = new Array();
-      	
-      	var fechaInicio = "<?php echo $GLOBALS['labelFechaInicial']; ?>";
-      	var fechaTermino = "<?php echo $GLOBALS['labelFechaTermino']; ?>";
-      	
-		var i = 0;
-      	for(var key in data2){
-      		/* Algunas fechas dan null en un arreglo mienstras que en el otro no, el if es para detectar esos nulls*/
-      	    if (data2[key].fechaRecibido == null) { 
-      	 		arrayDias[i] = data2[key].fechaCaptura;
-      	 	} else {
-      	 		arrayDias[i] = data2[key].fechaRecibido;
-      	 	}
-      
-      		var num = isNaN(parseInt(data2[key].noTramiteCapturados)) ? 0 : parseInt(data2[key].noTramiteCapturados)
-			arrayTramites[i] = num;
-			
-			var num2 = isNaN(parseInt(data2[key].noTramiteRecibidos)) ? 0 : parseInt(data2[key].noTramiteRecibidos)
-			arrayTramites2[i] = num2;
-			i++;
-      	}    
-      	
-      	$('#myChart').highcharts({
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Flujo de los trámites mensuales'
-        },
-        subtitle: {
-            text: 'Fechas: Desde ' + fechaInicio + ' hasta ' + fechaTermino
-        },
-        xAxis: {
-            categories: arrayDias
-        },
-        yAxis: {
-            title: {
-                text: 'No. de Trámites'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: true
-            }
-        },
-        series: [{
-            name: 'Tramites capturados',
-            data: arrayTramites
-        }, {
-            name: 'Tramites recibidos',
-            data: arrayTramites2
-        }]
-    });
-}
-
+    	function recargaGraficoDos(){
+	    	llenaGraficoDos();	
+    	}
         
-        function llenaGraficoDos(data2){
+        function llenaGraficoUno(data2){
         console.log(data2);
         
         var fechaInicio = "<?php echo $GLOBALS['labelFechaInicial']; ?>";
@@ -666,8 +603,5 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			window.location.href = nuevaURL;
 		}
 		
-		function despliegaGraficoAreas(){
-			setTimeout(function() { llenaGraficoModal();}, 200);
-		}
    </script>
   </body>
